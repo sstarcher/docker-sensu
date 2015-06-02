@@ -16,7 +16,7 @@ REDIS_HOST redis
 REDIS_PORT 6379
 
 
-An example of running everything locally
+An example docker-compose.yml file of running everything locally
 
 ```
 api:
