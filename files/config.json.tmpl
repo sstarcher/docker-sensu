@@ -1,0 +1,13 @@
+{
+    "rabbitmq": {
+        "port": {{ default "5672" .Env.RABBITMQ_PORT }},
+        "host": "{{ default "rabbitmq" .Env.RABBITMQ_HOST }}",
+        "user": "{{ default "guest" .Env.RABBITMQ_USER }}",
+        "password": "{{ default "guest" .Env.RABBITMQ_PASSWORD }}",
+        "vhost": "{{ default "/" .Env.RABBITMQ_VHOST }}"
+    },
+    "redis": {
+        "host": "{{ default "redis" .Env.REDIS_HOST }}",
+        "port": {{ default "6379" .Env.REDIS_PORT }}
+    }
+}
