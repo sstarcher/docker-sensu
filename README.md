@@ -6,6 +6,7 @@ For running the client use docker-sensu-client container image that contains the
 
 Default configuration allows for local linkage to rabbitmq and redis, by using docker links.  If you need to reference external servers set the following variables as needed.
 
+```
 RABBITMQ_PORT 5672
 RABBITMQ_HOST rabbitmq
 RABBITMQ_USER guest
@@ -14,6 +15,7 @@ RABBITMQ_VHOST /
 
 REDIS_HOST redis
 REDIS_PORT 6379
+```
 
 
 An example docker-compose.yml file of running everything locally
