@@ -30,4 +30,4 @@ ENV EXTENSION_DIR /etc/sensu/extensions
 ENV PLUGINS_DIR /etc/sensu/plugins
 ENV HANDLERS_DIR /etc/sensu/handlers
 
-ENTRYPOINT /bin/start
+CMD /bin/start
