@@ -12,8 +12,12 @@ case "$SENSU_SERVICE" in
       dockerize -template $file:${file%.*} echo
     done
 
-    command="sensu-$SENSU_SERVICE -c $CONFIG_FILE -d $CONFIG_DIR -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS"
-    dockerize -template /etc/sensu/config.json.tmpl:/etc/sensu/config.json $command
+    for index in $DEPENDENCIES
+    do
+      dockerize -template /etc/sensu/templates/$index.json.tmpl:$CONFIG_DIR/$index.json echo
+    done
+
+    dockerize sensu-$SENSU_SERVICE -d $CONFIG_DIR -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS
     ;;
   *)
     echo 'Specify either api/server/client'

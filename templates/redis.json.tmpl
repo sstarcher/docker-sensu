@@ -1,0 +1,7 @@
+{{ $REDIS_PORT := default .Env.REDIS_PORT "6379" }}
+{
+    "redis": {
+        "host": "{{ default .Env.REDIS_HOST "redis" }}",
+        "port": {{  default .Env.REDIS_PORT_6379_TCP_PORT $REDIS_PORT }}
+    }
+}
