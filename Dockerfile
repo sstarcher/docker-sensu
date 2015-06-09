@@ -30,6 +30,6 @@ ENV CONFIG_DIR /etc/sensu/conf.d
 ENV EXTENSION_DIR /etc/sensu/extensions
 ENV PLUGINS_DIR /etc/sensu/plugins
 ENV HANDLERS_DIR /etc/sensu/handlers
-ENV DEPENDENCIES redis
+ENV DEPENDENCIES redis rabbitmq
 
 CMD /bin/start
