@@ -3,6 +3,10 @@ set -e
 
 SENSU_SERVICE=${SENSU_SERVICE-$1}
 
+if [[ "$SENSU_SERVICE" == "server" ]]; then
+  DEPENDENCIES="rabbitmq redis api"
+fi
+
 case "$SENSU_SERVICE" in
   api|server|client)
     shopt -s nullglob #fixes null glob when no file exists
