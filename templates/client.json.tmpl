@@ -1,0 +1,14 @@
+{
+  "client": {
+    "name": "{{ .Env.CLIENT_NAME }}",
+    "address": "{{ .Env.CLIENT_ADDRESS }}",
+    "subscriptions": [
+      {{range  $index, $element := split .Env.CLIENT_SUBSCRIPTIONS "," }}
+        {{if $index}},{{end}}"{{.}}"
+      {{end}}
+    ],
+    "keepalive": {
+      "handler": "{{ default .Env.CLIENT_KEEPALIVE_HANDLER "default"  }}"
+    }
+  }
+}

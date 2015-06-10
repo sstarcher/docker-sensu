@@ -6,6 +6,18 @@ For running the client use docker-sensu-client container image that contains the
 
 Default configuration allows for local linkage to rabbitmq and redis, by using docker links.  If you need to reference external servers set the following variables as needed.
 
+Dependencies:
+  - Server
+    - rabbitmq
+    - redis
+    - api
+  - Api
+    - rabbitmq
+    - redis
+  - Client
+    - rabbitmq
+
+
 ```
 RABBITMQ_PORT 5672
 RABBITMQ_HOST rabbitmq
@@ -17,33 +29,43 @@ REDIS_HOST redis
 REDIS_PORT 6379
 ```
 
+Client specific settings.
+
+```
+CLIENT_NAME *no default*
+CLIENT_ADDRESS *no default*
+CLIENT_SUBSCRIPTIONS all, default
+CLIENT_KEEPALIVE_HANDLER default
+```
+
+
 
 An example docker-compose.yml file of running everything locally
 
 ```
 api:
   image: sstarcher/sensu
-  environment:
-    SENSU_SERVICE: api
+  command: api
   links:
     - rabbitmq
     - redis
 server:
   image: sstarcher/sensu
-  environment:
-    SENSU_SERVICE: server
+  command: server
   links:
     - rabbitmq
     - redis
+    - api
 client:
   image: sstarcher/sensu-client
+  command: client
   environment:
-    CLIENT_NAME: client_name
+    CLIENT_NAME: bob
+    RUNTIME_INSTALL: sstarcher/aws sstarcher/consul
   links:
     - rabbitmq
-    - redis
 uchiwa:
-  image: sstarcher/uchiwa
+  build: docker-uchiwa
   links:
     - api:sensu
   ports:
@@ -54,3 +76,5 @@ redis:
   image: redis
  ```
 
+
+RUNTIME_INSTALL will allow you to install additional plugins from github during runtime

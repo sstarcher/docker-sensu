@@ -1,14 +1,16 @@
 #!/bin/bash
 set -e
 
-for index in $PLUGINS
+echo $@ 
+
+for index in $@
 do
 	echo $index
 	set -- "$index" 
 	IFS="/"; declare -a Array=($*) 
 	if [[ ${#Array[@]} -eq 1 ]]; then
 		PLUGIN="${Array[0]}" 
-		REPO=$PLUGINS_REPO
+		REPO=$DEFAULT_PLUGINS_REPO
 	else
 		REPO="${Array[0]}" 
 		PLUGIN="${Array[1]}" 
