@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+
+for index in $PLUGINS
+do
+	echo $index
+	set -- "$index" 
+	IFS="/"; declare -a Array=($*) 
+	if [[ ${#Array[@]} -eq 1 ]]; then
+		PLUGIN="${Array[0]}" 
+		REPO=$PLUGINS_REPO
+	else
+		REPO="${Array[0]}" 
+		PLUGIN="${Array[1]}" 
+	fi
+
+	wget https://github.com/$REPO/sensu-plugins-$PLUGIN/archive/master.tar.gz
+	tar -xzvf master.tar.gz
+	rm *.tar.gz 
+	cd sensu-plugins-$PLUGIN-master 
+	bundle install 
+	mkdir -p /etc/sensu/plugins/$PLUGIN
+	mv bin/* /etc/sensu/plugins/$PLUGIN/ 
+	rm -rf /etc/sensu/extensions/checks
+done

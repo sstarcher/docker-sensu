@@ -20,6 +20,11 @@ RUN tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.0.2.tar.gz
 
 ADD bin /bin/
 
+RUN gem install bundler -v 1.9.9 --no-document
+ENV PLUGINS hipchat mailer pagerduty
+ENV PLUGINS_REPO sensu-plugins
+RUN /bin/install
+
 EXPOSE 4567
 VOLUME ["/etc/sensu/conf.d"]
 
@@ -31,5 +36,7 @@ ENV EXTENSION_DIR /etc/sensu/extensions
 ENV PLUGINS_DIR /etc/sensu/plugins
 ENV HANDLERS_DIR /etc/sensu/handlers
 ENV DEPENDENCIES redis rabbitmq
+
+
 
 CMD /bin/start
