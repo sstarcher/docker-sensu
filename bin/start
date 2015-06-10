@@ -1,26 +1,21 @@
 #!/bin/bash
 set -e
 
-/bin/install $INSTALL_PLUGINS
+/bin/install $RUNTIME_INSTALL
 
 SENSU_SERVICE=${SENSU_SERVICE-$1}
 
 case "$SENSU_SERVICE" in
    api)
-    echo 'api'
     DEPENDENCIES="rabbitmq redis"  
     ;;&
   client)
-    echo 'client'
     DEPENDENCIES="rabbitmq client"
     ;;&
   server)
-    echo 'server'
     DEPENDENCIES="rabbitmq redis api"
     ;;&
   api|server|client)
-    echo 'yAAAY'
-    echo $DEPENDENCIES
     shopt -s nullglob #fixes null glob when no file exists
     for file in $CONFIG_DIR/*.tmpl
     do
