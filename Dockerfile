@@ -16,13 +16,11 @@ ENV PATH /opt/sensu/embedded/bin:$PATH
 RUN apt-get update && \
     apt-get install libxml2 libxml2-dev libxslt1-dev zlib1g-dev build-essential -y &&\
     apt-get -y clean
-ENV NOKOGIRI_USE_SYSTEM_LIBRARIES 1
-RUN gem install nokogiri -- --use-system-libraries --with-xml2-include=/usr/include/libxml2
+RUN NOKOGIRI_USE_SYSTEM_LIBRARIES=1 gem install nokogiri -- --use-system-libraries --with-xml2-include=/usr/include/libxml2
 
 RUN wget https://github.com/jwilder/dockerize/releases/download/v0.0.2/dockerize-linux-amd64-v0.0.2.tar.gz
 RUN tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.0.2.tar.gz
 
-RUN gem install bundler -v 1.9.9 --no-document
 ENV DEFAULT_PLUGINS_REPO sensu-plugins
 
 ADD templates /etc/sensu/templates
