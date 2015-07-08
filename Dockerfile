@@ -35,7 +35,7 @@ ADD bin /bin/
 RUN /bin/install hipchat mailer pagerduty
 
 #Plugins needed for checks and maybe handlers
-RUN /bin/install docker aws http graphite ftp consul etcd bitbucket redis elasticsearch
+RUN /bin/install docker aws http graphite ftp consul etcd redis elasticsearch
 
 EXPOSE 4567
 VOLUME ["/etc/sensu/conf.d"]
