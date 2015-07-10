@@ -6,6 +6,9 @@ For running the client use docker-sensu-client container image that contains the
 
 Default configuration allows for local linkage to rabbitmq and redis, by using docker links.  If you need to reference external servers set the following variables as needed.
 
+*Note
+Installed plugins for now can change without warning.  If you need a specific plugin installed either build a container based off of this one our use RUNTIME_INSTALL to ensure your plugins are installed.
+
 Dependencies:
   - Server
     - rabbitmq
@@ -27,6 +30,10 @@ RABBITMQ_VHOST /
 
 REDIS_HOST redis
 REDIS_PORT 6379
+REDIS_PASSWORD ""
+REDIS_DB 0
+REDIS_AUTO_RECONNECT true
+REDIS_RECONNECT_ON_ERROR false
 ```
 
 Client specific settings.
