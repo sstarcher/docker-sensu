@@ -32,7 +32,7 @@ ADD templates /etc/sensu/templates
 ADD bin /bin/
 
 #Plugins needed for handlers
-RUN /bin/install hipchat mailer pagerduty
+RUN /bin/install slack mailer pagerduty
 
 #Plugins needed for checks and maybe handlers
 RUN /bin/install aws consul docker sstarcher/dns etcd ftp graphite http redis elasticsearch
