@@ -35,7 +35,7 @@ ADD bin /bin/
 RUN /bin/install slack mailer pagerduty
 
 #Plugins needed for checks and maybe handlers
-RUN /bin/install aws consul docker sstarcher/dns etcd ftp graphite http redis elasticsearch
+RUN /bin/install aws consul docker dns etcd ftp graphite http redis elasticsearch
 
 EXPOSE 4567
 VOLUME ["/etc/sensu/conf.d"]
