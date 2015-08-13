@@ -18,8 +18,9 @@ do
 	tar -xzvf master.tar.gz
 	rm *.tar.gz 
 	cd sensu-plugins-$PLUGIN-master 
-	sed -i'' '/signing_key/d' sensu-plugins-*.gemspec #We don't have the private key
-	gem build sensu-plugins-*.gemspec
+	sed -i'' '/signing_key/d' sensu-plugins-$PLUGIN.gemspec #We don't have the private key
+	gem build sensu-plugins-$PLUGIN.gemspec
+	gem uninstall -x sensu-plugins-$PLUGIN
 	gem install sensu-plugins-*.gem
 	cd ..
 	rm -rf sensu-plugins-$PLUGIN-master
