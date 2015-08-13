@@ -22,5 +22,5 @@ do
 	gem build sensu-plugins-*.gemspec
 	gem install sensu-plugins-*.gem
 	cd ..
-	rm -rf sensu-plugins-$PLUGINS-master
+	rm -rf sensu-plugins-$PLUGIN-master
 done
