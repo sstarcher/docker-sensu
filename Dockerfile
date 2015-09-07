@@ -42,6 +42,7 @@ VOLUME ["/etc/sensu/conf.d"]
 
 #Client Config
 ENV CLIENT_SUBSCRIPTIONS all,default
+ENV CLIENT_BIND 127.0.0.0
 
 #Common Config
 ENV RUNTIME_INSTALL ''

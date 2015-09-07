@@ -1,5 +1,8 @@
 {
   "client": {
+    "socket": {
+      "bind": "{{ .Env.CLIENT_BIND }}"
+    },
     "name": "{{ .Env.CLIENT_NAME }}",
     "address": "{{ .Env.CLIENT_ADDRESS }}",
     "subscriptions": [
