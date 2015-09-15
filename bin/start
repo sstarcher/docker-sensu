@@ -31,8 +31,6 @@ case "$SENSU_SERVICE" in
       dockerize -template /etc/sensu/templates/$index.json.tmpl:$CONFIG_DIR/$index.json echo
     done
 
-    echo $DIRS
-    exit
     dockerize sensu-$SENSU_SERVICE -d $DIRS -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS
     ;;
   *)
