@@ -9,6 +9,13 @@ Default configuration allows for local linkage to rabbitmq and redis, by using d
 *Note
 Installed plugins for now can change without warning.  If you need a specific plugin installed either build a container based off of this one our use RUNTIME_INSTALL to ensure your plugins are installed.
 
+* Configuration
+The client by default only loads files from /etc/sensu/conf.d & the api and server load files from both conf.d and /etc/sensu/check.d
+
+
+ENV CONFIG_DIR /etc/sensu/conf.d
+ENV CHECK_DIR /etc/sensu/check.d
+
 Dependencies:
   - Server
     - rabbitmq

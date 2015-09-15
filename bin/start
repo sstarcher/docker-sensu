@@ -8,12 +8,15 @@ SENSU_SERVICE=${SENSU_SERVICE-$1}
 case "$SENSU_SERVICE" in
    api)
     DEPENDENCIES="rabbitmq redis"  
+    DIRS="$CONFIG_DIR,$CHECK_DIR"
     ;;&
   client)
     DEPENDENCIES="rabbitmq client"
+    DIRS="$CONFIG_DIR"
     ;;&
   server)
     DEPENDENCIES="rabbitmq redis api"
+    DIRS="$CONFIG_DIR,$CHECK_DIR"
     ;;&
   api|server|client)
     shopt -s nullglob #fixes null glob when no file exists
@@ -28,7 +31,9 @@ case "$SENSU_SERVICE" in
       dockerize -template /etc/sensu/templates/$index.json.tmpl:$CONFIG_DIR/$index.json echo
     done
 
-    dockerize sensu-$SENSU_SERVICE -d $CONFIG_DIR -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS
+    echo $DIRS
+    exit
+    dockerize sensu-$SENSU_SERVICE -d $DIRS -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS
     ;;
   *)
     echo 'Specify either api/server/client'

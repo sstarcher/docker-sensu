@@ -32,10 +32,10 @@ ADD templates /etc/sensu/templates
 ADD bin /bin/
 
 #Plugins needed for handlers
-RUN /bin/install slack mailer pagerduty
+RUN /bin/install mailer
 
 #Plugins needed for checks and maybe handlers
-RUN /bin/install aws consul docker dns etcd ftp graphite http redis elasticsearch
+RUN /bin/install http
 
 EXPOSE 4567
 VOLUME ["/etc/sensu/conf.d"]
@@ -50,6 +50,7 @@ ENV LOG_LEVEL warn
 ENV EMBEDDED_RUBY true
 ENV CONFIG_FILE /etc/sensu/config.json
 ENV CONFIG_DIR /etc/sensu/conf.d
+ENV CHECK_DIR /etc/sensu/check.d
 ENV EXTENSION_DIR /etc/sensu/extensions
 ENV PLUGINS_DIR /etc/sensu/plugins
 ENV HANDLERS_DIR /etc/sensu/handlers
