@@ -26,6 +26,12 @@ case "$SENSU_SERVICE" in
       dockerize -template $file:${file%.*} echo
     done
 
+    for file in $CHECK_DIR/*.tmpl
+    do
+      echo "Processing $file file..."
+      dockerize -template $file:${file%.*} echo
+    done
+
     for index in $DEPENDENCIES
     do
       dockerize -template /etc/sensu/templates/$index.json.tmpl:$CONFIG_DIR/$index.json echo
