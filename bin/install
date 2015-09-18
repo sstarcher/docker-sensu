@@ -4,24 +4,24 @@ set -e
 for index in $@
 do
 	echo $index
-	set -- "$index" 
-	IFS="/"; declare -a Array=($*) 
+	set -- "$index"
+	IFS="/"; declare -a Array=($*)
 	if [[ ${#Array[@]} -eq 1 ]]; then
-		PLUGIN="${Array[0]}" 
+		PLUGIN="${Array[0]}"
 		REPO=$DEFAULT_PLUGINS_REPO
 	else
-		REPO="${Array[0]}" 
-		PLUGIN="${Array[1]}" 
+		REPO="${Array[0]}"
+		PLUGIN="${Array[1]}"
 	fi
 
 	wget https://github.com/$REPO/sensu-plugins-$PLUGIN/archive/master.tar.gz
 	tar -xzvf master.tar.gz
-	rm *.tar.gz 
-	cd sensu-plugins-$PLUGIN-master 
+	rm *.tar.gz
+	cd sensu-plugins-$PLUGIN-master
 	sed -i'' '/signing_key/d' sensu-plugins-$PLUGIN.gemspec #We don't have the private key
 	gem build sensu-plugins-$PLUGIN.gemspec
 	gem uninstall -x sensu-plugins-$PLUGIN
-	gem install sensu-plugins-*.gem
+	gem install --no-ri --no-rdoc sensu-plugins-*.gem
 	cd ..
 	rm -rf sensu-plugins-$PLUGIN-master
 done
