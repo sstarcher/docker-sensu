@@ -5,6 +5,7 @@
         "port": {{  default .Env.REDIS_PORT_6379_TCP_PORT $REDIS_PORT }},
         {{if .Env.REDIS_PASSWORD }}"password": "{{ .Env.REDIS_PASSWORD }}",{{end}}
         "db": {{  default .Env.REDIS_DB "0" }},
+        "vhost": {{  default .Env.REDIS_VHOST "/" }},
         "auto_reconnect": {{  default .Env.REDIS_AUTO_RECONNECT "true" }},
         "reconnect_on_error": {{  default .Env.REDIS_RECONNECT_ON_ERROR "false" }}
     }
