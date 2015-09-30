@@ -1,5 +1,15 @@
-docker-sensu
+Dockerized Sensu
 ============
+This git repo provides [Sensu](https://sensuapp.org/) in a Docker container.
+
+Project: [https://github.com/sstarcher/docker-sensu]
+(https://github.com/sstarcher/docker-sensu)
+
+Docker image: [https://registry.hub.docker.com/u/sstarcher/sensu/]
+(https://registry.hub.docker.com/u/sstarcher/sensu/)
+
+[![](https://badge.imagelayers.io/sstarcher/sensu:latest.svg)](https://imagelayers.io/?images=sstarcher/sensu:latest 'Get your own badge on imagelayers.io')
+[![Docker Registry](https://img.shields.io/docker/pulls/sstarcher/sensu.svg)](https://registry.hub.docker.com/u/sstarcher/sensu)&nbsp;
 
 This is a base container for Sensu Core.  It contains sensu-api, sensu-client, sensu-server, but does not contain any plugins.
 For running the client use docker-sensu-client container image that contains the sensu plugins.
