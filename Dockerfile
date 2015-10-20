@@ -2,8 +2,9 @@ FROM debian:jessie
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
 RUN apt-get update && apt-get install -y wget ca-certificates && apt-get -y clean
-RUN wget -q http://repos.sensuapp.org/apt/pubkey.gpg -O- | apt-key add -
-RUN echo "deb     http://repos.sensuapp.org/apt sensu main" > /etc/apt/sources.list.d/sensu.list
+RUN wget -q http://repositories.sensuapp.org/apt/pubkey.gpg -O-  | apt-key add -
+RUN echo "deb     http://repositories.sensuapp.org/apt sensu main" > /etc/apt/sources.list.d/sensu.list
+
 
 RUN \
 	apt-get update && \
