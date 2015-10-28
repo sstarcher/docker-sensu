@@ -21,7 +21,7 @@ do
 	sed -i'' '/signing_key/d' sensu-plugins-$PLUGIN.gemspec #We don't have the private key
 	gem build sensu-plugins-$PLUGIN.gemspec
 	gem uninstall -x sensu-plugins-$PLUGIN
-	gem install --no-ri --no-rdoc sensu-plugins-*.gem
+	gem install --no-ri --no-rdoc --no-wrapper sensu-plugins-*.gem
 	cd ..
 	rm -rf sensu-plugins-$PLUGIN-master
 done
