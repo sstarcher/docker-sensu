@@ -12,7 +12,6 @@ Docker image: [https://registry.hub.docker.com/u/sstarcher/sensu/]
 [![Docker Registry](https://img.shields.io/docker/pulls/sstarcher/sensu.svg)](https://registry.hub.docker.com/u/sstarcher/sensu)&nbsp;
 
 This is a base container for Sensu Core.  It contains sensu-api, sensu-client, sensu-server, but does not contain any plugins.
-For running the client use docker-sensu-client container image that contains the sensu plugins.
 
 Default configuration allows for local linkage to rabbitmq and redis, by using docker links.  If you need to reference external servers set the following variables as needed.
 
@@ -81,7 +80,7 @@ server:
     - redis
     - api
 client:
-  image: sstarcher/sensu-client
+  image: sstarcher/sensu
   command: client
   environment:
     CLIENT_NAME: bob
