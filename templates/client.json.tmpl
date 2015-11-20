@@ -3,7 +3,7 @@
     "socket": {
       "bind": "{{ .Env.CLIENT_BIND }}"
     },
-    "name": "{{ .Env.CLIENT_NAME }}",
+    "name": "{{ default .Env.CLIENT_NAME .Env.HOSTNAME }}",
     "address": "{{ .Env.CLIENT_ADDRESS }}",
     "subscriptions": [
       {{range  $index, $element := split .Env.CLIENT_SUBSCRIPTIONS "," }}
