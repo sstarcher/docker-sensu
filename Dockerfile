@@ -56,4 +56,9 @@ ENV EXTENSION_DIR /etc/sensu/extensions
 ENV PLUGINS_DIR /etc/sensu/plugins
 ENV HANDLERS_DIR /etc/sensu/handlers
 
+#Config for gathering host metrics
+ENV HOST_DEV_DIR /dev
+ENV HOST_PROC_DIR /proc
+ENV HOST_SYS_DIR /sys
+
 ENTRYPOINT ["/bin/start"]
