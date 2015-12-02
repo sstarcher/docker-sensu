@@ -6,8 +6,8 @@ set -e
 SENSU_SERVICE=${SENSU_SERVICE-$1}
 
 case "$SENSU_SERVICE" in
-   api)
-    DEPENDENCIES="rabbitmq redis"  
+  api)
+    DEPENDENCIES="rabbitmq redis"
     DIRS="$CONFIG_DIR,$CHECK_DIR"
     ;;&
   client)
@@ -16,7 +16,7 @@ case "$SENSU_SERVICE" in
     ;;&
   server)
     DEPENDENCIES="rabbitmq redis api"
-    DIRS="$CONFIG_DIR,$CHECK_DIR"
+    DIRS="$CONFIG_DIR,$CHECK_DIR,$HANDLERS_DIR"
     ;;&
   api|server|client)
     shopt -s nullglob #fixes null glob when no file exists
@@ -36,6 +36,11 @@ case "$SENSU_SERVICE" in
     do
       dockerize -template /etc/sensu/templates/$index.json.tmpl:$CONFIG_DIR/$index.json echo
     done
+
+    # use host (not container) dirs for checks and metrics
+    sed -i "s|/dev|$HOST_DEV_DIR|g" /opt/sensu/embedded/bin/*.rb
+    sed -i "s|/proc|$HOST_PROC_DIR|g" /opt/sensu/embedded/bin/*.rb
+    sed -i "s|/sys|$HOST_SYS_DIR|g" /opt/sensu/embedded/bin/*.rb
 
     dockerize sensu-$SENSU_SERVICE -d $DIRS -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS
     ;;
