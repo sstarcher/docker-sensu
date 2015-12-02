@@ -47,23 +47,23 @@ ENV CHECK_DIR /etc/sensu/check.d
 ENV HANDLERS_DIR /etc/sensu/handlers
 ```
 
-If you want to use runtime system information for checks and metrics from container's *host* system (*not* from `sensu` container itself) you should:
+If you want `sensu-client` to use runtime system information for checks and metrics from container's *host* system (*not* from `sensu` container itself) you should:
 
 1. Define volumes to access host's filesystem from `sensu` container :
 
-	```
+  ```
   /dev:/host_dev/:ro
   /proc:/host_proc/:ro
   /sys:/host_sys/:ro
-	```
+  ```
 
 2. Redefine environment variables :
 
-	```
+  ```
   HOST_DEV_DIR: /host_dev
   HOST_PROC_DIR: /host_proc
   HOST_SYS_DIR: /host_sys
-	```
+  ```
 
 All Sensu plugins will be automatically configured to use these paths instead of default ones.
 
