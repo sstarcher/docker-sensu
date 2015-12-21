@@ -5,6 +5,7 @@
         "host": "{{ default .Env.RABBITMQ_HOST "rabbitmq" }}",
         "user": "{{ default .Env.RABBITMQ_USER "guest" }}",
         "password": "{{ default .Env.RABBITMQ_PASSWORD "guest" }}",
-        "vhost": "{{ default .Env.RABBITMQ_VHOST "/" }}"
+        "vhost": "{{ default .Env.RABBITMQ_VHOST "/" }}",
+        "prefetch": {{ default .Env.RABBITMQ_PREFETCH 1 }}
     }
 }
