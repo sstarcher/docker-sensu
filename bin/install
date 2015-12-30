@@ -14,14 +14,22 @@ do
 		PLUGIN="${Array[1]}"
 	fi
 
-	wget https://github.com/$REPO/sensu-plugins-$PLUGIN/archive/master.tar.gz
-	tar -xzvf master.tar.gz
+	IFS="@"; declare -a PluginArray=("${PLUGIN}")
+	if [[ ${#PluginArray[@]} -eq 1 ]]; then
+		VERSION=$DEFAULT_PLUGINS_VERSION
+	else
+		PLUGIN="${PluginArray[0]}"
+		VERSION="${PluginArray[1]}"
+	fi
+
+	wget https://github.com/$REPO/sensu-plugins-$PLUGIN/archive/$VERSION.tar.gz
+	tar -xzvf $VERSION.tar.gz
 	rm *.tar.gz
-	cd sensu-plugins-$PLUGIN-master
+	cd sensu-plugins-$PLUGIN-$VERSION
 	sed -i'' '/signing_key/d' sensu-plugins-$PLUGIN.gemspec #We don't have the private key
 	gem build sensu-plugins-$PLUGIN.gemspec
 	gem uninstall -x sensu-plugins-$PLUGIN
 	gem install --no-ri --no-rdoc --no-wrapper sensu-plugins-*.gem
 	cd ..
-	rm -rf sensu-plugins-$PLUGIN-master
+	rm -rf sensu-plugins-$PLUGIN-$VERSION
 done

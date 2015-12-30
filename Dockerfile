@@ -29,6 +29,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/v0.0.2/dockerize
 RUN tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.0.2.tar.gz
 
 ENV DEFAULT_PLUGINS_REPO sensu-plugins
+ENV DEFAULT_PLUGINS_VERSION master
 
 ADD templates /etc/sensu/templates
 ADD bin /bin/
