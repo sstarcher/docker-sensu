@@ -142,3 +142,6 @@ redis:
 ```
 
 `RUNTIME_INSTALL` will allow you to install additional plugins from github during runtime.
+
+`GEM_SOURCES` can be used to add additional gem sources (such as https://ruby.taobao.org/ for China).
+
