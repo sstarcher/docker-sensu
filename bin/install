@@ -1,6 +1,15 @@
 #!/bin/bash
 set -e
 
+if [ -n "$GEM_SOURCES" ] && ! [ -e "/tmp/gem_sources_added" ]; then
+	for src in $(echo $GEM_SOURCES | tr ',' ' ')
+	do
+		echo "Adding gem source $src"
+		gem sources -a $src
+	done
+	touch /tmp/gem_sources_added
+fi
+
 for index in $@
 do
 	echo $index
