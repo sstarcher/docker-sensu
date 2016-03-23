@@ -18,7 +18,11 @@ case "$SENSU_SERVICE" in
     DEPENDENCIES="rabbitmq redis api"
     DIRS="$CONFIG_DIR,$CHECK_DIR,$HANDLERS_DIR"
     ;;&
-  api|server|client)
+  validate)
+    DEPENDENCIES="rabbitmq redis api"
+    VALIDATE_ONLY="true"
+    ;;&
+  api|server|client|validate)
     shopt -s nullglob #fixes null glob when no file exists
     for file in $CONFIG_DIR/*.tmpl
     do
@@ -54,10 +58,15 @@ case "$SENSU_SERVICE" in
       yaml2json ${yamlFile} > ${jsonFile}
     done
 
+    if [[ "${VALIDATE_ONLY}" == "true" ]]; then
+      echo 'No errors'
+      exit 0
+    fi
+
     dockerize sensu-$SENSU_SERVICE -d $DIRS -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS
     ;;
   *)
-    echo 'Specify either api/server/client'
+    echo 'Specify either api/server/client/validate'
     exit 1
     ;;
 esac
