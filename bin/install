@@ -10,9 +10,10 @@ if [ -n "$GEM_SOURCES" ] && ! [ -e "/tmp/gem_sources_added" ]; then
 	touch /tmp/gem_sources_added
 fi
 
-for index in $@
-do
-	echo $index
+
+determine_params() {
+	index=$1
+
 	set -- "$index"
 	IFS="/"; declare -a Array=($*)
 	if [[ ${#Array[@]} -eq 1 ]]; then
@@ -31,14 +32,66 @@ do
 		VERSION="${PluginArray[1]}"
 	fi
 
+	echo "'$REPO' '$PLUGIN' '$VERSION'"
+}
+
+build_plugin() {
+	PLUGIN=$1
+	REPO=$2
+	VERSION=$3
+
+	local blddir="/tmp/sensu-plugins-${PLUGIN}-${VERSION}/build"
+	local gemdir="/tmp/sensu-plugins-${PLUGIN}-${VERSION}/gems"
+	mkdir $blddir $gemdir
+	cd $blddir
 	wget https://github.com/$REPO/sensu-plugins-$PLUGIN/archive/$VERSION.tar.gz
-	tar -xzvf $VERSION.tar.gz
+	tar -xzf $VERSION.tar.gz
 	rm *.tar.gz
 	cd sensu-plugins-$PLUGIN-$VERSION
 	sed -i'' '/signing_key/d' sensu-plugins-$PLUGIN.gemspec #We don't have the private key
 	gem build sensu-plugins-$PLUGIN.gemspec
+	mv sensu-plugins-*.gem $gemdir
+	cd
+	rm -rf $blddir
+	touch /tmp/sensu-plugins-${PLUGIN}-${VERSION}/done
+}
+
+install_plugin() {
+	PLUGIN=$1
+	VERSION=$2
+
+	local gemdir="/tmp/sensu-plugins-${PLUGIN}-${VERSION}/gems"
+	cd $gemdir
 	gem uninstall -x sensu-plugins-$PLUGIN
 	gem install --no-ri --no-rdoc --no-wrapper sensu-plugins-*.gem
-	cd ..
-	rm -rf sensu-plugins-$PLUGIN-$VERSION
+}
+
+# Launch all plugins installations in parallel
+for index in $@
+do
+	echo $index
+	determine_params $index
+	mkdir "/tmp/sensu-plugins-${PLUGIN}-${VERSION}"
+	build_plugin $PLUGIN $REPO $VERSION &
+	install_pid=$!
+	echo $install_pid > /tmp/sensu-plugins-${PLUGIN}-${VERSION}/pid
 done
+
+
+for index in $@
+do
+	determine_params $index
+
+	install_pid=$(cat /tmp/sensu-plugins-${PLUGIN}-${VERSION}/pid)
+	echo "Waiting for $PLUGIN $VERSION to install (pid $install_pid)"
+	while ! [ -f "/tmp/sensu-plugins-${PLUGIN}-${VERSION}/done" ]; do
+		if ! [ -d "/proc/$install_pid" ] && ! [ -f "/tmp/sensu-plugins-${PLUGIN}-${VERSION}/done" ]; then
+			echo "Build of $PLUGIN $VERSION failed"
+			exit 1
+		fi
+		sleep 1
+	done
+
+	install_plugin $PLUGIN $VERSION
+done
+
