@@ -66,6 +66,13 @@ install_plugin() {
 	gem install --no-ri --no-rdoc --no-wrapper sensu-plugins-*.gem
 }
 
+cleanup_plugin() {
+	PLUGIN=$1
+	VERSION=$2
+
+	rm -rf "/tmp/sensu-plugins-${PLUGIN}-${VERSION}"
+}
+
 # Launch all plugins installations in parallel
 for index in $@
 do
@@ -93,5 +100,6 @@ do
 	done
 
 	install_plugin $PLUGIN $VERSION
+	cleanup_plugin $PLUGIN $VERSION
 done
 
