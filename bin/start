@@ -1,6 +1,16 @@
 #!/bin/bash
 set -e
 
+process_template(){
+  pushd $1 > /dev/null
+  for FILE in *.tmpl
+  do
+    echo "Processing $FILE file..."
+    envtpl -in $FILE > ${FILE%.*}
+  done
+  popd
+}
+
 /bin/install $RUNTIME_INSTALL
 
 SENSU_SERVICE=${SENSU_SERVICE-$1}
@@ -11,8 +21,12 @@ case "$SENSU_SERVICE" in
     DIRS="$CONFIG_DIR,$CHECK_DIR"
     ;;&
   client)
-    DEPENDENCIES="redis client transport"
+    DEPENDENCIES="client transport"
     DIRS="$CONFIG_DIR"
+
+    if [[ "${TRANSPORT_NAME}" == "redis" ]]; then
+      DEPENDENCIES="redis $DEPENDENCIES"
+    fi
     ;;&
   server)
     DEPENDENCIES="redis api transport"
@@ -25,32 +39,15 @@ case "$SENSU_SERVICE" in
   api|server|client|validate)
     shopt -s nullglob #fixes null glob when no file exists
 
-    if [[ "${TRANSPORT_NAME}" == "rabbitmq" && "${SENSU_SERVICE}" == "client"  ]]; then
-      echo "Removing redis config from client"
-      rm $CONFIG_DIR/redis.json
-    fi
-
-    for file in $CONFIG_DIR/*.tmpl
+    process_template $CONFIG_DIR
+    process_template $CHECK_DIR
+    process_template $HANDLERS_DIR
+    
+    for INDEX in $DEPENDENCIES
     do
-      echo "Processing $file file..."
-      dockerize -template $file:${file%.*} echo
-    done
-
-    for file in $CHECK_DIR/*.tmpl
-    do
-      echo "Processing $file file..."
-      dockerize -template $file:${file%.*} echo
-    done
-
-    for file in $HANDLERS_DIR/*.tmpl
-    do
-      echo "Processing $file file..."
-      dockerize -template $file:${file%.*} echo
-    done
-
-    for index in $DEPENDENCIES
-    do
-      dockerize -template /etc/sensu/templates/$index.json.tmpl:$CONFIG_DIR/$index.json echo
+      pushd /etc/sensu/templates/ > dev/null
+      envtpl -in ${INDEX}.json.tmpl > $CONFIG_DIR/${INDEX}.json
+      popd > /dev/null
     done
 
     # use host (not container) dirs for checks and metrics
@@ -69,7 +66,7 @@ case "$SENSU_SERVICE" in
       exit 0
     fi
 
-    dockerize sensu-$SENSU_SERVICE -d $DIRS -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS
+    sensu-$SENSU_SERVICE -d $DIRS -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS
     ;;
   *)
     echo 'Specify either api/server/client/validate'

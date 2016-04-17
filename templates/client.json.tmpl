@@ -1,17 +1,19 @@
 {
   "client": {
     "socket": {
-      "bind": "{{ .Env.CLIENT_BIND }}"
+      "bind": "{{ .CLIENT_BIND }}"
     },
-    "name": "{{ default .Env.CLIENT_NAME .Env.HOSTNAME }}",
-    "address": "{{ .Env.CLIENT_ADDRESS }}",
+    "name": {{ default .HOSTNAME .CLIENT_NAME | quote }},
+    "address": {{ .CLIENT_ADDRESS | quote }},
+    {{ if .CLIENT_SUBSCRIPTIONS }}
     "subscriptions": [
-      {{range  $index, $element := split .Env.CLIENT_SUBSCRIPTIONS "," }}
-        {{if $index}},{{end}}"{{.}}"
+      {{ range  $index, $element := split "," .CLIENT_SUBSCRIPTIONS }}
+        {{ if ne $index "_0" }},{{end}}{{. | quote }}
       {{end}}
     ],
+    {{end}}
     "keepalive": {
-      "handler": "{{ default .Env.CLIENT_KEEPALIVE_HANDLER "default"  }}"
+      "handler": {{ default "default" .CLIENT_KEEPALIVE_HANDLER | quote }}
     }
   }
 }

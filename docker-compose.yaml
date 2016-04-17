@@ -43,5 +43,7 @@ sensu_client:
     API_HOST: sensu_api
     TRANSPORT_NAME: rabbitmq
     CLIENT_NAME: test
+    CLIENT_SUBSCRIPTIONS: all
+    CLIENT_ADDRESS: 127.0.0.1
     RABBITMQ_HOST: rabbitmq
   command: client

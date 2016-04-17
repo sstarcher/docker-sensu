@@ -1,11 +1,11 @@
-{{ $REDIS_PORT := default .Env.REDIS_PORT "6379" }}
+{{ $REDIS_PORT := default "6379" .REDIS_PORT }}
 {
     "redis": {
-        "host": "{{ default .Env.REDIS_HOST "redis" }}",
-        "port": {{  default .Env.REDIS_PORT_6379_TCP_PORT $REDIS_PORT }},
-        {{if .Env.REDIS_PASSWORD }}"password": "{{ .Env.REDIS_PASSWORD }}",{{end}}
-        "db": {{  default .Env.REDIS_DB "0" }},
-        "auto_reconnect": {{  default .Env.REDIS_AUTO_RECONNECT "true" }},
-        "reconnect_on_error": {{  default .Env.REDIS_RECONNECT_ON_ERROR "false" }}
+        "host": {{ default "redis" .REDIS_HOST | quote }},
+        "port": {{ default $REDIS_PORT .REDIS_PORT_6379_TCP_PORT }},
+{{if .REDIS_PASSWORD }}"password": {{ .REDIS_PASSWORD | quote }},{{end}}
+        "db": {{ default "0" .REDIS_DB }},
+        "auto_reconnect": {{ default "true"  .REDIS_AUTO_RECONNECT }},
+        "reconnect_on_error": {{ default "false" .REDIS_RECONNECT_ON_ERROR }}
     }
 }

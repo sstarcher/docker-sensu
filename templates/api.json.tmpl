@@ -1,7 +1,7 @@
-{{ $API_PORT := default .Env.API_PORT "4567" }}
+{{ $API_PORT := default  "4567" .API_PORT }}
 {
     "api": {
-        "host": "{{ default .Env.API_HOST "api" }}",
-        "port": {{  default .Env.API_PORT_4567_TCP_PORT $API_PORT }}
+        "host": {{ default "api" .API_HOST | quote }},
+        "port": {{ default $API_PORT .API_PORT_4567_TCP_PORT }}
     }
 }

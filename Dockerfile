@@ -25,42 +25,40 @@ RUN \
 
 RUN gem install yaml2json
 
-RUN wget https://github.com/jwilder/dockerize/releases/download/v0.0.2/dockerize-linux-amd64-v0.0.2.tar.gz
-RUN tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.0.2.tar.gz
-
-ENV DEFAULT_PLUGINS_REPO sensu-plugins
-ENV DEFAULT_PLUGINS_VERSION master
+ENV ENVTPL_VERSION=0.1.2
+RUN \
+    wget -O /usr/local/bin/envtpl https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 &&\
+    chmod +x /usr/local/bin/envtpl
 
 ADD templates /etc/sensu/templates
 ADD bin /bin/
 
-#Plugins needed for handlers
-RUN /bin/install mailer
+ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
+    DEFAULT_PLUGINS_VERSION=master \
+    
+    #Client Config
+    CLIENT_SUBSCRIPTIONS=all,default \
+    CLIENT_BIND=127.0.0.0 \
 
-#Plugins needed for checks and maybe handlers
+    #Common Config 
+    RUNTIME_INSTALL='' \
+    LOG_LEVEL=warn \
+    CONFIG_FILE=/etc/sensu/config.json \
+    CONFIG_DIR=/etc/sensu/conf.d \
+    CHECK_DIR=/etc/sensu/check.d \
+    EXTENSION_DIR=/etc/sensu/extensions \
+    PLUGINS_DIR=/etc/sensu/plugins \
+    HANDLERS_DIR=/etc/sensu/handlers \
+
+    #Config for gathering host metrics
+    HOST_DEV_DIR=/dev \
+    HOST_PROC_DIR=/proc \
+    HOST_SYS_DIR=/sys
+
+RUN mkdir -p $CONFIG_DIR $CHECK_DIR $EXTENSION_DIR $PLUGINS_DIR $HANDLERS_DIR
 RUN /bin/install http
 
 EXPOSE 4567
 VOLUME ["/etc/sensu/conf.d"]
-
-#Client Config
-ENV CLIENT_SUBSCRIPTIONS all,default
-ENV CLIENT_BIND 127.0.0.0
-
-#Common Config
-ENV RUNTIME_INSTALL ''
-ENV LOG_LEVEL warn
-ENV EMBEDDED_RUBY true
-ENV CONFIG_FILE /etc/sensu/config.json
-ENV CONFIG_DIR /etc/sensu/conf.d
-ENV CHECK_DIR /etc/sensu/check.d
-ENV EXTENSION_DIR /etc/sensu/extensions
-ENV PLUGINS_DIR /etc/sensu/plugins
-ENV HANDLERS_DIR /etc/sensu/handlers
-
-#Config for gathering host metrics
-ENV HOST_DEV_DIR /dev
-ENV HOST_PROC_DIR /proc
-ENV HOST_SYS_DIR /sys
 
 ENTRYPOINT ["/bin/start"]
