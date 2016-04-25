@@ -7,23 +7,29 @@ SENSU_SERVICE=${SENSU_SERVICE-$1}
 
 case "$SENSU_SERVICE" in
   api)
-    DEPENDENCIES="rabbitmq redis"
+    DEPENDENCIES="redis transport"
     DIRS="$CONFIG_DIR,$CHECK_DIR"
     ;;&
   client)
-    DEPENDENCIES="rabbitmq client"
+    DEPENDENCIES="redis client transport"
     DIRS="$CONFIG_DIR"
     ;;&
   server)
-    DEPENDENCIES="rabbitmq redis api"
+    DEPENDENCIES="redis api transport"
     DIRS="$CONFIG_DIR,$CHECK_DIR,$HANDLERS_DIR"
     ;;&
   validate)
-    DEPENDENCIES="rabbitmq redis api"
+    DEPENDENCIES="redis api transport"
     VALIDATE_ONLY="true"
     ;;&
   api|server|client|validate)
     shopt -s nullglob #fixes null glob when no file exists
+
+    if [[ "${TRANSPORT_NAME}" == "rabbitmq" && "${SENSU_SERVICE}" == "client"  ]]; then
+      echo "Removing redis config from client"
+      rm $CONFIG_DIR/redis.json
+    fi
+
     for file in $CONFIG_DIR/*.tmpl
     do
       echo "Processing $file file..."

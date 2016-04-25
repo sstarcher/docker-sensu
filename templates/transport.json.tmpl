@@ -1,5 +1,10 @@
 {{ $RABBITMQ_PORT := default .Env.RABBITMQ_PORT "5672" }}
+{{ $TRANSPORT_NAME := default .Env.TRANSPORT_NAME "rabbitmq" }}
 {
+    "transport": {
+      "name": "{{ $TRANSPORT_NAME  }}",
+      "reconnect_on_error": {{ default .Env.TRANSPORT_RECONNECT "true" }}
+    } {{ if eq $TRANSPORT_NAME "rabbitmq"}},
     "rabbitmq": {
         "port": {{ default .Env.RABBITMQ_PORT_5672_TCP_PORT $RABBITMQ_PORT }},
         "host": "{{ default .Env.RABBITMQ_HOST "rabbitmq" }}",
@@ -7,5 +12,5 @@
         "password": "{{ default .Env.RABBITMQ_PASSWORD "guest" }}",
         "vhost": "{{ default .Env.RABBITMQ_VHOST "/" }}",
         "prefetch": {{ default .Env.RABBITMQ_PREFETCH "1" }}
-    }
+    } {{ end }}
 }
