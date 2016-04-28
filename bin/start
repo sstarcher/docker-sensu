@@ -46,10 +46,10 @@ case "$SENSU_SERVICE" in
     done
 
     # use host (not container) dirs for checks and metrics
-    if compgen -G "/opt/sensu/embedded/bin/*.rb" > /dev/null; then
-      sed -i "s|/dev|$HOST_DEV_DIR|g" /opt/sensu/embedded/bin/*.rb
-      sed -i "s|/proc|$HOST_PROC_DIR|g" /opt/sensu/embedded/bin/*.rb
-      sed -i "s|/sys|$HOST_SYS_DIR|g" /opt/sensu/embedded/bin/*.rb
+    if compgen -G "/usr/local/bundle/bin/*.rb" > /dev/null; then
+      sed -i "s|/dev|$HOST_DEV_DIR|g" /usr/local/bundle/bin/*.rb
+      sed -i "s|/proc|$HOST_PROC_DIR|g" /usr/local/bundle/bin/*.rb
+      sed -i "s|/sys|$HOST_SYS_DIR|g" /usr/local/bundle/bin/*.rb
     fi    
 
     find /etc/sensu -regex '.*\.ya?ml' | while read yamlFile; do

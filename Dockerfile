@@ -1,30 +1,16 @@
-FROM debian:jessie
+FROM ruby:2.3-alpine
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
-RUN \
-    apt-get update &&\
-    apt-get install -y curl ca-certificates &&\ 
-    rm -rf /var/lib/apt/lists/*
-
-RUN curl -s http://repositories.sensuapp.org/apt/pubkey.gpg | apt-key add -
-RUN echo "deb     http://repositories.sensuapp.org/apt sensu main" > /etc/apt/sources.list.d/sensu.list
-
-ENV SENSU_VERSION=0.26.2-1
-RUN \
-	apt-get update && \
-    apt-get install -y sensu=${SENSU_VERSION} && \
-    rm -rf /var/lib/apt/lists/*
-
-ENV PATH /opt/sensu/embedded/bin:$PATH
-
-#Nokogiri is needed by aws plugins
-RUN \
-	apt-get update && \
-    apt-get install -y libxml2 libxml2-dev libxslt1-dev zlib1g-dev build-essential  && \
-    gem install --no-ri --no-rdoc nokogiri yaml2json && \
-    apt-get remove -y libxml2-dev libxslt1-dev zlib1g-dev && \
-    rm -rf /var/lib/apt/lists/*
-
+ENV SENSU_VERSION=0.26.2
+ENV NOKOGIRI_DEPS libxml2-dev libxslt-dev 
+ENV BUILD_DEPS git
+ENV RUNTIME_DEPS bash build-base
+# install sensu-core and ruby plugins
+RUN apk add --no-cache $BUILD_DEPS $NOKOGIRI_DEPS $RUNTIME_DEPS \
+    && gem install sensu -v ${SENSU_VERSION} \
+    && gem install nokogiri \
+    && gem install yaml2json \
+    && apk del $BUILD_DEPS && rm -rf /var/cache/apk/*
 
 ENV ENVTPL_VERSION=0.2.3
 RUN \
