@@ -1,0 +1,47 @@
+rabbitmq:
+  image: rabbitmq:3.5-management
+  restart: always
+  ports:
+    - 5672:5672
+redis:
+  image: redis:3
+  restart: always
+  ports:
+    - 6379:6379
+sensu_api:
+  build: .
+  links:
+    - redis
+    - rabbitmq
+  environment:
+    TRANSPORT_NAME: rabbitmq
+    REDIS_HOST: redis
+    RABBITMQ_HOST: rabbitmq
+  command: api
+  ports:
+    - 4567:4567
+sensu_server:
+  build : .
+  links:
+    - redis
+    - sensu_api
+    - rabbitmq
+  environment:
+    REDIS_HOST: redis
+    API_HOST: sensu_api
+    TRANSPORT_NAME: rabbitmq
+    RABBITMQ_HOST: rabbitmq
+  command: server
+sensu_client:
+  build: .
+  links:
+    - redis
+    - sensu_api
+    - rabbitmq
+  environment:
+    REDIS_HOST: redis
+    API_HOST: sensu_api
+    TRANSPORT_NAME: rabbitmq
+    CLIENT_NAME: test
+    RABBITMQ_HOST: rabbitmq
+  command: client
