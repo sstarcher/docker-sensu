@@ -25,7 +25,7 @@ RUN \
 
 RUN gem install yaml2json
 
-ENV ENVTPL_VERSION=0.1.2
+ENV ENVTPL_VERSION=0.2.3
 RUN \
     wget -O /usr/local/bin/envtpl https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 &&\
     chmod +x /usr/local/bin/envtpl

@@ -8,7 +8,7 @@ process_template(){
     echo "Processing $FILE file..."
     envtpl -in $FILE > ${FILE%.*}
   done
-  popd
+  popd > /dev/null
 }
 
 /bin/install $RUNTIME_INSTALL
@@ -45,9 +45,7 @@ case "$SENSU_SERVICE" in
     
     for INDEX in $DEPENDENCIES
     do
-      pushd /etc/sensu/templates/ > dev/null
-      envtpl -in ${INDEX}.json.tmpl > $CONFIG_DIR/${INDEX}.json
-      popd > /dev/null
+      envtpl -in /etc/sensu/templates/${INDEX}.json.tmpl > $CONFIG_DIR/${INDEX}.json
     done
 
     # use host (not container) dirs for checks and metrics
