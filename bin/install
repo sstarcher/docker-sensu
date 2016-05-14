@@ -24,7 +24,7 @@ determine_params() {
 		PLUGIN="${Array[1]}"
 	fi
 
-	IFS="@"; declare -a PluginArray=("${PLUGIN}")
+	IFS="@"; declare -a PluginArray=($PLUGIN)
 	if [[ ${#PluginArray[@]} -eq 1 ]]; then
 		VERSION=$DEFAULT_PLUGINS_VERSION
 	else
