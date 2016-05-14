@@ -1,15 +1,19 @@
 FROM debian:jessie
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
-RUN apt-get update && apt-get install -y wget ca-certificates && apt-get -y clean
-RUN wget -q http://repositories.sensuapp.org/apt/pubkey.gpg -O-  | apt-key add -
+RUN \
+    apt-get update &&\
+    apt-get install -y curl ca-certificates &&\ 
+    rm -rf /var/lib/apt/lists/*
+
+RUN curl -s http://repositories.sensuapp.org/apt/pubkey.gpg | apt-key add -
 RUN echo "deb     http://repositories.sensuapp.org/apt sensu main" > /etc/apt/sources.list.d/sensu.list
 
 
 RUN \
 	apt-get update && \
     apt-get install -y sensu && \
-    apt-get -y clean
+    rm -rf /var/lib/apt/lists/*
 
 
 ENV PATH /opt/sensu/embedded/bin:$PATH
@@ -18,20 +22,18 @@ ENV PATH /opt/sensu/embedded/bin:$PATH
 RUN \
 	apt-get update && \
     apt-get install -y libxml2 libxml2-dev libxslt1-dev zlib1g-dev build-essential  && \
-    gem install nokogiri && \
+    gem install --no-ri --no-rdoc nokogiri yaml2json && \
     apt-get remove -y libxml2-dev libxslt1-dev zlib1g-dev && \
-    apt-get autoremove -y && \
-    apt-get -y clean
+    rm -rf /var/lib/apt/lists/*
 
-RUN gem install yaml2json
 
 ENV ENVTPL_VERSION=0.2.3
 RUN \
-    wget -O /usr/local/bin/envtpl https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 &&\
+    curl -Ls https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 > /usr/local/bin/envtpl &&\
     chmod +x /usr/local/bin/envtpl
 
-ADD templates /etc/sensu/templates
-ADD bin /bin/
+COPY templates /etc/sensu/templates
+COPY bin /bin/
 
 ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     DEFAULT_PLUGINS_VERSION=master \

@@ -12,94 +12,47 @@ fi
 
 
 determine_params() {
-	index=$1
-
-	set -- "$index"
-	IFS="/"; declare -a Array=($*)
-	if [[ ${#Array[@]} -eq 1 ]]; then
-		PLUGIN="${Array[0]}"
-		REPO=$DEFAULT_PLUGINS_REPO
-	else
-		REPO="${Array[0]}"
-		PLUGIN="${Array[1]}"
+	IFS=/ read REPO PLUGIN <<< "${1}"
+	if [ -z "$PLUGIN" ]; then
+		PLUGIN=${REPO}
+		REPO=${DEFAULT_PLUGINS_REPO}
 	fi
 
-	IFS="@"; declare -a PluginArray=("${PLUGIN}")
-	if [[ ${#PluginArray[@]} -eq 1 ]]; then
-		VERSION=$DEFAULT_PLUGINS_VERSION
-	else
-		PLUGIN="${PluginArray[0]}"
-		VERSION="${PluginArray[1]}"
-	fi
-
-	echo "'$REPO' '$PLUGIN' '$VERSION'"
+	IFS=@ read PLUGIN VERSION <<< "${PLUGIN}"
+	VERSION=${VERSION:-${DEFAULT_PLUGINS_VERSION}}
 }
 
-build_plugin() {
-	PLUGIN=$1
-	REPO=$2
-	VERSION=$3
+install(){
+	determine_params "$1"
+	echo -e "Downloading \t $REPO/$PLUGIN:$VERSION"
+	curl -s https://codeload.github.com/$REPO/sensu-plugins-$PLUGIN/tar.gz/$VERSION > "$1"
+	tar -xzf "$1" && rm "$1"
 
-	local blddir="/tmp/sensu-plugins-${PLUGIN}-${VERSION}/build"
-	local gemdir="/tmp/sensu-plugins-${PLUGIN}-${VERSION}/gems"
-	mkdir $blddir $gemdir
-	cd $blddir
-	wget https://github.com/$REPO/sensu-plugins-$PLUGIN/archive/$VERSION.tar.gz
-	tar -xzf $VERSION.tar.gz
-	rm *.tar.gz
+	echo -e "Building \t $REPO/$PLUGIN:$VERSION"
 	cd sensu-plugins-$PLUGIN-$VERSION
 	sed -i'' '/signing_key/d' sensu-plugins-$PLUGIN.gemspec #We don't have the private key
-	gem build sensu-plugins-$PLUGIN.gemspec
-	mv sensu-plugins-*.gem $gemdir
-	cd
-	rm -rf $blddir
-	touch /tmp/sensu-plugins-${PLUGIN}-${VERSION}/done
-}
+	gem build sensu-plugins-$PLUGIN.gemspec > /dev/null
 
-install_plugin() {
-	PLUGIN=$1
-	VERSION=$2
-
-	local gemdir="/tmp/sensu-plugins-${PLUGIN}-${VERSION}/gems"
-	cd $gemdir
-	gem uninstall -x sensu-plugins-$PLUGIN
-	gem install --no-ri --no-rdoc --no-wrapper sensu-plugins-*.gem
-}
-
-cleanup_plugin() {
-	PLUGIN=$1
-	VERSION=$2
-
-	rm -rf "/tmp/sensu-plugins-${PLUGIN}-${VERSION}"
+	echo -e "Installing \t $REPO/$PLUGIN:$VERSION"
+	gem install --force --no-ri --no-rdoc --no-wrapper sensu-plugins-*.gem > /dev/null
+	cd ..
+	rm -rf "sensu-plugins-$PLUGIN-$VERSION"
+	echo -e "Finished \t $REPO/$PLUGIN:$VERSION"
 }
 
 # Launch all plugins installations in parallel
-for index in $@
+for index in "$@"
 do
-	echo $index
-	determine_params $index
-	mkdir "/tmp/sensu-plugins-${PLUGIN}-${VERSION}"
-	build_plugin $PLUGIN $REPO $VERSION &
-	install_pid=$!
-	echo $install_pid > /tmp/sensu-plugins-${PLUGIN}-${VERSION}/pid
+	install "$index" &
 done
 
-
-for index in $@
+FAIL=0
+for job in `jobs -p`
 do
-	determine_params $index
-
-	install_pid=$(cat /tmp/sensu-plugins-${PLUGIN}-${VERSION}/pid)
-	echo "Waiting for $PLUGIN $VERSION to install (pid $install_pid)"
-	while ! [ -f "/tmp/sensu-plugins-${PLUGIN}-${VERSION}/done" ]; do
-		if ! [ -d "/proc/$install_pid" ] && ! [ -f "/tmp/sensu-plugins-${PLUGIN}-${VERSION}/done" ]; then
-			echo "Build of $PLUGIN $VERSION failed"
-			exit 1
-		fi
-		sleep 1
-	done
-
-	install_plugin $PLUGIN $VERSION
-	cleanup_plugin $PLUGIN $VERSION
+    wait $job || let "FAIL=+1"
 done
+
+if [ "$FAIL" -ne "0" ]; then
+	exit $FAIL
+fi
 
