@@ -25,7 +25,7 @@ determine_params() {
 install(){
 	determine_params "$1"
 	echo -e "Downloading \t $REPO/$PLUGIN:$VERSION"
-	curl -s https://codeload.github.com/$REPO/sensu-plugins-$PLUGIN/tar.gz/$VERSION > "$1"
+	curl -Ls https://github.com/$REPO/sensu-plugins-$PLUGIN/archive/$VERSION.tar.gz > "$1"
 	tar -xzf "$1" && rm "$1"
 
 	echo -e "Building \t $REPO/$PLUGIN:$VERSION"
