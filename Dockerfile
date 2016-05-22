@@ -9,12 +9,11 @@ RUN \
 RUN curl -s http://repositories.sensuapp.org/apt/pubkey.gpg | apt-key add -
 RUN echo "deb     http://repositories.sensuapp.org/apt sensu main" > /etc/apt/sources.list.d/sensu.list
 
-
+ENV SENSU_VERSION=0.23.2-2
 RUN \
 	apt-get update && \
-    apt-get install -y sensu && \
+    apt-get install -y sensu=${SENSU_VERSION} && \
     rm -rf /var/lib/apt/lists/*
-
 
 ENV PATH /opt/sensu/embedded/bin:$PATH
 
