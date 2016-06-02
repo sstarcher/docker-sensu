@@ -54,9 +54,11 @@ case "$SENSU_SERVICE" in
     sed -i "s|/sys|$HOST_SYS_DIR|g" /opt/sensu/embedded/bin/*.rb
 
     find /etc/sensu -regex '.*\.ya?ml' | while read yamlFile; do
-      echo -n "Converting yaml to json "
+      echo "Converting yaml to json"
       jsonFile=$(echo ${yamlFile} | sed -r -e 's/\.ya?ml/.json/');
-      echo "${yamlFile} -> ${jsonFile}"
+      if [[ "${LOG_LEVEL}" == "debug" ]]; then
+        echo "Converted ${yamlFile} to ${jsonFile}"
+      fi
       yaml2json ${yamlFile} > ${jsonFile}
     done
 
