@@ -42,7 +42,7 @@ case "$SENSU_SERVICE" in
     process_template $CONFIG_DIR
     process_template $CHECK_DIR
     process_template $HANDLERS_DIR
-    
+
     for INDEX in $DEPENDENCIES
     do
       envtpl -in /etc/sensu/templates/${INDEX}.json.tmpl > $CONFIG_DIR/${INDEX}.json
@@ -56,6 +56,9 @@ case "$SENSU_SERVICE" in
     find /etc/sensu -regex '.*\.ya?ml' | while read yamlFile; do
       echo "Converting yaml to json"
       jsonFile=$(echo ${yamlFile} | sed -r -e 's/\.ya?ml/.json/');
+      if [[ "${LOG_LEVEL}" == "debug" ]]; then
+        echo "Converted ${yamlFile} to ${jsonFile}"
+      fi
       yaml2json ${yamlFile} > ${jsonFile}
     done
 
