@@ -141,7 +141,7 @@ redis:
   image: redis
 ```
 
-`RUNTIME_INSTALL` will allow you to install additional plugins from github during runtime.
+`RUNTIME_INSTALL` will allow you to install additional plugins from github during runtime.  The install format is USERNAME/repo:TAG.  The default USERNAME is sensu-plugins and the default TAG is master.  In place of a TAG a full git sha may be used.
 
 `GEM_SOURCES` can be used to add additional gem sources (such as https://ruby.taobao.org/ for China).
 
