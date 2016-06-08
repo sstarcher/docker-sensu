@@ -58,6 +58,7 @@ case "$SENSU_SERVICE" in
       jsonFile=$(echo ${yamlFile} | sed -r -e 's/\.ya?ml/.json/');
       if [[ "${LOG_LEVEL}" == "debug" ]]; then
         echo "Converted ${yamlFile} to ${jsonFile}"
+        OPTIONS="${OPTIONS} --print_config"
       fi
       yaml2json ${yamlFile} > ${jsonFile}
     done
