@@ -64,8 +64,7 @@ case "$SENSU_SERVICE" in
     done
 
     if [[ "${VALIDATE_ONLY}" == "true" ]]; then
-      echo 'No errors'
-      exit 0
+      OPTIONS="${OPTIONS} --validate_config"
     fi
 
     sensu-$SENSU_SERVICE -d $DIRS -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS
