@@ -57,12 +57,8 @@ case "$SENSU_SERVICE" in
       rm ${jsonFile} > /dev/null
     done
 
-    if [[ "${LOG_LEVEL}" == "debug" ]]; then
-      OPTIONS="${OPTIONS} --print_config"
-    fi
-
     if [[ "${VALIDATE_ONLY}" == "true" ]]; then
-      OPTIONS="${OPTIONS} --validate_config"
+      OPTIONS="${OPTIONS} --print_config --validate_config"
     fi
 
     sensu-$SENSU_SERVICE -d $DIRS -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS
