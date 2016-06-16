@@ -54,7 +54,7 @@ case "$SENSU_SERVICE" in
       jsonFile=$(echo ${yamlFile} | sed -r -e 's/\.ya?ml/.json/');
       echo "Converted ${yamlFile} to ${jsonFile}"
       yaml2json ${yamlFile} > ${jsonFile}
-      rm ${jsonFile} > /dev/null
+      rm ${yamlFile} > /dev/null
     done
 
     if [[ "${VALIDATE_ONLY}" == "true" ]]; then
