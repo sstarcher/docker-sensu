@@ -52,13 +52,14 @@ case "$SENSU_SERVICE" in
 
     find /etc/sensu -regex '.*\.ya?ml' | while read yamlFile; do
       jsonFile=$(echo ${yamlFile} | sed -r -e 's/\.ya?ml/.json/');
-      if [[ "${LOG_LEVEL}" == "debug" ]]; then
-        echo "Converted ${yamlFile} to ${jsonFile}"
-        OPTIONS="${OPTIONS} --print_config"
-      fi
+      echo "Converted ${yamlFile} to ${jsonFile}"
       yaml2json ${yamlFile} > ${jsonFile}
       rm ${jsonFile} > /dev/null
     done
+
+    if [[ "${LOG_LEVEL}" == "debug" ]]; then
+      OPTIONS="${OPTIONS} --print_config"
+    fi
 
     if [[ "${VALIDATE_ONLY}" == "true" ]]; then
       OPTIONS="${OPTIONS} --validate_config"
