@@ -23,6 +23,7 @@ case "$SENSU_SERVICE" in
   client)
     DEPENDENCIES="client transport"
     DIRS="$CONFIG_DIR"
+    rm -rf ${CHECK_DIR}
 
     if [[ "${TRANSPORT_NAME}" == "redis" ]]; then
       DEPENDENCIES="redis $DEPENDENCIES"
