@@ -33,11 +33,7 @@ case "$SENSU_SERVICE" in
     DEPENDENCIES="redis api transport"
     DIRS="$CONFIG_DIR,$CHECK_DIR,$HANDLERS_DIR"
     ;;&
-  validate)
-    DEPENDENCIES="redis api transport"
-    VALIDATE_ONLY="true"
-    ;;&
-  api|server|client|validate)
+  api|server|client)
     shopt -s nullglob #fixes null glob when no file exists
 
     process_template $CONFIG_DIR
@@ -55,13 +51,13 @@ case "$SENSU_SERVICE" in
     sed -i "s|/sys|$HOST_SYS_DIR|g" /opt/sensu/embedded/bin/*.rb
 
     find /etc/sensu -regex '.*\.ya?ml' | while read yamlFile; do
-      echo "Converting yaml to json"
       jsonFile=$(echo ${yamlFile} | sed -r -e 's/\.ya?ml/.json/');
       if [[ "${LOG_LEVEL}" == "debug" ]]; then
         echo "Converted ${yamlFile} to ${jsonFile}"
         OPTIONS="${OPTIONS} --print_config"
       fi
       yaml2json ${yamlFile} > ${jsonFile}
+      rm ${jsonFile} > /dev/null
     done
 
     if [[ "${VALIDATE_ONLY}" == "true" ]]; then
@@ -71,7 +67,7 @@ case "$SENSU_SERVICE" in
     sensu-$SENSU_SERVICE -d $DIRS -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS
     ;;
   *)
-    echo 'Specify either api/server/client/validate'
+    echo 'Specify either api/server/client'
     exit 1
     ;;
 esac
