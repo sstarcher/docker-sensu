@@ -40,6 +40,7 @@ ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     #Client Config
     CLIENT_SUBSCRIPTIONS=all,default \
     CLIENT_BIND=127.0.0.0 \
+    CLIENT_DEREGISTER=true \
 
     #Common Config 
     RUNTIME_INSTALL='' \

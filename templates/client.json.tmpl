@@ -5,6 +5,7 @@
     },
     "name": {{ default .HOSTNAME .CLIENT_NAME | quote }},
     "address": {{ .CLIENT_ADDRESS | quote }},
+    "deregister":  {{ .CLIENT_DEREGISTER }},
     {{ if .CLIENT_SUBSCRIPTIONS }}
     "subscriptions": [
       {{ range  $index, $element := split "," .CLIENT_SUBSCRIPTIONS }}
