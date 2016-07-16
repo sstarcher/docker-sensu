@@ -9,7 +9,7 @@ RUN \
 RUN curl -s http://repositories.sensuapp.org/apt/pubkey.gpg | apt-key add -
 RUN echo "deb     http://repositories.sensuapp.org/apt sensu main" > /etc/apt/sources.list.d/sensu.list
 
-ENV SENSU_VERSION=0.25.3-1
+ENV SENSU_VERSION=0.25.5-1
 RUN \
 	apt-get update && \
     apt-get install -y sensu=${SENSU_VERSION} && \
