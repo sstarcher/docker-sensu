@@ -9,7 +9,7 @@ Project: [https://github.com/sstarcher/docker-sensu]
 Docker image: [https://registry.hub.docker.com/u/sstarcher/sensu/]
 (https://registry.hub.docker.com/u/sstarcher/sensu/)
 
-[![](https://badge.imagelayers.io/sstarcher/sensu:latest.svg)](https://imagelayers.io/?images=sstarcher/sensu:latest 'Get your own badge on imagelayers.io')
+[![](https://images.microbadger.com/badges/image/sstarcher/sensu.svg)](http://microbadger.com/images/sstarcher/sensu "Get your own image badge on microbadger.com")
 [![Docker Registry](https://img.shields.io/docker/pulls/sstarcher/sensu.svg)](https://registry.hub.docker.com/u/sstarcher/sensu)&nbsp;
 
 This is a base container for Sensu Core. It contains `sensu-api`, `sensu-client`, `sensu-server`, but does *not* contain any plugins.
