@@ -61,7 +61,7 @@ case "$SENSU_SERVICE" in
       OPTIONS="${OPTIONS} --print_config --validate_config"
     fi
 
-    sensu-$SENSU_SERVICE -d $DIRS -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS
+    exec sensu-$SENSU_SERVICE -d $DIRS -e $EXTENSION_DIR -L $LOG_LEVEL $OPTIONS
     ;;
   *)
     echo 'Specify either api/server/client'
