@@ -46,9 +46,9 @@ case "$SENSU_SERVICE" in
     done
 
     # use host (not container) dirs for checks and metrics
-    sed -i "s|/dev|$HOST_DEV_DIR|g" /opt/sensu/embedded/bin/*.rb
-    sed -i "s|/proc|$HOST_PROC_DIR|g" /opt/sensu/embedded/bin/*.rb
-    sed -i "s|/sys|$HOST_SYS_DIR|g" /opt/sensu/embedded/bin/*.rb
+    sed -i "s|/dev|$HOST_DEV_DIR|g" /opt/sensu/embedded/bin/*
+    sed -i "s|/proc|$HOST_PROC_DIR|g" /opt/sensu/embedded/bin/*
+    sed -i "s|/sys|$HOST_SYS_DIR|g" /opt/sensu/embedded/bin/*
 
     find /etc/sensu -regex '.*\.ya?ml' | while read yamlFile; do
       jsonFile=$(echo ${yamlFile} | sed -r -e 's/\.ya?ml/.json/');
