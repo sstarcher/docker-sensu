@@ -14,7 +14,7 @@ Docker image: [https://registry.hub.docker.com/u/sstarcher/sensu/]
 
 This is a base container for Sensu Core. It contains `sensu-api`, `sensu-client`, `sensu-server`, but does *not* contain any plugins.
 
-Default configuration allows for local linkage to `rabbitmq` and `redis`, by using docker links. If you need to reference external servers set the following variables as needed.
+Default configuration is to use `redis` as the transport.  This allows us to not need `rabbitmq`.
 
 This container can be configured to use runtime system information for checks and metrics from it's *host*.
 
@@ -68,16 +68,16 @@ If you want `sensu-client` to use runtime system information for checks and metr
 All Sensu plugins will be automatically configured to use these paths instead of default ones.
 
 
-Dependencies:
+Dependencies: 
   - Server
-    - rabbitmq
+    - rabbitmq - If transport is redis this is not used
     - redis
     - api
   - Api
-    - rabbitmq
+    - rabbitmq - If transport is redis this is not used
     - redis
   - Client
-    - rabbitmq
+    - transport - rabbitmq or redis
 
 
 ```
@@ -112,13 +112,11 @@ api:
   image: sstarcher/sensu
   command: api
   links:
-    - rabbitmq
     - redis
 server:
   image: sstarcher/sensu
   command: server
   links:
-    - rabbitmq
     - redis
     - api
 client:
@@ -126,19 +124,17 @@ client:
   command: client
   environment:
     CLIENT_NAME: bob
-    RUNTIME_INSTALL: sstarcher/aws sstarcher/consul
+    RUNTIME_INSTALL: sstarcher/aws mail
   links:
-    - rabbitmq
+    - redis
 uchiwa:
-  build: docker-uchiwa
+  image: sstarcher/uchiwa
   links:
     - api:sensu
   ports:
     - '80:3000'
-rabbitmq:
-  image: rabbitmq:3.5-management
 redis:
-  image: redis
+  image: redis:3
 ```
 
 `RUNTIME_INSTALL` will allow you to install additional plugins from github during runtime.  The install format is USERNAME/repo:TAG.  The default USERNAME is sensu-plugins and the default TAG is master.  In place of a TAG a full git sha may be used.

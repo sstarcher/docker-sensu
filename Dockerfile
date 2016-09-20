@@ -42,6 +42,22 @@ ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     CLIENT_BIND=127.0.0.1 \
     CLIENT_DEREGISTER=true \
 
+    #Transport
+    TRANSPORT_NAME=redis \
+
+    RABBITMQ_PORT=5672 \
+    RABBITMQ_HOST=rabbitmq \
+    RABBITMQ_USER=guest \
+    RABBITMQ_PASSWORD=guest \
+    RABBITMQ_VHOST=/ \
+    RABBITMQ_PREFETCH=1 \
+
+    REDIS_HOST=redis \
+    REDIS_PORT=6379 \
+    REDIS_DB=0 \
+    REDIS_AUTO_RECONNECT=true \
+    REDIS_RECONNECT_ON_ERROR=false \
+
     #Common Config 
     RUNTIME_INSTALL='' \
     LOG_LEVEL=warn \
