@@ -3,6 +3,8 @@ api:
   links:
     - redis
   command: api
+  ports:
+    - '4567:4567'  
 server:
   build : .
   links:
