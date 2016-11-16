@@ -32,6 +32,7 @@ RUN \
     dpkg -i dumb-init.deb &&\
     rm dumb-init.deb
 
+ENV ENVTPL_VERSION=0.2.3
 RUN \
     curl -Ls https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 > /usr/local/bin/envtpl &&\
     chmod +x /usr/local/bin/envtpl
