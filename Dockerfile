@@ -26,7 +26,12 @@ RUN \
     rm -rf /var/lib/apt/lists/*
 
 
-ENV ENVTPL_VERSION=0.2.3
+ENV DUMB_INIT_VERSION=1.2.0
+RUN \
+    curl -Ls https://github.com/Yelp/dumb-init/releases/download/v${DUMB_INIT_VERSION}/dumb-init_${DUMB_INIT_VERSION}_amd64.deb > dumb-init.deb &&\
+    dpkg -i dumb-init.deb &&\
+    rm dumb-init.deb
+
 RUN \
     curl -Ls https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 > /usr/local/bin/envtpl &&\
     chmod +x /usr/local/bin/envtpl
@@ -78,4 +83,4 @@ RUN mkdir -p $CONFIG_DIR $CHECK_DIR $EXTENSION_DIR $PLUGINS_DIR $HANDLERS_DIR
 EXPOSE 4567
 VOLUME ["/etc/sensu/conf.d"]
 
-ENTRYPOINT ["/bin/start"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "/bin/start"]
