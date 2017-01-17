@@ -13,6 +13,8 @@ ENV SENSU_VERSION=0.26.5-2
 RUN \
 	apt-get update && \
     apt-get install -y sensu=${SENSU_VERSION} && \
+    rm -rf /opt/sensu/embedded/lib/ruby/gems/2.3.0/{cache,doc}/* && \
+    find /opt/sensu/embedded/lib/ruby/gems/ -name "*.o" -delete && \
     rm -rf /var/lib/apt/lists/*
 
 ENV PATH /opt/sensu/embedded/bin:$PATH
@@ -24,6 +26,8 @@ RUN \
     gem install --no-ri --no-rdoc nokogiri yaml2json && \
     apt-get remove -y libxml2-dev libxslt1-dev zlib1g-dev build-essential && \
     apt-get autoremove -y && \
+    rm -rf /opt/sensu/embedded/lib/ruby/gems/2.3.0/{cache,doc}/* && \
+    find /opt/sensu/embedded/lib/ruby/gems/ -name "*.o" -delete && \
     rm -rf /var/lib/apt/lists/*
 
 
