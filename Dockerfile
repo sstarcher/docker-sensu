@@ -22,7 +22,8 @@ RUN \
 	apt-get update && \
     apt-get install -y libxml2 libxml2-dev libxslt1-dev zlib1g-dev build-essential  && \
     gem install --no-ri --no-rdoc nokogiri yaml2json && \
-    apt-get remove -y libxml2-dev libxslt1-dev zlib1g-dev && \
+    apt-get remove -y libxml2-dev libxslt1-dev zlib1g-dev build-essential && \
+    apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
 
