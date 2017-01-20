@@ -3,7 +3,7 @@ MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
 RUN \
     apt-get update &&\
-    apt-get install -y curl ca-certificates &&\ 
+    apt-get install -y curl ca-certificates &&\
     rm -rf /var/lib/apt/lists/*
 
 RUN curl -s http://repositories.sensuapp.org/apt/pubkey.gpg | apt-key add -
