@@ -10,6 +10,8 @@ RUN \
     echo "deb     http://repositories.sensuapp.org/apt sensu main" > /etc/apt/sources.list.d/sensu.list &&\
     apt-get update &&\
     apt-get install -y sensu=${SENSU_VERSION} &&\
+    rm -rf /opt/sensu/embedded/lib/ruby/gems/2.3.0/{cache,doc}/* && \
+    find /opt/sensu/embedded/lib/ruby/gems/ -name "*.o" -delete && \
     rm -rf /var/lib/apt/lists/*
 
 ENV PATH /opt/sensu/embedded/bin:$PATH
