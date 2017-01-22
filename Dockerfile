@@ -1,30 +1,19 @@
-FROM debian:jessie
+FROM debian:jessie-slim
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
+
+ENV SENSU_VERSION=0.26.5-2
 
 RUN \
     apt-get update &&\
     apt-get install -y curl ca-certificates &&\
-    rm -rf /var/lib/apt/lists/*
-
-RUN curl -s http://repositories.sensuapp.org/apt/pubkey.gpg | apt-key add -
-RUN echo "deb     http://repositories.sensuapp.org/apt sensu main" > /etc/apt/sources.list.d/sensu.list
-
-ENV SENSU_VERSION=0.26.5-2
-RUN \
-	apt-get update && \
-    apt-get install -y sensu=${SENSU_VERSION} && \
+    curl -s http://repositories.sensuapp.org/apt/pubkey.gpg | apt-key add - &&\
+    echo "deb     http://repositories.sensuapp.org/apt sensu main" > /etc/apt/sources.list.d/sensu.list &&\
+    apt-get update &&\
+    apt-get install -y sensu=${SENSU_VERSION} &&\
     rm -rf /var/lib/apt/lists/*
 
 ENV PATH /opt/sensu/embedded/bin:$PATH
-
-#Nokogiri is needed by aws plugins
-RUN \
-	apt-get update && \
-    apt-get install -y libxml2 libxml2-dev libxslt1-dev zlib1g-dev build-essential  && \
-    gem install --no-ri --no-rdoc nokogiri yaml2json && \
-    apt-get remove -y libxml2-dev libxslt1-dev zlib1g-dev && \
-    rm -rf /var/lib/apt/lists/*
-
+RUN gem install --no-document yaml2json
 
 ENV DUMB_INIT_VERSION=1.2.0
 RUN \
@@ -42,7 +31,7 @@ COPY bin /bin/
 
 ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     DEFAULT_PLUGINS_VERSION=master \
-    
+
     #Client Config
     CLIENT_SUBSCRIPTIONS=all,default \
     CLIENT_BIND=127.0.0.1 \
@@ -67,7 +56,7 @@ ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     REDIS_AUTO_RECONNECT=true \
     REDIS_RECONNECT_ON_ERROR=false \
 
-    #Common Config 
+    #Common Config
     RUNTIME_INSTALL='' \
     LOG_LEVEL=warn \
     CONFIG_FILE=/etc/sensu/config.json \

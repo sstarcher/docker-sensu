@@ -10,6 +10,17 @@ if [ -n "$GEM_SOURCES" ] && ! [ -e "/tmp/gem_sources_added" ]; then
 	touch /tmp/gem_sources_added
 fi
 
+DEBIAN_TOOLING='libxml2 libxml2-dev libxslt1-dev zlib1g-dev build-essential curl'
+tooling_install() {
+	apt-get update
+	apt-get install -y $DEBIAN_TOOLING
+}
+
+tooling_uninstall() {
+	apt-get remove -y $DEBIAN_TOOLING
+	apt-get autoremove -y
+	rm -rf /var/lib/apt/lists/*
+}
 
 determine_params() {
 	IFS=/ read REPO PLUGIN <<< "${1}"
@@ -34,12 +45,13 @@ install(){
 	gem build sensu-plugins-$PLUGIN.gemspec > /dev/null
 
 	echo -e "Installing \t $REPO/$PLUGIN:$VERSION"
-	gem install --force --no-ri --no-rdoc --no-wrapper sensu-plugins-*.gem > /dev/null
+	gem install --force --no-document --no-wrapper sensu-plugins-*.gem > /dev/null
 	cd ..
 	rm -rf "sensu-plugins-$PLUGIN-$VERSION"
 	echo -e "Finished \t $REPO/$PLUGIN:$VERSION"
 }
 
+tooling_install
 # Launch all plugins installations in parallel
 for index in "$@"
 do
@@ -52,7 +64,7 @@ do
     wait $job || let "FAIL=+1"
 done
 
+tooling_uninstall
 if [ "$FAIL" -ne "0" ]; then
 	exit $FAIL
 fi
-
