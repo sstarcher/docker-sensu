@@ -10,7 +10,7 @@ if [ -n "$GEM_SOURCES" ] && ! [ -e "/tmp/gem_sources_added" ]; then
 	touch /tmp/gem_sources_added
 fi
 
-DEBIAN_TOOLING='libxml2 libxml2-dev libxslt1-dev zlib1g-dev build-essential curl'
+DEBIAN_TOOLING='libxml2 libxml2-dev libxslt1-dev zlib1g-dev build-essential'
 tooling_install() {
 	apt-get update
 	apt-get install -y $DEBIAN_TOOLING
