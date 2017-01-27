@@ -13,7 +13,7 @@ process_template(){
 
 if [[ "${VALIDATE_ONLY}" == "true" ]]; then
   echo "Skipping install step because the VALIDATE_ONLY flag is set"
-elif
+else
   /bin/install $RUNTIME_INSTALL
 fi
 
