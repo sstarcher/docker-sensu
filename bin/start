@@ -11,7 +11,11 @@ process_template(){
   popd > /dev/null
 }
 
-/bin/install $RUNTIME_INSTALL
+if [[ "${VALIDATE_ONLY}" == "true" ]]; then
+  echo "Skipping install step because the VALIDATE_ONLY flag is set"
+else
+  /bin/install $RUNTIME_INSTALL
+fi
 
 SENSU_SERVICE=${SENSU_SERVICE-$1}
 
