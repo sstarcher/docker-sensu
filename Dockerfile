@@ -1,7 +1,7 @@
 FROM debian:jessie-slim
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
-ENV SENSU_VERSION=0.27.0-2
+ENV SENSU_VERSION=0.27.0-1
 
 RUN \
     apt-get update &&\
