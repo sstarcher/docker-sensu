@@ -7,7 +7,7 @@ RUN \
     apt-get update &&\
     apt-get install -y curl ca-certificates &&\
     curl -s http://repositories.sensuapp.org/apt/pubkey.gpg | apt-key add - &&\
-    echo "deb     http://repositories.sensuapp.org/apt sensu main" > /etc/apt/sources.list.d/sensu.list &&\
+    echo "deb     http://repositories.sensuapp.org/apt jessie main" > /etc/apt/sources.list.d/sensu.list &&\
     apt-get update &&\
     apt-get install -y sensu=${SENSU_VERSION} &&\
     rm -rf /opt/sensu/embedded/lib/ruby/gems/2.3.0/{cache,doc}/* && \
