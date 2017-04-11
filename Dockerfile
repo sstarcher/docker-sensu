@@ -1,7 +1,7 @@
 FROM debian:jessie-slim
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
-ENV SENSU_VERSION=0.28.4-1
+ENV SENSU_VERSION=0.29.0-7
 
 
 RUN \
