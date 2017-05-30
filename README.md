@@ -68,7 +68,7 @@ If you want `sensu-client` to use runtime system information for checks and metr
 All Sensu plugins will be automatically configured to use these paths instead of default ones.
 
 
-Dependencies: 
+Dependencies:
   - Server
     - rabbitmq - If transport is redis this is not used
     - redis
@@ -127,7 +127,7 @@ client:
   command: client
   environment:
     CLIENT_NAME: bob
-    RUNTIME_INSTALL: sstarcher/aws mail
+    RUNTIME_INSTALL: sstarcher/aws mailer
   links:
     - redis
 uchiwa:
@@ -143,4 +143,3 @@ redis:
 `RUNTIME_INSTALL` will allow you to install additional plugins from github during runtime.  The install format is USERNAME/repo:TAG.  The default USERNAME is sensu-plugins and the default TAG is master.  In place of a TAG a full git sha may be used.
 
 `GEM_SOURCES` can be used to add additional gem sources (such as https://ruby.taobao.org/ for China).
-
