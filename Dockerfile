@@ -1,7 +1,7 @@
 FROM ubuntu:zesty-20170411
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
-ENV SENSU_VERSION=0.29.0-7
+ENV SENSU_VERSION=1.0.0-1
 
 
 RUN \
@@ -11,7 +11,7 @@ RUN \
     echo "deb     https://sensu.global.ssl.fastly.net/apt xenial main" > /etc/apt/sources.list.d/sensu.list &&\
     apt-get update &&\
     apt-get install -y sensu=${SENSU_VERSION} &&\
-    rm -rf /opt/sensu/embedded/lib/ruby/gems/2.3.0/{cache,doc}/* && \
+    rm -rf /opt/sensu/embedded/lib/ruby/gems/2.4.0/{cache,doc}/* && \
     find /opt/sensu/embedded/lib/ruby/gems/ -name "*.o" -delete && \
     rm -rf /var/lib/apt/lists/*
 
