@@ -107,7 +107,7 @@ CLIENT_SUBSCRIPTIONS all, default
 CLIENT_KEEPALIVE_HANDLER default
 ```
 
-Settings required for Server and API
+Settings required for Server and API.  Defaults to no username or password.
 ```
 API_PORT 4567
 API_BIND 0.0.0.0
