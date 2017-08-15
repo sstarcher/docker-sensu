@@ -107,6 +107,14 @@ CLIENT_SUBSCRIPTIONS all, default
 CLIENT_KEEPALIVE_HANDLER default
 ```
 
+Settings required for Server and API.  Defaults to no username or password.
+```
+API_PORT 4567
+API_BIND 0.0.0.0
+API_HOST api
+API_USER *no default*
+API_PASSWORD *no default*
+```
 
 An example `docker-compose.yml` file of running everything locally:
 

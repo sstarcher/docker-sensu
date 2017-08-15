@@ -21,7 +21,7 @@ SENSU_SERVICE=${SENSU_SERVICE-$1}
 
 case "$SENSU_SERVICE" in
   api)
-    DEPENDENCIES="redis transport"
+    DEPENDENCIES="redis api transport"
     DIRS="$CONFIG_DIR,$CHECK_DIR"
     ;;&
   client)
