@@ -1,41 +1,11 @@
 FROM debian:jessie
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
-ENV SENSU_VERSION=1.0.2-1
-
-
-RUN \
-    apt-get update &&\
-    apt-get install -y --no-install-recommends \
-      curl \
-      ca-certificates \
-      apt-transport-https &&\
-    curl -s https://sensu.global.ssl.fastly.net/apt/pubkey.gpg | apt-key add - &&\
-    echo "deb     https://sensu.global.ssl.fastly.net/apt xenial main" > /etc/apt/sources.list.d/sensu.list &&\
-    apt-get update &&\
-    apt-get install -y sensu=${SENSU_VERSION} &&\
-    rm -rf /opt/sensu/embedded/lib/ruby/gems/2.4.0/{cache,doc}/* && \
-    find /opt/sensu/embedded/lib/ruby/gems/ -name "*.o" -delete && \
-    rm -rf /var/lib/apt/lists/*
-
-ENV PATH /opt/sensu/embedded/bin:$PATH
-RUN gem install --no-document yaml2json
-
-ENV DUMB_INIT_VERSION=1.2.0
-RUN \
-    curl -Ls https://github.com/Yelp/dumb-init/releases/download/v${DUMB_INIT_VERSION}/dumb-init_${DUMB_INIT_VERSION}_amd64.deb > dumb-init.deb &&\
-    dpkg -i dumb-init.deb &&\
-    rm dumb-init.deb
-
-ENV ENVTPL_VERSION=0.2.3
-RUN \
-    curl -Ls https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 > /usr/local/bin/envtpl &&\
-    chmod +x /usr/local/bin/envtpl
-
-COPY templates /etc/sensu/templates
-COPY bin /bin/
-
-ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
+ENV SENSU_VERSION=1.0.2-1 \
+    PATH=/opt/sensu/embedded/bin:$PATH \
+    DUMB_INIT_VERSION=1.2.0 \
+    ENVTPL_VERSION=0.2.3 \
+    DEFAULT_PLUGINS_REPO=sensu-plugins \
     DEFAULT_PLUGINS_VERSION=master \
 
     #Client Config
@@ -77,9 +47,32 @@ ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     HOST_PROC_DIR=/proc \
     HOST_SYS_DIR=/sys
 
-RUN mkdir -p $CONFIG_DIR $CHECK_DIR $EXTENSION_DIR $PLUGINS_DIR $HANDLERS_DIR
 
+RUN set -x \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+      curl \
+      ca-certificates \
+      apt-transport-https \
+      build-essential \
+    && curl -s https://sensu.global.ssl.fastly.net/apt/pubkey.gpg | apt-key add - \
+    && echo "deb     https://sensu.global.ssl.fastly.net/apt xenial main" > /etc/apt/sources.list.d/sensu.list \
+    && apt-get update \
+    && apt-get install -y sensu=${SENSU_VERSION} \
+    && gem install --no-document \
+        yaml2json \
+        eventmachine \
+    && curl -Ls https://github.com/Yelp/dumb-init/releases/download/v${DUMB_INIT_VERSION}/dumb-init_${DUMB_INIT_VERSION}_amd64.deb > dumb-init.deb \
+    && dpkg -i dumb-init.deb \
+    && rm dumb-init.deb \
+    && curl -Ls https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 > /usr/local/bin/envtpl \
+    && chmod +x /usr/local/bin/envtpl \
+    && mkdir -p $CONFIG_DIR $CHECK_DIR $EXTENSION_DIR $PLUGINS_DIR $HANDLERS_DIR
+    # && rm -rf /opt/sensu/embedded/lib/ruby/gems/2.4.0/{cache,doc}/* \
+    # && find /opt/sensu/embedded/lib/ruby/gems/ -name "*.o" -delete \
+    # && rm -rf /var/lib/apt/lists/*
+COPY templates /etc/sensu/templates
+COPY bin /bin/
 EXPOSE 4567
 VOLUME ["/etc/sensu/conf.d"]
-
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/bin/start"]
