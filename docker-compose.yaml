@@ -4,7 +4,7 @@ api:
     - redis
   command: api
   ports:
-    - '4567:4567'  
+    - '4567:4567'
 server:
   build : .
   links:
@@ -20,16 +20,16 @@ client:
     CLIENT_SUBSCRIPTIONS: all
     CLIENT_ADDRESS: 127.0.0.1
   ports:
-    - '3030:3030'    
+    - '3030:3030'
   command: client
 redis:
-  image: redis:3  
+  image: redis:3
 uchiwa:
   image: sstarcher/uchiwa
   environment:
     SENSU_DC_NAME: test
     SENSU_HOSTNAME: api
   links:
-    - api    
+    - api
   ports:
     - '80:3000'
