@@ -1,35 +1,41 @@
-api:
-  build: .
-  links:
-    - redis
-  command: api
-  ports:
-    - '4567:4567'
-server:
-  build : .
-  links:
-    - redis
-    - api
-  command: server
-client:
-  build: .
-  links:
-    - redis
-  environment:
-    CLIENT_NAME: test
-    CLIENT_SUBSCRIPTIONS: all
-    CLIENT_ADDRESS: 127.0.0.1
-  ports:
-    - '3030:3030'
-  command: client
-redis:
-  image: redis:3
-uchiwa:
-  image: sstarcher/uchiwa
-  environment:
-    SENSU_DC_NAME: test
-    SENSU_HOSTNAME: api
-  links:
-    - api
-  ports:
-    - '80:3000'
+version: "3.3"
+services:
+  api:
+    build: .
+    links:
+      - redis
+    command: api
+    ports:
+      - '4567:4567'
+
+  server:
+    build : .
+    links:
+      - redis
+      - api
+    command: server
+
+  client:
+    build: .
+    links:
+      - redis
+    environment:
+      CLIENT_NAME: test
+      CLIENT_SUBSCRIPTIONS: all
+      CLIENT_ADDRESS: 127.0.0.1
+    ports:
+      - '3030:3030'
+    command: client
+
+  redis:
+    image: redis:3
+
+  uchiwa:
+    image: sstarcher/uchiwa
+    environment:
+      SENSU_DC_NAME: test
+      SENSU_HOSTNAME: api
+    links:
+      - api
+    ports:
+      - '80:3000'
