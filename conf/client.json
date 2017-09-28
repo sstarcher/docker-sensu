@@ -1,0 +1,11 @@
+{
+  "client": {
+    "socket": {
+      "bind":"127.0.0.1"
+    },
+    "name": "client",
+    "address": "127.0.0.1",
+    "subscriptions": "all"
+    }
+  }
+}

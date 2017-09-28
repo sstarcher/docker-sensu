@@ -1,0 +1,8 @@
+{
+    "redis": {
+        "host": "sensu-redis",
+        "port": "6379",
+        "auto_reconnect": "true",
+        "reconnect_on_error": "true"
+    }
+}
