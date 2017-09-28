@@ -3,27 +3,28 @@ services:
   api:
     build: .
     container_name: sensu-api
+    command: sensu-api
     links:
       - redis
-    command: api
     networks:
       - frontend
     ports:
       - '4567:4567'
 
   server:
-    container_name: sensu-server
     build : .
+    container_name: sensu-server
+    command: sensu-server
     links:
       - redis
       - api
-    command: server
     networks:
       - frontend
 
   client:
-    container_name: sensu-client
     build: .
+    container_name: sensu-client
+    command: sensu-client
     links:
       - redis
     environment:
@@ -35,7 +36,6 @@ services:
       HOST_SYS_DIR: /host_sys
     ports:
       - '3030:3030'
-    command: client
     networks:
       - frontend
     volumes:
