@@ -6,6 +6,9 @@ ENV SENSU_VERSION=1.0.3-1 \
     ENVTPL_VERSION=0.2.3 \
     DEFAULT_PLUGINS_REPO=sensu-plugins \
     DEFAULT_PLUGINS_VERSION=master \
+    BUILD_DEPS="\
+    build-essential \
+    libevent-dev" \
     #Client Config
     CLIENT_SUBSCRIPTIONS=all,default \
     CLIENT_BIND=127.0.0.1 \
@@ -45,23 +48,25 @@ RUN set -x \
       curl \
       ca-certificates \
       apt-transport-https \
-      build-essential \
+      gnupg2 \
+      ${BUILD_DEPS} \
     && curl -s https://sensu.global.ssl.fastly.net/apt/pubkey.gpg | apt-key add - \
-    && echo "deb     https://sensu.global.ssl.fastly.net/apt xenial main" > /etc/apt/sources.list.d/sensu.list \
+    && echo "deb     https://sensu.global.ssl.fastly.net/apt stretch main" > /etc/apt/sources.list.d/sensu.list \
     && apt-get update \
-    && apt-get install -y sensu=${SENSU_VERSION}
-    # && gem install --no-document \
-    #     yaml2json \
-    #     eventmachine \
-    # && curl -Ls https://github.com/Yelp/dumb-init/releases/download/v${DUMB_INIT_VERSION}/dumb-init_${DUMB_INIT_VERSION}_amd64.deb > dumb-init.deb \
-    # && dpkg -i dumb-init.deb \
-    # && rm dumb-init.deb \
-    # && curl -Ls https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 > /usr/local/bin/envtpl \
-    # && chmod +x /usr/local/bin/envtpl \
-    # && mkdir -p $CONFIG_DIR $CHECK_DIR $EXTENSION_DIR $PLUGINS_DIR $HANDLERS_DIR
-    # && rm -rf /opt/sensu/embedded/lib/ruby/gems/2.4.0/{cache,doc}/* \
-    # && find /opt/sensu/embedded/lib/ruby/gems/ -name "*.o" -delete \
-    # && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y sensu=${SENSU_VERSION} \
+    && gem install --no-document \
+        yaml2json \
+        eventmachine \
+    && curl -Ls https://github.com/Yelp/dumb-init/releases/download/v${DUMB_INIT_VERSION}/dumb-init_${DUMB_INIT_VERSION}_amd64.deb > dumb-init.deb \
+    && dpkg -i dumb-init.deb \
+    && rm dumb-init.deb \
+    && curl -Ls https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 > /usr/local/bin/envtpl \
+    && chmod +x /usr/local/bin/envtpl \
+    && mkdir -p $CONFIG_DIR $CHECK_DIR $EXTENSION_DIR $PLUGINS_DIR $HANDLERS_DIR \
+    && rm -rf /opt/sensu/embedded/lib/ruby/gems/2.4.0/{cache,doc}/* \
+    && find /opt/sensu/embedded/lib/ruby/gems/ -name "*.o" -delete \
+    && apt-get purge --assume-yes ${BUILD_DEPS} \
+    && rm -rf /var/lib/apt/lists/*
 COPY templates /etc/sensu/templates
 COPY bin /bin/
 EXPOSE 4567
