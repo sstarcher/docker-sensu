@@ -49,6 +49,8 @@ RUN set -x \
       ca-certificates \
       apt-transport-https \
       gnupg2 \
+      inetutils-ping \
+      inetutils-telnet \
       ${BUILD_DEPS} \
     && curl -s https://sensu.global.ssl.fastly.net/apt/pubkey.gpg | apt-key add - \
     && echo "deb     https://sensu.global.ssl.fastly.net/apt stretch main" > /etc/apt/sources.list.d/sensu.list \
