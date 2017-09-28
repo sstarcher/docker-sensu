@@ -1,6 +1,6 @@
-FROM debian:jessie
+FROM debian:stretch
 LABEL MAINTAINER="Shane Starcher <shanestarcher@gmail.com>"
-ENV SENSU_VERSION=1.0.2-1 \
+ENV SENSU_VERSION=1.0.3-1 \
     PATH=/opt/sensu/embedded/bin:$PATH \
     DUMB_INIT_VERSION=1.2.0 \
     ENVTPL_VERSION=0.2.3 \
