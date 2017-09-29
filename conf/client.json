@@ -2,7 +2,7 @@
   "client": {
     "name": "client",
     "address": "127.0.0.1",
-    "subscriptions": "all",
+    "subscriptions": ["production"],
     "socket": {
       "bind":"127.0.0.1"
     }
