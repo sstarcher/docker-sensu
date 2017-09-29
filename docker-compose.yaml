@@ -28,9 +28,6 @@ services:
     links:
       - redis
     environment:
-      CLIENT_NAME: test
-      CLIENT_SUBSCRIPTIONS: all
-      CLIENT_ADDRESS: 127.0.0.1
       HOST_DEV_DIR: /host_dev
       HOST_PROC_DIR: /host_proc
       HOST_SYS_DIR: /host_sys
