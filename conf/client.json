@@ -2,9 +2,20 @@
   "client": {
     "name": "client",
     "address": "127.0.0.1",
-    "subscriptions": ["production"],
+    "subscriptions": [
+      "production"
+    ],
     "socket": {
       "bind":"127.0.0.1"
+    },
+    "keepalive": {
+      "handlers": [
+        "default"
+      ],
+      "thresholds": {
+        "warning": 90,
+        "critical": 180
+      }
     }
   }
 }
