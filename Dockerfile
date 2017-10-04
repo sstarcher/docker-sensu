@@ -9,6 +9,26 @@ ENV SENSU_VERSION=1.0.3-1 \
     BUILD_DEPS="\
     build-essential \
     libevent-dev" \
+    #Client Config
+    CLIENT_SUBSCRIPTIONS=all,default \
+    CLIENT_BIND=127.0.0.1 \
+    CLIENT_DEREGISTER=true \
+    #Transport
+    TRANSPORT_NAME=redis \
+    RABBITMQ_PORT=5672 \
+    RABBITMQ_HOST=rabbitmq \
+    RABBITMQ_USER=guest \
+    RABBITMQ_PASSWORD=guest \
+    RABBITMQ_VHOST=/ \
+    RABBITMQ_PREFETCH=1 \
+    RABBITMQ_SSL_SUPPORT=false \
+    RABBITMQ_SSL_CERT='' \
+    RABBITMQ_SSL_KEY='' \
+    REDIS_HOST=redis \
+    REDIS_PORT=6379 \
+    REDIS_DB=0 \
+    REDIS_AUTO_RECONNECT=true \
+    REDIS_RECONNECT_ON_ERROR=false \
     #Common Config
     RUNTIME_INSTALL='' \
     LOG_LEVEL=warn \
