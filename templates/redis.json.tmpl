@@ -1,0 +1,10 @@
+{
+    "redis": {
+        "host": {{ .REDIS_HOST | quote }},
+        "port": {{ default .REDIS_PORT .REDIS_PORT_6379_TCP_PORT }},
+{{if .REDIS_PASSWORD }}"password": {{ .REDIS_PASSWORD | quote }},{{end}}
+        "db": {{ .REDIS_DB }},
+        "auto_reconnect": {{ .REDIS_AUTO_RECONNECT }},
+        "reconnect_on_error": {{ .REDIS_RECONNECT_ON_ERROR }}
+    }
+}

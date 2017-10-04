@@ -1,0 +1,24 @@
+{
+  "client": {
+    "socket": {
+      "bind": {{ .CLIENT_BIND | quote }}
+    },
+    "name": {{ default .HOSTNAME .CLIENT_NAME | quote }},
+    "address": {{ .CLIENT_ADDRESS | quote }},
+    "deregister":  {{ .CLIENT_DEREGISTER }},
+    {{ if .CLIENT_SUBSCRIPTIONS }}
+    "subscriptions": [
+      {{ range  $index, $element := split "," .CLIENT_SUBSCRIPTIONS }}
+        {{ if ne $index "_0" }},{{end}}{{. | quote }}
+      {{end}}
+    ],
+    {{end}}
+    "keepalive": {
+      "thresholds": {
+         "warning": {{ default .CLIENT_KEEPALIVE_WARNING 120 }},
+         "critical": {{ default .CLIENT_KEEPALIVE_CRITICAL 180 }}
+      },
+      "handler": {{ default "default" .CLIENT_KEEPALIVE_HANDLER | quote }}
+    }
+  }
+}

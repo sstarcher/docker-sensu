@@ -49,6 +49,8 @@ RUN set -x \
       ca-certificates \
       apt-transport-https \
       gnupg2 \
+      inetutils-ping \
+      inetutils-telnet \
       ${BUILD_DEPS} \
     && curl -s https://sensu.global.ssl.fastly.net/apt/pubkey.gpg | apt-key add - \
     && echo "deb     https://sensu.global.ssl.fastly.net/apt stretch main" > /etc/apt/sources.list.d/sensu.list \
@@ -67,7 +69,8 @@ RUN set -x \
     && find /opt/sensu/embedded/lib/ruby/gems/ -name "*.o" -delete \
     && apt-get purge --assume-yes ${BUILD_DEPS} \
     && rm -rf /var/lib/apt/lists/*
-COPY conf /etc/sensu/conf.d
+COPY templates /etc/sensu/templates
 COPY bin /bin/
 EXPOSE 4567
+VOLUME ["/etc/sensu/conf.d"]
 CMD ["/usr/bin/dumb-init", "--", "/bin/start"]

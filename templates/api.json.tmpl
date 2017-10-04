@@ -1,0 +1,12 @@
+{{ $API_PORT := default  "4567" .API_PORT }}
+{
+    "api": {
+        "host": {{ default "api" .API_HOST | quote }},
+        "bind": {{ default "0.0.0.0" .API_BIND | quote }},
+	{{ if and .API_USER .API_PASSWORD }}
+        "user": {{ .API_USER | quote }},
+        "password": {{ .API_PASSWORD | quote }},
+	{{ end }}
+        "port": {{ default $API_PORT .API_PORT_4567_TCP_PORT }}
+    }
+}

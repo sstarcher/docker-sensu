@@ -1,0 +1,18 @@
+{
+    "transport": {
+      "name": "{{ .TRANSPORT_NAME  }}",
+      "reconnect_on_error": {{ default .TRANSPORT_RECONNECT "true" }}
+    } {{ if eq .TRANSPORT_NAME "rabbitmq"}},
+    "rabbitmq": {
+        "port": {{ default .RABBITMQ_PORT .RABBITMQ_PORT_5672_TCP_PORT }},
+        "host": {{ .RABBITMQ_HOST | quote }},
+        "user": {{ .RABBITMQ_USER | quote }},
+        "password": {{ .RABBITMQ_PASSWORD | quote }},
+        "vhost": {{ .RABBITMQ_VHOST | quote }},
+        "prefetch": {{ .RABBITMQ_PREFETCH }} {{ if eq .RABBITMQ_SSL_SUPPORT "true" }},
+          "ssl" : {
+            "cert_chain_file": "/etc/sensu/ssl/cert.pem",
+            "private_key_file": "/etc/sensu/ssl/key.pem"
+          } {{ end }}
+    } {{ end }}
+}
