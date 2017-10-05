@@ -54,7 +54,7 @@ RUN set -x \
     && echo "deb     https://sensu.global.ssl.fastly.net/apt stretch main" > /etc/apt/sources.list.d/sensu.list \
     && apt-get update \
     && apt-get install -y sensu=${SENSU_VERSION} \
-    && gem install --no-ri --no-rdoc \
+    && gem install --no-document \
         yaml2json \
         eventmachine \
     && curl -Ls https://github.com/Yelp/dumb-init/releases/download/v${DUMB_INIT_VERSION}/dumb-init_${DUMB_INIT_VERSION}_amd64.deb > dumb-init.deb \
