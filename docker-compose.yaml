@@ -6,8 +6,6 @@ services:
     command: sensu-api
     links:
       - redis
-    networks:
-      - frontend
     ports:
       - '4567:4567'
 
@@ -18,8 +16,6 @@ services:
     links:
       - redis
       - api
-    networks:
-      - frontend
 
   client:
     build: .
@@ -27,17 +23,8 @@ services:
     command: sensu-client
     links:
       - redis
-    environment:
-      CLIENT_NAME: test
-      CLIENT_SUBSCRIPTIONS: all
-      CLIENT_ADDRESS: 127.0.0.1
-      HOST_DEV_DIR: /host_dev
-      HOST_PROC_DIR: /host_proc
-      HOST_SYS_DIR: /host_sys
     ports:
       - '3030:3030'
-    networks:
-      - frontend
     volumes:
       - /dev:/host_dev:ro
       - /proc:/host_proc:ro
@@ -46,8 +33,6 @@ services:
   redis:
     container_name: sensu-redis
     image: redis:3
-    networks:
-      - frontend
 
   uchiwa:
     image: sstarcher/uchiwa
@@ -59,8 +44,4 @@ services:
       - api
     ports:
       - '80:3000'
-    networks:
-      - frontend
 
-networks:
-  frontend:
