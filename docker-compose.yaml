@@ -1,35 +1,47 @@
-api:
-  build: .
-  links:
-    - redis
-  command: api
-  ports:
-    - '4567:4567'  
-server:
-  build : .
-  links:
-    - redis
-    - api
-  command: server
-client:
-  build: .
-  links:
-    - redis
-  environment:
-    CLIENT_NAME: test
-    CLIENT_SUBSCRIPTIONS: all
-    CLIENT_ADDRESS: 127.0.0.1
-  ports:
-    - '3030:3030'    
-  command: client
-redis:
-  image: redis:3  
-uchiwa:
-  image: sstarcher/uchiwa
-  environment:
-    SENSU_DC_NAME: test
-    SENSU_HOSTNAME: api
-  links:
-    - api    
-  ports:
-    - '80:3000'
+version: "3.2"
+services:
+  api:
+    build: .
+    container_name: sensu-api
+    command: sensu-api
+    links:
+      - redis
+    ports:
+      - '4567:4567'
+
+  server:
+    build : .
+    container_name: sensu-server
+    command: sensu-server
+    links:
+      - redis
+      - api
+
+  client:
+    build: .
+    container_name: sensu-client
+    command: sensu-client
+    links:
+      - redis
+    ports:
+      - '3030:3030'
+    volumes:
+      - /dev:/host_dev:ro
+      - /proc:/host_proc:ro
+      - /sys:/host_sys:ro
+
+  redis:
+    container_name: sensu-redis
+    image: redis:3
+
+  uchiwa:
+    image: sstarcher/uchiwa
+    container_name: sensu-uchiwa
+    environment:
+      SENSU_DC_NAME: test
+      SENSU_HOSTNAME: api
+    links:
+      - api
+    ports:
+      - '80:3000'
+

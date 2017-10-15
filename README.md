@@ -12,16 +12,21 @@ Docker image: [https://registry.hub.docker.com/u/sstarcher/sensu/]
 [![](https://images.microbadger.com/badges/image/sstarcher/sensu.svg)](http://microbadger.com/images/sstarcher/sensu "Get your own image badge on microbadger.com")
 [![Docker Registry](https://img.shields.io/docker/pulls/sstarcher/sensu.svg)](https://registry.hub.docker.com/u/sstarcher/sensu)&nbsp;
 
-This is a base container for Sensu Core. It contains `sensu-api`, `sensu-client`, `sensu-server`, but does *not* contain any plugins.
+This is a base container for Sensu Core. It contains `sensu-api`,
+`sensu-client`, `sensu-server`, but does *not* contain any plugins.
 
-Default configuration is to use `redis` as the transport.  This allows us to not need `rabbitmq`.
+Default configuration is to use `redis` as the transport.  This allows us to not
+need `rabbitmq`.
 
-This container can be configured to use runtime system information for checks and metrics from it's *host*.
+This container can be configured to use runtime system information for checks
+and metrics from it's *host*.
 
 
 ## Note
 
-Installed plugins for now can change without warning. If you need a specific plugin installed either build a container based off of this one our use `RUNTIME_INSTALL` to ensure your plugins are installed.
+Installed plugins for now can change without warning. If you need a specific
+plugin installed either build a container based off of this one our use
+`RUNTIME_INSTALL` to ensure your plugins are installed.
 
 
 ## Configuration
@@ -47,7 +52,9 @@ ENV CHECK_DIR /etc/sensu/check.d
 ENV HANDLERS_DIR /etc/sensu/handlers
 ```
 
-If you want `sensu-client` to use runtime system information for checks and metrics from container's *host* system (*not* from `sensu` container itself) you should:
+If you want `sensu-client` to use runtime system information for checks and
+metrics from container's *host* system (*not* from `sensu` container itself) you
+should:
 
 1. Define volumes to access host's filesystem from `sensu` container :
 
@@ -65,7 +72,8 @@ If you want `sensu-client` to use runtime system information for checks and metr
   HOST_SYS_DIR: /host_sys
   ```
 
-All Sensu plugins will be automatically configured to use these paths instead of default ones.
+All Sensu plugins will be automatically configured to use these paths instead
+of default ones.
 
 
 Dependencies:
@@ -148,6 +156,10 @@ redis:
   image: redis:3
 ```
 
-`RUNTIME_INSTALL` will allow you to install additional plugins from github during runtime.  The install format is USERNAME/repo:TAG.  The default USERNAME is sensu-plugins and the default TAG is master.  In place of a TAG a full git sha may be used.
+`RUNTIME_INSTALL` will allow you to install additional plugins from github
+during runtime.  The install format is USERNAME/repo:TAG.  The default USERNAME
+is sensu-plugins and the default TAG is master.  In place of a TAG a full git
+sha may be used.
 
-`GEM_SOURCES` can be used to add additional gem sources (such as https://ruby.taobao.org/ for China).
+`GEM_SOURCES` can be used to add additional gem sources (such as
+https://ruby.taobao.org/ for China).
