@@ -116,37 +116,7 @@ API_USER *no default*
 API_PASSWORD *no default*
 ```
 
-An example `docker-compose.yml` file of running everything locally:
-
-```
-api:
-  image: sstarcher/sensu
-  command: api
-  links:
-    - redis
-server:
-  image: sstarcher/sensu
-  command: server
-  links:
-    - redis
-    - api
-client:
-  image: sstarcher/sensu
-  command: client
-  environment:
-    CLIENT_NAME: bob
-    RUNTIME_INSTALL: sstarcher/aws mailer
-  links:
-    - redis
-uchiwa:
-  image: sstarcher/uchiwa
-  links:
-    - api:sensu
-  ports:
-    - '80:3000'
-redis:
-  image: redis:3
-```
+You can use `docker-compose.yaml` to run everything locally.
 
 `RUNTIME_INSTALL` will allow you to install additional plugins from github during runtime.  The install format is USERNAME/repo:TAG.  The default USERNAME is sensu-plugins and the default TAG is master.  In place of a TAG a full git sha may be used.
 
