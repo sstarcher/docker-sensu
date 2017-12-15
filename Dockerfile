@@ -1,7 +1,7 @@
 FROM ubuntu:zesty-20170411
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
-ENV SENSU_VERSION=1.1.1-1
+ENV SENSU_VERSION=1.2.0-1
 
 
 RUN \
