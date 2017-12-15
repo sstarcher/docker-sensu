@@ -34,15 +34,12 @@ COPY bin /bin/
 
 ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     DEFAULT_PLUGINS_VERSION=master \
-
     #Client Config
     CLIENT_SUBSCRIPTIONS=all,default \
     CLIENT_BIND=127.0.0.1 \
     CLIENT_DEREGISTER=true \
-
     #Transport
     TRANSPORT_NAME=redis \
-
     RABBITMQ_PORT=5672 \
     RABBITMQ_HOST=rabbitmq \
     RABBITMQ_USER=guest \
@@ -52,13 +49,11 @@ ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     RABBITMQ_SSL_SUPPORT=false \
     RABBITMQ_SSL_CERT='' \
     RABBITMQ_SSL_KEY='' \
-
     REDIS_HOST=redis \
     REDIS_PORT=6379 \
     REDIS_DB=0 \
     REDIS_AUTO_RECONNECT=true \
     REDIS_RECONNECT_ON_ERROR=false \
-
     #Common Config
     RUNTIME_INSTALL='' \
     LOG_LEVEL=warn \
@@ -68,7 +63,6 @@ ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     EXTENSION_DIR=/etc/sensu/extensions \
     PLUGINS_DIR=/etc/sensu/plugins \
     HANDLERS_DIR=/etc/sensu/handlers \
-
     #Config for gathering host metrics
     HOST_DEV_DIR=/dev \
     HOST_PROC_DIR=/proc \
