@@ -57,6 +57,7 @@ ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     #Common Config
     RUNTIME_INSTALL='' \
     PARALLEL_INSTALLATION=1 \
+    UNINSTALL_BUILD_TOOLS=1 \
     LOG_LEVEL=warn \
     CONFIG_FILE=/etc/sensu/config.json \
     CONFIG_DIR=/etc/sensu/conf.d \
