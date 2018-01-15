@@ -120,4 +120,6 @@ You can use `docker-compose.yaml` to run everything locally.
 
 `RUNTIME_INSTALL` will allow you to install additional plugins from github during runtime.  The install format is USERNAME/repo:TAG.  The default USERNAME is sensu-plugins and the default TAG is master.  In place of a TAG a full git sha may be used.
 
+Multiple plugins will be installed in parallel. However, if fetching and compiling too many dependencies at the same time cause issues, set `PARALLEL_INSTALLATION` to 0.
+
 `GEM_SOURCES` can be used to add additional gem sources (such as https://ruby.taobao.org/ for China).

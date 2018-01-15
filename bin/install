@@ -57,15 +57,21 @@ install() {
 
 tooling_install
 
-# Launch all plugins installations in parallel
+# Launch all plugins installations in parallel, if requested
 for index in "$@"; do
-	install "$index" &
+	if [ ${PARALLEL_INSTALLATION:-1} = 1 ]; then
+		install "$index" &
+	else
+		install "$index"
+	fi
 done
 
 FAIL=0
-for job in $(jobs -p); do
-	wait $job || let "FAIL=+1"
-done
+if [ ${PARALLEL_INSTALLATION:-1} = 1 ]; then
+	for job in $(jobs -p); do
+		wait $job || let "FAIL=+1"
+	done
+fi
 
 tooling_uninstall
 

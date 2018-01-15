@@ -56,6 +56,7 @@ ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     REDIS_RECONNECT_ON_ERROR=false \
     #Common Config
     RUNTIME_INSTALL='' \
+    PARALLEL_INSTALLATION=1 \
     LOG_LEVEL=warn \
     CONFIG_FILE=/etc/sensu/config.json \
     CONFIG_DIR=/etc/sensu/conf.d \
