@@ -73,7 +73,7 @@ if [ ${PARALLEL_INSTALLATION:-1} = 1 ]; then
 	done
 fi
 
-tooling_uninstall
+[ ${UNINSTALL_BUILD_TOOLS:-1} = 1 ] && tooling_uninstall
 
 if [ "$FAIL" -ne "0" ]; then
 	exit $FAIL

@@ -122,4 +122,6 @@ You can use `docker-compose.yaml` to run everything locally.
 
 Multiple plugins will be installed in parallel. However, if fetching and compiling too many dependencies at the same time cause issues, set `PARALLEL_INSTALLATION` to 0.
 
+If you want to keep the installed build tools and the apt cache, set `UNINSTALL_BUILD_TOOLS` to 0.
+
 `GEM_SOURCES` can be used to add additional gem sources (such as https://ruby.taobao.org/ for China).
