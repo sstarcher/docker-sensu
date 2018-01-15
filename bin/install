@@ -1,20 +1,20 @@
 #!/bin/bash
 set -e
 
-if [[ $# -eq 0 ]] ; then
+if [[ $# -eq 0 ]]; then
 	exit
 fi
 
 if [ -n "$GEM_SOURCES" ] && ! [ -e "/tmp/gem_sources_added" ]; then
-	for src in $(echo $GEM_SOURCES | tr ',' ' ')
-	do
+	for src in $(echo $GEM_SOURCES | tr "," " "); do
 		echo "Adding gem source $src"
 		gem sources -a $src
 	done
 	touch /tmp/gem_sources_added
 fi
 
-DEBIAN_TOOLING='libxml2 libxml2-dev libxslt1-dev zlib1g-dev build-essential'
+DEBIAN_TOOLING="libxml2 libxml2-dev libxslt1-dev zlib1g-dev build-essential"
+
 tooling_install() {
 	apt-get update
 	apt-get install -y $DEBIAN_TOOLING
@@ -37,7 +37,7 @@ determine_params() {
 	VERSION=${VERSION:-${DEFAULT_PLUGINS_VERSION}}
 }
 
-install(){
+install() {
 	determine_params "$1"
 	echo -e "Downloading \t $REPO/$PLUGIN:$VERSION"
 	curl -Ls https://github.com/$REPO/sensu-plugins-$PLUGIN/archive/$VERSION.tar.gz > "$PLUGIN"
@@ -45,7 +45,7 @@ install(){
 
 	echo -e "Building \t $REPO/$PLUGIN:$VERSION"
 	cd sensu-plugins-$PLUGIN-$VERSION
-	sed -i'' '/signing_key/d' sensu-plugins-$PLUGIN.gemspec #We don't have the private key
+	sed -i"" "/signing_key/d" sensu-plugins-$PLUGIN.gemspec #We don't have the private key
 	gem build sensu-plugins-$PLUGIN.gemspec > /dev/null
 
 	echo -e "Installing \t $REPO/$PLUGIN:$VERSION"
@@ -56,19 +56,19 @@ install(){
 }
 
 tooling_install
+
 # Launch all plugins installations in parallel
-for index in "$@"
-do
+for index in "$@"; do
 	install "$index" &
 done
 
 FAIL=0
-for job in `jobs -p`
-do
-    wait $job || let "FAIL=+1"
+for job in $(jobs -p); do
+	wait $job || let "FAIL=+1"
 done
 
 tooling_uninstall
+
 if [ "$FAIL" -ne "0" ]; then
 	exit $FAIL
 fi
