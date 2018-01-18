@@ -1,8 +1,9 @@
 FROM ubuntu:zesty-20170411
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
-ENV SENSU_VERSION=1.2.0-1
-
+ARG SENSU_VERSION=1.2.0-1
+ARG DUMB_INIT_VERSION=1.2.0
+ARG ENVTPL_VERSION=0.2.3
 
 RUN \
     apt-get update &&\
@@ -13,21 +14,16 @@ RUN \
     apt-get install -y sensu=${SENSU_VERSION} &&\
     rm -rf /opt/sensu/embedded/lib/ruby/gems/2.4.0/{cache,doc}/* && \
     find /opt/sensu/embedded/lib/ruby/gems/ -name "*.o" -delete && \
-    rm -rf /var/lib/apt/lists/*
-
-ENV PATH /opt/sensu/embedded/bin:$PATH
-RUN gem install --no-document yaml2json
-
-ENV DUMB_INIT_VERSION=1.2.0
-RUN \
+    rm -rf /var/lib/apt/lists/* &&\
+    # Install dumb-init
     curl -Ls https://github.com/Yelp/dumb-init/releases/download/v${DUMB_INIT_VERSION}/dumb-init_${DUMB_INIT_VERSION}_amd64.deb > dumb-init.deb &&\
     dpkg -i dumb-init.deb &&\
-    rm dumb-init.deb
-
-ENV ENVTPL_VERSION=0.2.3
-RUN \
+    rm dumb-init.deb &&\
+    # Install envtpl & yaml2json
     curl -Ls https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 > /usr/local/bin/envtpl &&\
-    chmod +x /usr/local/bin/envtpl
+    chmod +x /usr/local/bin/envtpl &&\
+    gem install --no-document yaml2json &&\
+    mkdir -p /etc/sensu/conf.d /etc/sensu/check.d /etc/sensu/extensions /etc/sensu/plugins /etc/sensu/handlers
 
 COPY templates /etc/sensu/templates
 COPY bin /bin/
@@ -68,9 +64,8 @@ ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     #Config for gathering host metrics
     HOST_DEV_DIR=/dev \
     HOST_PROC_DIR=/proc \
-    HOST_SYS_DIR=/sys
-
-RUN mkdir -p $CONFIG_DIR $CHECK_DIR $EXTENSION_DIR $PLUGINS_DIR $HANDLERS_DIR
+    HOST_SYS_DIR=/sys \
+    PATH=/opt/sensu/embedded/bin:$PATH
 
 EXPOSE 4567
 VOLUME ["/etc/sensu/conf.d"]
