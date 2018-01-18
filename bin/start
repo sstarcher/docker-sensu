@@ -61,12 +61,13 @@ case "$SENSU_SERVICE" in
       echo -e "${RABBITMQ_SSL_KEY}" > /etc/sensu/ssl/key.pem
     fi
 
-    # use host (not container) dirs for checks and metrics
-    if compgen -G "/opt/sensu/embedded/bin/*.rb" > /dev/null; then
-      sed -i "s|/dev|$HOST_DEV_DIR|g" /opt/sensu/embedded/bin/*.rb
-      sed -i "s|/proc|$HOST_PROC_DIR|g" /opt/sensu/embedded/bin/*.rb
-      sed -i "s|/sys|$HOST_SYS_DIR|g" /opt/sensu/embedded/bin/*.rb
-    fi
+    # For checks which need access to the host's /dev, /proc or /sys filesystem,
+    # adjust the checks to the directories mounted from the host
+    for dir in $(gem env gempath | sed -e 's/:/ /g'); do
+      if compgen -G "${dir}/*.rb" > /dev/null; then
+        sed -i -e "s|/dev|$HOST_DEV_DIR|g" -e "s|/proc|$HOST_PROC_DIR|g" -e "s|/sys|$HOST_SYS_DIR|g" ${dir}/*.rb
+      fi
+    done
 
     find /etc/sensu -regex '.*\.ya?ml' | while read yamlFile; do
       jsonFile=$(echo ${yamlFile} | sed -r -e 's/\.ya?ml/.json/');
