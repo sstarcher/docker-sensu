@@ -64,7 +64,11 @@ case "$SENSU_SERVICE" in
     # adjust the checks to the directories mounted from the host
     for dir in $(gem env gempath | sed -e 's/:/ /g'); do
       if compgen -G "${dir}/*.rb" > /dev/null; then
-        sed -i -e "s|/dev|$HOST_DEV_DIR|g" -e "s|/proc|$HOST_PROC_DIR|g" -e "s|/sys|$HOST_SYS_DIR|g" ${dir}/*.rb
+        sed -i \
+            -e "s|\(['\"]\)/dev/|\1${HOST_DEV_DIR%/}/|g" \
+            -e "s|\(['\"]\)/proc/|\1${HOST_PROC_DIR%/}/|g" \
+            -e "s|\(['\"]\)/sys/|\1${HOST_SYS_DIR%/}/|g" \
+            ${dir}/*.rb
       fi
     done
 
