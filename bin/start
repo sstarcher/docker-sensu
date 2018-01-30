@@ -27,7 +27,7 @@ case "$SENSU_SERVICE" in
   client)
     DEPENDENCIES="client transport"
     DIRS="$CONFIG_DIR"
-    rm -rf ${CHECK_DIR}/*
+    rm -rf "${CHECK_DIR}"/*
 
     if [[ "${TRANSPORT_NAME}" == "redis" ]]; then
       DEPENDENCIES="redis $DEPENDENCIES"
@@ -44,8 +44,7 @@ case "$SENSU_SERVICE" in
     process_template $CHECK_DIR
     process_template $HANDLERS_DIR
 
-    for INDEX in $DEPENDENCIES
-    do
+    for INDEX in $DEPENDENCIES; do
       envtpl -in /etc/sensu/templates/${INDEX}.json.tmpl > $CONFIG_DIR/${INDEX}.json
     done
 
