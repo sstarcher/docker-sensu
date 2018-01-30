@@ -62,7 +62,7 @@ case "$SENSU_SERVICE" in
 
     # For checks which need access to the host's /dev, /proc or /sys filesystem,
     # adjust the checks to the directories mounted from the host
-    for dir in $(gem env gempath | sed -e 's/:/ /g'); do
+    for dir in $(gem env gemdir) $(gem env gemdir)/bin /opt/sensu/embedded/bin; do
       if compgen -G "${dir}/*.rb" > /dev/null; then
         sed -i \
             -e "s|\(['\"]\)/dev/|\1${HOST_DEV_DIR%/}/|g" \
