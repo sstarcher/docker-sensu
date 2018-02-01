@@ -118,7 +118,14 @@ API_PASSWORD *no default*
 
 You can use `docker-compose.yaml` to run everything locally.
 
-`RUNTIME_INSTALL` will allow you to install additional plugins from github during runtime.  The install format is USERNAME/repo:TAG.  The default USERNAME is sensu-plugins and the default TAG is master.  In place of a TAG a full git sha may be used.
+`RUNTIME_INSTALL` will allow you to install additional plugins from github during runtime.  The install format is USERNAME/repo@TAG.  The default USERNAME is sensu-plugins and the default TAG is master.  In place of a TAG a full git sha may be used.  
+
+Examples:
+* https://github.com/sensu-plugins/sensu-plugins-disk-checks
+  * RUNTIME_INSTALL='disk-checks' will install the master branch
+  * RUNTIME_INSTALL='sensu-plugins/disk-checks@2.5.1 will install tag 0.5.1
+* https://github.com/sstarcher/sensu-plugins-http
+  * RUNTIME_INSTALL='sstarcher/http` will install the master branch from the sstarcher organization on github for http
 
 Multiple plugins will be installed in parallel. However, if fetching and compiling too many dependencies at the same time cause issues, set `PARALLEL_INSTALLATION` to 0.
 
