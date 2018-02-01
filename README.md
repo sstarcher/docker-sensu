@@ -118,6 +118,16 @@ API_PASSWORD *no default*
 
 You can use `docker-compose.yaml` to run everything locally.
 
+Multiple plugins will be installed in parallel. However, if fetching and compiling too many dependencies at the same time cause issues, set `PARALLEL_INSTALLATION` to 0.
+
+If you want to keep the installed build tools and the apt cache, set `UNINSTALL_BUILD_TOOLS` to 0.
+
+`GEM_SOURCES` can be used to add additional gem sources (such as https://ruby.taobao.org/ for China).
+
+
+### Runtime Installation
+Due to build time errors and increased start time this is not recommend outside of testing.
+
 `RUNTIME_INSTALL` will allow you to install additional plugins from github during runtime.  The install format is USERNAME/repo@TAG.  The default USERNAME is sensu-plugins and the default TAG is master.  In place of a TAG a full git sha may be used.  
 
 Examples:
@@ -126,9 +136,3 @@ Examples:
   * RUNTIME_INSTALL='sensu-plugins/disk-checks@2.5.1 will install tag 0.5.1
 * https://github.com/sstarcher/sensu-plugins-http
   * RUNTIME_INSTALL='sstarcher/http` will install the master branch from the sstarcher organization on github for http
-
-Multiple plugins will be installed in parallel. However, if fetching and compiling too many dependencies at the same time cause issues, set `PARALLEL_INSTALLATION` to 0.
-
-If you want to keep the installed build tools and the apt cache, set `UNINSTALL_BUILD_TOOLS` to 0.
-
-`GEM_SOURCES` can be used to add additional gem sources (such as https://ruby.taobao.org/ for China).
