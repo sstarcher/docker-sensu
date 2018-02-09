@@ -1,0 +1,9 @@
+{
+  "filters": {
+    "every_3_occurrences": {
+      "attributes": {
+        "occurrences": "eval: (value % 3) == 0"
+      }
+    }
+  }
+}

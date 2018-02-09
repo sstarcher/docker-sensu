@@ -1,0 +1,14 @@
+{
+  "filters": {
+    "chef_server_mode": {
+      "attributes": {
+        "client": {
+          "chef": {
+            "endpoint": "eval: value.include? \"chefzero://\""
+          }
+        }
+      },
+      "negate": true
+    }
+  }
+}

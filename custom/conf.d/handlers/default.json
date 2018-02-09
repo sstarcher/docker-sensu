@@ -1,0 +1,11 @@
+{
+  "handlers": {
+    "default": {
+      "type": "set",
+      "handlers": [
+        "argos",
+        "ec2_node"
+      ]
+    }
+  }
+}

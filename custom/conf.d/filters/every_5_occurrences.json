@@ -1,0 +1,9 @@
+{
+  "filters": {
+    "every_5_occurrences": {
+      "attributes": {
+        "occurrences": "eval: (value % 5) == 0"
+      }
+    }
+  }
+}

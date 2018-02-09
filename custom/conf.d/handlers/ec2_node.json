@@ -1,0 +1,19 @@
+{
+  "handlers": {
+    "ec2_node": {
+      "type": "pipe",
+      "filters": [
+        "keepalives",
+        "ec2",
+        "every_5_occurrences",
+        "max_100_occurrences"
+      ],
+      "severities": [
+        "warning",
+        "critical"
+      ],
+      "command": "/etc/sensu/handlers/ruby/ec2_node.rb",
+      "timeout": 300
+    }
+  }
+}

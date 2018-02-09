@@ -1,0 +1,9 @@
+{
+  "filters": {
+    "actions": {
+      "attributes": {
+        "action": "eval: %w(create resolve).include? value.to_s"
+      }
+    }
+  }
+}

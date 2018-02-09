@@ -1,0 +1,14 @@
+{
+  "filters": {
+    "chef": {
+      "attributes": {
+        "client": {
+          "chef": {
+            "environment": "eval: value.nil?"
+          }
+        }
+      },
+      "negate": true
+    }
+  }
+}

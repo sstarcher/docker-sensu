@@ -34,7 +34,7 @@ case "$SENSU_SERVICE" in
     fi
     ;;&
   server)
-    DEPENDENCIES="redis api transport"
+    DEPENDENCIES="redis api transport argos relay"
     DIRS="$CONFIG_DIR,$CHECK_DIR,$HANDLERS_DIR"
     ;;&
   api|server|client)
@@ -59,6 +59,13 @@ case "$SENSU_SERVICE" in
       mkdir -p /etc/sensu/ssl
       echo -e "${RABBITMQ_SSL_CERT}" > /etc/sensu/ssl/cert.pem
       echo -e "${RABBITMQ_SSL_KEY}" > /etc/sensu/ssl/key.pem
+    fi
+
+    if [ -z "$GRAPHITE_HOST" ]; then
+      rm -f /etc/sensu/extensions/server/metrics.rb
+      rm -f /etc/sensu/extensions/server/relay.rb
+      rm -f /etc/sensu/conf.d/handlers/metrics.json
+      rm -f /etc/sensu/conf.d/relay.json
     fi
 
     # For checks which need access to the host's /dev, /proc or /sys filesystem,
