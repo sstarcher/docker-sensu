@@ -17,8 +17,10 @@ phases:
       - echo Pushing the Docker image...
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_NAME:latest
       - echo Preparing Cloudformation Artifacts
-      - printf '[{"name":"%s","imageUri":"%s.dkr.ecr.%s.amazonaws.com/%s:latest"}]' "$IMAGE_NAME" "$AWS_ACCOUNT_ID" "$AWS_DEFAULT_REGION" "$IMAGE_NAME" > image-definitions.json
+      - printf '[{"name":"sensu-api","imageUri":"%s.dkr.ecr.%s.amazonaws.com/%s:latest"}]' "$AWS_ACCOUNT_ID" "$AWS_DEFAULT_REGION" "$IMAGE_NAME" > image-definitions-api.json
+      - printf '[{"name":"sensu-server","imageUri":"%s.dkr.ecr.%s.amazonaws.com/%s:latest"}]' "$AWS_ACCOUNT_ID" "$AWS_DEFAULT_REGION" "$IMAGE_NAME" > image-definitions-server.json
 
 artifacts:
   files:
-    - image-definitions.json
+    - image-definitions-api.json
+    - image-definitions-server.json
