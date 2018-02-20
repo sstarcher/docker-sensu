@@ -52,7 +52,7 @@ COPY custom/extensions /etc/sensu/extensions
 
 COPY bin /bin/
 
-RUN chown sensu.sensu -R /etc/sensu
+RUN chown sensu.sensu -R /etc/sensu && chmod 755 /bin/start
 
 ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     DEFAULT_PLUGINS_VERSION=master \
