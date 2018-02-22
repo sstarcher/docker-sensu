@@ -1,0 +1,13 @@
+{
+  "handlers": {
+    "sns": {
+      "type": "pipe",
+      "filters": [
+        "state_change_only",
+        "check_dependencies"
+      ],
+      "command": "/etc/sensu/handlers/ruby/sns.rb",
+      "timeout": 300
+    }
+  }
+}

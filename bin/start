@@ -34,7 +34,7 @@ case "$SENSU_SERVICE" in
     fi
     ;;&
   server)
-    DEPENDENCIES="redis api transport argos relay"
+    DEPENDENCIES="redis api transport argos relay sns"
     DIRS="$CONFIG_DIR,$CHECK_DIR,$HANDLERS_DIR"
     ;;&
   api|server|client)
@@ -66,6 +66,11 @@ case "$SENSU_SERVICE" in
       rm -f /etc/sensu/extensions/server/relay.rb
       rm -f /etc/sensu/conf.d/handlers/metrics.json
       rm -f /etc/sensu/conf.d/relay.json
+    fi
+
+    if [ -z "$SNS_TOPIC_ARN" ]; then
+      rm -f /etc/sensu/conf.d/handlers/sns.json
+      rm -f /etc/sensu/conf.d/sns.json
     fi
 
     # For checks which need access to the host's /dev, /proc or /sys filesystem,
