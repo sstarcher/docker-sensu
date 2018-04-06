@@ -1,7 +1,8 @@
-FROM ruby:2.4-slim-stretch
+FROM ubuntu:18.04
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
-ARG SENSU_VERSION=1.2.1-1
+ARG DEBIAN_FRONTEND=noninteractive
+ARG SENSU_VERSION=1.2.1-2
 ARG DUMB_INIT_VERSION=1.2.0
 ARG ENVTPL_VERSION=0.2.3
 
@@ -25,7 +26,8 @@ RUN \
     # Install Sensu snssqs support
     /opt/sensu/embedded/bin/gem install --no-ri --no-rdoc sensu-transport-snssqs-ng && \
     # Cleanup sensu
-    rm -rf /opt/sensu/embedded/lib/ruby/gems/2.4.0/{cache,doc}/* &&\
+    rm -rf /opt/sensu/embedded/lib/ruby/gems/2.4.0/cache/* &&\
+    rm -rf /opt/sensu/embedded/lib/ruby/gems/2.4.0/doc/* &&\
     find /opt/sensu/embedded/lib/ruby/gems/ -name "*.o" -delete &&\
     # Install php
     apt-get install -y php-cli php-curl &&\
@@ -40,10 +42,8 @@ RUN \
     # Install envtpl & yaml2json
     curl -Ls https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 > /usr/local/bin/envtpl &&\
     chmod +x /usr/local/bin/envtpl &&\
-    gem install --no-document yaml2json &&\
-    mkdir -p /etc/sensu/conf.d /etc/sensu/check.d /etc/sensu/extensions/server /etc/sensu/extensions/client /etc/sensu/plugins /etc/sensu/handlers &&\
-    # Undo world writable bundle directory, see https://github.com/docker-library/ruby/issues/74
-    chmod -R o-w /usr/local/bundle
+    /opt/sensu/embedded/bin/gem install --no-document yaml2json &&\
+    mkdir -p /etc/sensu/conf.d /etc/sensu/check.d /etc/sensu/extensions/server /etc/sensu/extensions/client /etc/sensu/plugins /etc/sensu/handlers
 
 COPY templates /etc/sensu/templates
 COPY custom/conf.d /etc/sensu/conf.d
@@ -53,6 +53,8 @@ COPY custom/extensions /etc/sensu/extensions
 COPY bin /bin/
 
 RUN chown sensu.sensu -R /etc/sensu
+RUN chmod +x /etc/sensu/handlers/ruby/*.rb
+RUN chmod +x /etc/sensu/handlers/php/*.php
 
 ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     DEFAULT_PLUGINS_VERSION=master \
