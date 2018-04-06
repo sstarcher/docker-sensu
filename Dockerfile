@@ -52,9 +52,8 @@ COPY custom/extensions /etc/sensu/extensions
 
 COPY bin /bin/
 
-RUN chown sensu.sensu -R /etc/sensu
-RUN chmod +x /etc/sensu/handlers/ruby/*.rb
-RUN chmod +x /etc/sensu/handlers/php/*.php
+RUN chown sensu.sensu -R /etc/sensu && chmod +x /etc/sensu/handlers/ruby/*.rb && chmod +x /etc/sensu/handlers/php/*.php
+RUN chmod +x /bin/start && chmod +x /bin/install
 
 ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     DEFAULT_PLUGINS_VERSION=master \
