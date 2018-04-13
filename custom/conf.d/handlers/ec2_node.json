@@ -13,7 +13,8 @@
         "critical"
       ],
       "command": "/etc/sensu/handlers/ruby/ec2_node.rb",
-      "timeout": 300
+      "timeout": 300,
+      "handle_silenced" : true
     }
   }
 }
