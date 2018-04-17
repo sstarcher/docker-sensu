@@ -3,7 +3,8 @@
     "deregistration": {
       "type": "pipe",
       "command": "handler-sensu-deregister.rb -i -d 1000",
-      "timeout": 300
+      "timeout": 300,
+      "handle_silenced": true
     }
   }
 }
