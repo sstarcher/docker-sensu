@@ -9,6 +9,8 @@ services:
         - no_proxy
     links:
       - redis
+    environment:
+      TRANSPORT_NAME: redis
     command: api
     ports:
       - '4567:4567'  
@@ -22,6 +24,8 @@ services:
     links:
       - redis
       - api
+    environment:
+      TRANSPORT_NAME: redis
     command: server
   client:
     build:
@@ -36,6 +40,7 @@ services:
       CLIENT_NAME: test
       CLIENT_SUBSCRIPTIONS: all
       CLIENT_ADDRESS: 127.0.0.1
+      TRANSPORT_NAME: redis
     ports:
       - '3030:3030'    
     command: client

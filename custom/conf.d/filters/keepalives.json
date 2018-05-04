@@ -1,0 +1,13 @@
+{
+  "filters": {
+    "keepalives": {
+      "attributes": {
+        "check": {
+          "name": "keepalive",
+          "status": 2
+        },
+        "occurrences": "eval: value > 2"
+      }
+    }
+  }
+}

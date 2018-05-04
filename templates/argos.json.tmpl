@@ -1,0 +1,10 @@
+{
+  "argos": {
+    "live": {{ default false .ARGOS_LIVE }},
+    "debug": {{ default false .ARGOS_DEBUG }},
+    "simulate": {{ default true .ARGOS_SIMULATE }},
+    "url": {{ .ARGOS_URL | quote }},
+    "api_key": {{ .ARGOS_API_KEY | quote }},
+    "op_tool_kit": {{ default false .ARGOS_OP_TOOL_KIT }}
+  }
+}

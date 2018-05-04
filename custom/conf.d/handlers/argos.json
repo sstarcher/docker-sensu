@@ -1,0 +1,13 @@
+{
+  "handlers": {
+    "argos": {
+      "type": "pipe",
+      "filters": [
+        "occurrences",
+        "check_dependencies"
+      ],
+      "command": "/etc/sensu/handlers/php/sensu_argos_handler.php",
+      "timeout": 300
+    }
+  }
+}

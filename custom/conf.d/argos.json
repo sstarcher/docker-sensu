@@ -1,0 +1,9 @@
+{
+  "argos": {
+    "live": true,
+    "debug": false,
+    "simulate": false,
+    "url": "https://test-argos-eye-ext01.ws.arvato-systems.de/api/setEventData/CommonData",
+    "api_key": "FzQnaQjRtn"
+  }
+}

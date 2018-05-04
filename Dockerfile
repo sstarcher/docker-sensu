@@ -1,13 +1,13 @@
 FROM ruby:2.4-slim-stretch
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
-ARG SENSU_VERSION=1.2.0-1
+ARG SENSU_VERSION=1.2.1-1
 ARG DUMB_INIT_VERSION=1.2.0
 ARG ENVTPL_VERSION=0.2.3
 
 RUN \
     apt-get update &&\
-    apt-get install -y --no-install-recommends curl ca-certificates apt-transport-https gnupg locales &&\
+    apt-get install -y --no-install-recommends curl ca-certificates apt-transport-https gnupg locales build-essential &&\
     # Setup default locale & cleanup unneeded
     echo "LC_ALL=en_US.UTF-8" >> /etc/environment &&\
     echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen &&\
@@ -20,10 +20,17 @@ RUN \
     echo "deb https://sensu.global.ssl.fastly.net/apt stretch main" > /etc/apt/sources.list.d/sensu.list &&\
     apt-get update &&\
     apt-get install -y sensu=${SENSU_VERSION} &&\
+    # Custom Plugins
+    /opt/sensu/embedded/bin/gem install --no-ri --no-rdoc sensu-plugins-sensu && \
+    # Install Sensu snssqs support
+    /opt/sensu/embedded/bin/gem install --no-ri --no-rdoc sensu-transport-snssqs-ng && \
+    # Cleanup sensu
     rm -rf /opt/sensu/embedded/lib/ruby/gems/2.4.0/{cache,doc}/* &&\
     find /opt/sensu/embedded/lib/ruby/gems/ -name "*.o" -delete &&\
+    # Install php
+    apt-get install -y php-cli php-curl &&\
     # Cleanup debian
-    apt-get remove -y gnupg &&\
+    apt-get remove -y gnupg build-essential &&\
     apt-get autoremove -y &&\
     rm -rf /var/lib/apt/lists/* &&\
     # Install dumb-init
@@ -34,12 +41,18 @@ RUN \
     curl -Ls https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 > /usr/local/bin/envtpl &&\
     chmod +x /usr/local/bin/envtpl &&\
     gem install --no-document yaml2json &&\
-    mkdir -p /etc/sensu/conf.d /etc/sensu/check.d /etc/sensu/extensions /etc/sensu/plugins /etc/sensu/handlers &&\
+    mkdir -p /etc/sensu/conf.d /etc/sensu/check.d /etc/sensu/extensions/server /etc/sensu/extensions/client /etc/sensu/plugins /etc/sensu/handlers &&\
     # Undo world writable bundle directory, see https://github.com/docker-library/ruby/issues/74
     chmod -R o-w /usr/local/bundle
 
 COPY templates /etc/sensu/templates
+COPY custom/conf.d /etc/sensu/conf.d
+COPY custom/handlers /etc/sensu/handlers
+COPY custom/extensions /etc/sensu/extensions
+
 COPY bin /bin/
+
+RUN chown sensu.sensu -R /etc/sensu && chmod 755 /bin/start && chmod 755 /bin/install
 
 ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     DEFAULT_PLUGINS_VERSION=master \
@@ -63,6 +76,19 @@ ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     REDIS_DB=0 \
     REDIS_AUTO_RECONNECT=true \
     REDIS_RECONNECT_ON_ERROR=false \
+    SNSSQS_MAX_NUMBER_OF_MESSAGES=10 \
+    SNSSQS_WAIT_TIME_SECONDS=2 \
+    SNSSQS_REGION=us-east-1 \
+    SNSSQS_CONSUMING_SQS_QUEUE_URL='' \
+    SNSSQS_PUBLISHING_SNS_TOPIC_ARN='' \
+    ARGOS_LIVE=false \
+    ARGOS_DEBUG=false \
+    ARGOS_SIMULATE=true \
+    ARGOS_URL='' \
+    ARGOS_API_KEY='' \
+    ARGOS_OP_TOOL_KIT=false \
+    GRAPHITE_HOST='' \
+    GRAPHITE_PORT=2003 \
     # Common Config
     RUNTIME_INSTALL='' \
     PARALLEL_INSTALLATION=1 \
@@ -86,6 +112,8 @@ ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
     RUBYOPT=-W0
 
 EXPOSE 4567
-VOLUME ["/etc/sensu/conf.d"]
+VOLUME ["/etc/sensu/conf.d", "/etc/sensu/check.d", "/etc/sensu/handlers"]
+
+USER sensu
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/bin/start"]

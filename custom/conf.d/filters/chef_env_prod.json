@@ -1,0 +1,13 @@
+{
+  "filters": {
+    "chef_env_prod": {
+      "attributes": {
+        "client": {
+          "chef": {
+            "environment": "prod"
+          }
+        }
+      }
+    }
+  }
+}

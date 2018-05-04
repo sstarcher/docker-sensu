@@ -1,0 +1,13 @@
+{
+  "filters": {
+    "ec2": {
+      "attributes": {
+        "client": {
+          "cloud": {
+            "provider": "ec2"
+          }
+        }
+      }
+    }
+  }
+}

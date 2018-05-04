@@ -1,0 +1,10 @@
+{
+  "ec2_node": {
+    "ec2_states": [
+      "terminated",
+      "stopping",
+      "shutting-down",
+      "stopped"
+    ]
+  }
+}

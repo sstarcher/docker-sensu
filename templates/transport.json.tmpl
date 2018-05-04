@@ -15,4 +15,12 @@
             "private_key_file": "/etc/sensu/ssl/key.pem"
           } {{ end }}
     } {{ end }}
+    {{ if eq .TRANSPORT_NAME "snssqs"}},
+    "snssqs": {
+        "max_number_of_messages": {{ default .SNSSQS_MAX_NUMBER_OF_MESSAGES 10}},
+        "wait_time_seconds": {{ default .SNSSQS_WAIT_TIME_SECONDS 2 }},
+        "region": {{ .SNSSQS_REGION | quote }},
+        "consuming_sqs_queue_url": {{ .SNSSQS_CONSUMING_SQS_QUEUE_URL | quote }},
+        "publishing_sns_topic_arn": {{ .SNSSQS_PUBLISHING_SNS_TOPIC_ARN | quote }}
+    } {{ end }}
 }
