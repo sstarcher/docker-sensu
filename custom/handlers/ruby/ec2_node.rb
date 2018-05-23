@@ -214,8 +214,8 @@ class Ec2Node < Sensu::Handler
       })
       if (dyn_resp.items[0].key?('fixed_access_key_id') && dyn_resp.items[0].key?('fixed_secret_access_key')) then
         assumed_role = {
-          access_key_id: dyn_resp.items[0].fixed_access_key_id,
-          secret_access_key: dyn_resp.items[0].fixed_secret_access_key
+          access_key_id: dyn_resp.items[0]['fixed_access_key_id'],
+          secret_access_key: dyn_resp.items[0]['fixed_secret_access_key']
         }
         path = '/stashes'
         api_request('POST', path) do |req|
@@ -233,7 +233,7 @@ class Ec2Node < Sensu::Handler
         end
         return Aws::Credentials.new(assumed_role[:access_key_id], assumed_role[:secret_access_key])
       else
-        role_arn = dyn_resp.items[0].key?('service_role_arn') ? dyn_resp.items[0].service_role_arn : "arn:aws:iam::#{account_id}:role/AsyServiceRole"
+        role_arn = dyn_resp.items[0].key?('service_role_arn') ? dyn_resp.items[0]['service_role_arn'] : "arn:aws:iam::#{account_id}:role/AsyServiceRole"
         sts = Aws::STS::Client.new({region: region_server})
         sts_resp = sts.assume_role({
           role_arn: role_arn,
