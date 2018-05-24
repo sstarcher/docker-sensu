@@ -5,22 +5,41 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - TAG=commit-"$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
+      - IMAGE_URI="${REPOSITORY_URI}:${TAG}"
+      - echo Using NAME "$APPLICATION_NAME"
+      - echo Using TAG "$TAG"
+      - echo Using IMAGE_URI "$IMAGE_URI"
   build:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -t $IMAGE_NAME:latest --no-cache .
-      - docker tag $IMAGE_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_NAME:latest
+      - docker build -t "${APPLICATION_NAME}:latest" --no-cache .
+      - docker tag "${APPLICATION_NAME}:latest" "${REPOSITORY_URI}:latest"
+      - docker tag "${APPLICATION_NAME}:latest" "${REPOSITORY_URI}:${TAG}"
+      - echo Build completed on `date`
   post_build:
     commands:
-      - echo Build completed on `date`
       - echo Pushing the Docker image...
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_NAME:latest
+      - docker push "${REPOSITORY_URI}:latest"
+      - docker push "${REPOSITORY_URI}:${TAG}"
       - echo Preparing Cloudformation Artifacts
-      - printf '[{"name":"sensu-api","imageUri":"%s.dkr.ecr.%s.amazonaws.com/%s:latest"}]' "$AWS_ACCOUNT_ID" "$AWS_DEFAULT_REGION" "$IMAGE_NAME" > image-definitions-api.json
-      - printf '[{"name":"sensu-server","imageUri":"%s.dkr.ecr.%s.amazonaws.com/%s:latest"}]' "$AWS_ACCOUNT_ID" "$AWS_DEFAULT_REGION" "$IMAGE_NAME" > image-definitions-server.json
+      - printf '[{"name":"%s","imageUri":"%s"}]' "$APPLICATION_NAME" "$IMAGE_URI" > images.json
+      - cat images.json
+      - printf '{"Parameters":{"ContainerImage":"%s","ContainerName":"%s"}}' "$IMAGE_URI" "$APPLICATION_NAME" > stack-configuration.json
+      - cat stack-configuration.json
+      - sed "s|SSM_BASE_PATH|$SSM_BASE_PATH_DEV|g" cloudformation.json > cloudformation_dev.json
+      - cat cloudformation_dev.json
+      - sed "s|SSM_BASE_PATH|$SSM_BASE_PATH_PREPROD|g" cloudformation.json > cloudformation_preprod.json
+      - cat cloudformation_preprod.json
+      - sed "s|SSM_BASE_PATH|$SSM_BASE_PATH_PROD|g" cloudformation.json > cloudformation_prod.json
+      - cat cloudformation_prod.json
+
 artifacts:
   files:
-    - image-definitions-api.json
-    - image-definitions-server.json
-
+    - image.json
+    - stack-configuration.json
+    - cloudformation.json
+    - cloudformation_dev.json
+    - cloudformation_preprod.json
+    - cloudformation_prod.json
