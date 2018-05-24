@@ -1,0 +1,520 @@
+{
+  "Conditions": {
+    "CacheTypeMemchache": {
+      "Fn::Equals": [
+        {
+          "Ref": "SsmCacheType"
+        },
+        "memcache"
+      ]
+    },
+    "CacheTypeRedis": {
+      "Fn::Equals": [
+        {
+          "Ref": "SsmCacheType"
+        },
+        "redis"
+      ]
+    },
+    "DbTypeMysql": {
+      "Fn::Equals": [
+        {
+          "Ref": "SsmDbType"
+        },
+        "mysql"
+      ]
+    },
+    "DbTypePostgres": {
+      "Fn::Equals": [
+        {
+          "Ref": "SsmDbType"
+        },
+        "postgres"
+      ]
+    },
+    "EfsMountsTrue": {
+      "Fn::Equals": [
+        {
+          "Ref": "ContainerEfsEnabled"
+        },
+        true
+      ]
+    }
+  },
+  "Description": "AWS CloudFormation Template for LAMP ECS Service/Task",
+  "Outputs": {
+    "ContainerName": {
+      "Description": "Container Name",
+      "Value": {
+        "Ref": "ContainerName"
+      }
+    },
+    "ServiceArn": {
+      "Description": "Service ARN",
+      "Value": {
+        "Ref": "ContainerService"
+      }
+    },
+    "TaskdefinitionArn": {
+      "Description": "TaskDefinition ARN",
+      "Value": {
+        "Ref": "ContainerTaskdefinition"
+      }
+    }
+  },
+  "Parameters": {
+    "ContainerCpu": {
+      "Default": "256",
+      "Description": "ECS Service CPU usage",
+      "Type": "Number"
+    },
+    "ContainerDesiredCount": {
+      "Default": "1",
+      "Description": "Defines the count of desired containers",
+      "Type": "Number"
+    },
+    "ContainerEfsEnabled": {
+      "Default": "SSM_BASE_PATH/EFS/enabled",
+      "Description": "enable EFS mounts",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerEfsPath": {
+      "Default": "/share",
+      "Description": "The path on the container that you want to mount",
+      "Type": "String"
+    },
+    "ContainerEfsReadOnly": {
+      "AllowedValues": [
+        "true",
+        "false"
+      ],
+      "Default": "false",
+      "Description": "Indicates whether the container can write to the volume.",
+      "Type": "String"
+    },
+    "ContainerEfsVolume": {
+      "Default": "files",
+      "Description": "The name of the volume to mount.",
+      "Type": "String"
+    },
+    "ContainerImage": {
+      "Description": "Docker container image",
+      "Type": "String"
+    },
+    "ContainerMemory": {
+      "Default": "256",
+      "Description": "ECS Service Memory usage",
+      "Type": "Number"
+    },
+    "ContainerMemoryReservation": {
+      "Default": "256",
+      "Description": "ECS Service Memory reservation usage",
+      "Type": "Number"
+    },
+    "ContainerName": {
+      "Description": "Name of the ECS Task/Service",
+      "Type": "String"
+    },
+    "EcsClusterName": {
+      "Default": "SSM_BASE_PATH/ECS/cluster_name",
+      "Description": "Defines the ecs clustername",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "EcsContainerPort": {
+      "Default": "SSM_BASE_PATH/ECS/container_port",
+      "Description": "The port of the ecs container",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "EcsTargetGroupArn": {
+      "Default": "SSM_BASE_PATH/ECS/target_group_arn",
+      "Description": "The target group arn of the ELB",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "EfsHostPath": {
+      "Default": "SSM_BASE_PATH/EFS/host_path",
+      "Description": "The path on the host that you want to mount",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SsmCacheHost": {
+      "Default": "SSM_BASE_PATH/Cache/host",
+      "Description": "cache host",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SsmCachePort": {
+      "Default": "SSM_BASE_PATH/Cache/port",
+      "Description": "cache port",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SsmCacheType": {
+      "Default": "SSM_BASE_PATH/Cache/type",
+      "Description": "cache type",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SsmDbDatabase": {
+      "Default": "SSM_BASE_PATH/DB/database",
+      "Description": "db database name",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SsmDbHost": {
+      "Default": "SSM_BASE_PATH/DB/host",
+      "Description": "db host",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SsmDbPassword": {
+      "Default": "SSM_BASE_PATH/DB/password",
+      "Description": "db password",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SsmDbPort": {
+      "Default": "SSM_BASE_PATH/DB/port",
+      "Description": "db port",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SsmDbType": {
+      "Default": "SSM_BASE_PATH/DB/type",
+      "Description": "db host",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SsmDbUser": {
+      "Default": "SSM_BASE_PATH/DB/username",
+      "Description": "db username",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    }
+  },
+  "Resources": {
+    "ContainerService": {
+      "Properties": {
+        "Cluster": {
+          "Ref": "EcsClusterName"
+        },
+        "DesiredCount": {
+          "Ref": "ContainerDesiredCount"
+        },
+        "LoadBalancers": [
+          {
+            "TargetGroupArn": {
+              "Ref": "EcsTargetGroupArn"
+            },
+            "ContainerName": {
+              "Ref": "ContainerName"
+            },
+            "ContainerPort": {
+              "Ref": "EcsContainerPort"
+            }
+          }
+        ],
+        "PlacementStrategies": [
+          {
+            "Field": "attribute:ecs.availability-zone",
+            "Type": "spread"
+          },
+          {
+            "Field": "instanceId",
+            "Type": "spread"
+          }
+        ],
+        "TaskDefinition": {
+          "Ref": "ContainerTaskdefinition"
+        }
+      },
+      "Type": "AWS::ECS::Service"
+    },
+    "ContainerTaskdefinition": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Name": {
+              "Ref": "ContainerName"
+            },
+            "Image": {
+              "Ref": "ContainerImage"
+            },
+            "Cpu": {
+              "Ref": "ContainerCpu"
+            },
+            "Memory": {
+              "Ref": "ContainerMemory"
+            },
+            "MemoryReservation": {
+              "Ref": "ContainerMemoryReservation"
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-group": "ECS-Docker",
+                "awslogs-stream-prefix": {
+                  "Ref": "EcsClusterName"
+                }
+              }
+            },
+            "PortMappings": [
+              {
+                "ContainerPort": {
+                  "Ref": "EcsContainerPort"
+                }
+              }
+            ],
+            "MountPoints": [
+              {
+                "Fn::If": [
+                  "EfsMountsTrue",
+                  {
+                    "ReadOnly": {
+                      "Ref": "ContainerEfsReadOnly"
+                    },
+                    "ContainerPath": {
+                      "Ref": "ContainerEfsPath"
+                    },
+                    "SourceVolume": {
+                      "Ref": "ContainerEfsVolume"
+                    }
+                  },
+                  {
+                    "Ref": "AWS::NoValue"
+                  }
+                ]
+              }
+            ],
+            "Environment": [
+              {
+                "Name": "MYSQL_HOST",
+                "Value": {
+                  "Fn::If": [
+                    "DbTypeMysql",
+                    {
+                      "Ref": "SsmDbHost"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "MYSQL_PORT",
+                "Value": {
+                  "Fn::If": [
+                    "DbTypeMysql",
+                    {
+                      "Ref": "SsmDbPort"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "MYSQL_DATABASE",
+                "Value": {
+                  "Fn::If": [
+                    "DbTypeMysql",
+                    {
+                      "Ref": "SsmDbDatabase"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "MYSQL_USER",
+                "Value": {
+                  "Fn::If": [
+                    "DbTypeMysql",
+                    {
+                      "Ref": "SsmDbUser"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "MYSQL_PASSWORD",
+                "Value": {
+                  "Fn::If": [
+                    "DbTypeMysql",
+                    {
+                      "Ref": "SsmDbPassword"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "POSTGRES_HOST",
+                "Value": {
+                  "Fn::If": [
+                    "DbTypePostgres",
+                    {
+                      "Ref": "SsmDbHost"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "POSTGRESL_PORT",
+                "Value": {
+                  "Fn::If": [
+                    "DbTypePostgres",
+                    {
+                      "Ref": "SsmDbPort"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "POSTGRES_DATABASE",
+                "Value": {
+                  "Fn::If": [
+                    "DbTypePostgres",
+                    {
+                      "Ref": "SsmDbDatabase"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "POSTGRES_USER",
+                "Value": {
+                  "Fn::If": [
+                    "DbTypePostgres",
+                    {
+                      "Ref": "SsmDbUser"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "POSTGRES_PASSWORD",
+                "Value": {
+                  "Fn::If": [
+                    "DbTypePostgres",
+                    {
+                      "Ref": "SsmDbPassword"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "REDIS_HOST",
+                "Value": {
+                  "Fn::If": [
+                    "CacheTypeRedis",
+                    {
+                      "Ref": "SsmCacheHost"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "REDIS_PORT",
+                "Value": {
+                  "Fn::If": [
+                    "CacheTypeRedis",
+                    {
+                      "Ref": "SsmCachePort"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "REDIS_DB",
+                "Value": {
+                  "Fn::If": [
+                    "CacheTypeRedis",
+                    "0",
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "MEMCACHE_HOST",
+                "Value": {
+                  "Fn::If": [
+                    "CacheTypeMemchache",
+                    {
+                      "Ref": "SsmCacheHost"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "MEMCACHE_PORT",
+                "Value": {
+                  "Fn::If": [
+                    "CacheTypeMemchache",
+                    {
+                      "Ref": "SsmCachePort"
+                    },
+                    {
+                      "Ref": "AWS::NoValue"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "Family": {
+          "Ref": "ContainerName"
+        },
+        "Volumes": [
+          {
+            "Fn::If": [
+              "EfsMountsTrue",
+              {
+                "Name": {
+                  "Ref": "ContainerEfsVolume"
+                },
+                "Host": {
+                  "SourcePath": {
+                    "Ref": "EfsHostPath"
+                  }
+                }
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        ]
+      },
+      "Type": "AWS::ECS::TaskDefinition"
+    }
+  }
+}
