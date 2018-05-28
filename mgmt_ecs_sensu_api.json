@@ -1,0 +1,706 @@
+{
+  "Description": "AWS CloudFormation Template for ECS Sensu API",
+  "Outputs": {
+    "ContainerName": {
+      "Description": "Container Name",
+      "Value": {
+        "Ref": "ContainerName"
+      }
+    },
+    "ContainerServiceArn": {
+      "Description": "Container Service ARN",
+      "Value": {
+        "Ref": "ContainerService"
+      }
+    },
+    "ContainerTaskdefinitionArn": {
+      "Description": "Container TaskDefinition ARN",
+      "Value": {
+        "Ref": "ContainerTaskdefinition"
+      }
+    }
+  },
+  "Parameters": {
+    "ContainerAdjustmentNumberHighDown": {
+      "Default": "-50",
+      "Description": "The amount by which to scale.",
+      "Type": "String"
+    },
+    "ContainerAdjustmentNumberHighUp": {
+      "Default": "100",
+      "Description": "The amount by which to scale.",
+      "Type": "String"
+    },
+    "ContainerAdjustmentNumberLowDown": {
+      "Default": "-20",
+      "Description": "The amount by which to scale.",
+      "Type": "String"
+    },
+    "ContainerAdjustmentNumberLowUp": {
+      "Default": "50",
+      "Description": "The amount by which to scale.",
+      "Type": "String"
+    },
+    "ContainerAlarmEvaluationPeriod": {
+      "Default": "1",
+      "Description": "The number of periods over which data is compared to the specified threshold.",
+      "Type": "String"
+    },
+    "ContainerAlarmPeriod": {
+      "Default": "60",
+      "Description": "The time over which the specified statistic is applied.",
+      "Type": "String"
+    },
+    "ContainerAlarmTresholdDown": {
+      "Default": "50",
+      "Description": "The value against which the specified statistic is compared.",
+      "Type": "String"
+    },
+    "ContainerAlarmTresholdUp": {
+      "Default": "75",
+      "Description": "The value against which the specified statistic is compared.",
+      "Type": "String"
+    },
+    "ContainerAutoscalingRole": {
+      "Description": "Container autoscaling role (ARN)",
+      "Type": "String"
+    },
+    "ContainerCooldown": {
+      "Default": "300",
+      "Description": "The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.",
+      "Type": "String"
+    },
+    "ContainerCpu": {
+      "Default": "256",
+      "Description": "ECS Service CPU usage",
+      "Type": "String"
+    },
+    "ContainerDesiredCount": {
+      "Default": "1",
+      "Description": "The scalable dimension that´s associated with the scalable target.",
+      "Type": "String"
+    },
+    "ContainerHost": {
+      "Default": "default",
+      "Description": "Container Host",
+      "Type": "String"
+    },
+    "ContainerMaxCapacity": {
+      "Default": "4",
+      "Description": "The maximum value that Application Auto Scaling can use to scale a target during a scaling activity.",
+      "Type": "String"
+    },
+    "ContainerMemory": {
+      "Default": "512",
+      "Description": "ECS Service Memory usage",
+      "Type": "String"
+    },
+    "ContainerMemoryReservation": {
+      "Default": "512",
+      "Description": "ECS Service Memory reservation usage",
+      "Type": "String"
+    },
+    "ContainerMetricIntervalLowerBoundDown": {
+      "Default": "-10",
+      "Description": "The lower bound of the breach size",
+      "Type": "String"
+    },
+    "ContainerMetricIntervalLowerBoundUp": {
+      "Default": "0",
+      "Description": "The lower bound of the breach size",
+      "Type": "String"
+    },
+    "ContainerMetricIntervalUpperBoundDown": {
+      "Default": "0",
+      "Description": "The upper bound of the breach size",
+      "Type": "String"
+    },
+    "ContainerMetricIntervalUpperBoundUp": {
+      "Default": "10",
+      "Description": "The upper bound of the breach size",
+      "Type": "String"
+    },
+    "ContainerMinCapacity": {
+      "Default": "1",
+      "Description": "The minimum value that Application Auto Scaling can use to scale a target during a scaling activity.",
+      "Type": "String"
+    },
+    "ContainerName": {
+      "Description": "Name of the ECS Container Service",
+      "Type": "String"
+    },
+    "ContainerPort": {
+      "Description": "ECS Container Port",
+      "Type": "String"
+    },
+    "ContainerRepository": {
+      "Default": "none",
+      "Description": "ECS public repository",
+      "Type": "String"
+    },
+    "ElbFrontOrBack": {
+      "Description": "Elastic loadbalancer (Frontend or Backend)",
+      "Type": "String"
+    },
+    "ElbHealthCheckIntervalSeconds": {
+      "Default": "30",
+      "Description": "Elastic loadbalancer Health Check interval in seconds",
+      "Type": "String"
+    },
+    "ElbHealthCheckTimeoutSeconds": {
+      "Default": "15",
+      "Description": "Elastic loadbalancer Health Checks timeout in seconds",
+      "Type": "String"
+    },
+    "ElbHealthyThresholdCount": {
+      "Default": "2",
+      "Description": "Elastic loadbalancer healthy threshold count",
+      "Type": "String"
+    },
+    "ElbPortListener": {
+      "Default": "none",
+      "Description": "ELB port listener, (If different from Container)",
+      "Type": "String"
+    },
+    "ElbUnhealthyThresholdCount": {
+      "Default": "5",
+      "Description": "Elastic loadbalancer unhealthy threshold count",
+      "Type": "String"
+    },
+    "LoadbalancerServiceRoleArn": {
+      "Description": "Elasticloadbalancer service role (ARN)",
+      "Type": "String"
+    },
+    "RedisDbTableId": {
+      "Default": "0",
+      "Description": "Redis database (customer table id)",
+      "Type": "String"
+    },
+    "RedisHost": {
+      "Default": "redis",
+      "Description": "Redis Host",
+      "Type": "String"
+    },
+    "RedisPort": {
+      "Default": "6379",
+      "Description": "Port for Redis",
+      "Type": "String"
+    },
+    "SensuApiHost": {
+      "Description": "Sensu API Host",
+      "Type": "String"
+    },
+    "SensuApiInputTopic": {
+      "Description": "SNS Topic ARN",
+      "Type": "String"
+    },
+    "SensuApiPort": {
+      "Description": "Sensu API port",
+      "Type": "String"
+    },
+    "SensuApiSqsQueue": {
+      "Description": "SQS Queue URL",
+      "Type": "String"
+    },
+    "SensuRegion": {
+      "AllowedValues": [
+        "eu-central-1",
+        "eu-west-1"
+      ],
+      "Default": "eu-central-1",
+      "Description": "Region of SQSSNS",
+      "Type": "String"
+    },
+    "SensuSqsMaxNumberOfMessages": {
+      "Default": "10",
+      "Description": "Maximum number of message for SNSSQS",
+      "Type": "String"
+    },
+    "SensuSqsWaitTimeSeconds": {
+      "Default": "2",
+      "Description": "Waiting time in second",
+      "Type": "String"
+    },
+    "TaskRoleArn": {
+      "Description": "Task Role ARN",
+      "Type": "String"
+    },
+    "VpcId": {
+      "Description": "VPC ID",
+      "Type": "AWS::EC2::VPC::Id"
+    }
+  },
+  "Resources": {
+    "ContainerAlarmScaleDown": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "ContainerScalingPolicyDown"
+          }
+        ],
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "CPU Utilization low on ",
+              {
+                "Ref": "ContainerName"
+              },
+              " container"
+            ]
+          ]
+        },
+        "ComparisonOperator": "LessThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "ServiceName",
+            "Value": {
+              "Ref": "ContainerName"
+            }
+          },
+          {
+            "Name": "ClusterName",
+            "Value": {
+              "Ref": "ContainerHost"
+            }
+          }
+        ],
+        "EvaluationPeriods": {
+          "Ref": "ContainerAlarmEvaluationPeriod"
+        },
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/ECS",
+        "Period": {
+          "Ref": "ContainerAlarmPeriod"
+        },
+        "Statistic": "Average",
+        "Threshold": {
+          "Ref": "ContainerAlarmTresholdDown"
+        }
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "ContainerAlarmScaleUp": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "ContainerScalingPolicyUp"
+          }
+        ],
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "CPU Utilization high on ",
+              {
+                "Ref": "ContainerName"
+              },
+              " container"
+            ]
+          ]
+        },
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "ServiceName",
+            "Value": {
+              "Ref": "ContainerName"
+            }
+          },
+          {
+            "Name": "ClusterName",
+            "Value": {
+              "Ref": "ContainerHost"
+            }
+          }
+        ],
+        "EvaluationPeriods": {
+          "Ref": "ContainerAlarmEvaluationPeriod"
+        },
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/ECS",
+        "Period": {
+          "Ref": "ContainerAlarmPeriod"
+        },
+        "Statistic": "Average",
+        "Threshold": {
+          "Ref": "ContainerAlarmTresholdUp"
+        }
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "ContainerAutoScalingTarget": {
+      "DependsOn": [
+        "ContainerService"
+      ],
+      "Properties": {
+        "MaxCapacity": {
+          "Ref": "ContainerMaxCapacity"
+        },
+        "MinCapacity": {
+          "Ref": "ContainerMinCapacity"
+        },
+        "ResourceId": {
+          "Fn::Join": [
+            "",
+            [
+              "service/",
+              {
+                "Ref": "ContainerHost"
+              },
+              "/",
+              {
+                "Ref": "ContainerName"
+              }
+            ]
+          ]
+        },
+        "RoleARN": {
+          "Ref": "ContainerAutoscalingRole"
+        },
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ServiceNamespace": "ecs"
+      },
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget"
+    },
+    "ContainerScalingPolicyDown": {
+      "Properties": {
+        "PolicyName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "ContainerName"
+              },
+              "-service-autoscaling-down"
+            ]
+          ]
+        },
+        "PolicyType": "StepScaling",
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ScalingTargetId": {
+          "Ref": "ContainerAutoScalingTarget"
+        },
+        "ServiceNamespace": "ecs",
+        "StepScalingPolicyConfiguration": {
+          "AdjustmentType": "PercentChangeInCapacity",
+          "Cooldown": {
+            "Ref": "ContainerCooldown"
+          },
+          "MetricAggregationType": "Average",
+          "StepAdjustments": [
+            {
+              "MetricIntervalUpperBound": {
+                "Ref": "ContainerMetricIntervalUpperBoundDown"
+              },
+              "MetricIntervalLowerBound": {
+                "Ref": "ContainerMetricIntervalLowerBoundDown"
+              },
+              "ScalingAdjustment": {
+                "Ref": "ContainerAdjustmentNumberLowDown"
+              }
+            },
+            {
+              "MetricIntervalUpperBound": {
+                "Ref": "ContainerMetricIntervalLowerBoundDown"
+              },
+              "ScalingAdjustment": {
+                "Ref": "ContainerAdjustmentNumberHighDown"
+              }
+            }
+          ]
+        }
+      },
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy"
+    },
+    "ContainerScalingPolicyUp": {
+      "Properties": {
+        "PolicyName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "ContainerName"
+              },
+              "-service-autoscaling-up"
+            ]
+          ]
+        },
+        "PolicyType": "StepScaling",
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ScalingTargetId": {
+          "Ref": "ContainerAutoScalingTarget"
+        },
+        "ServiceNamespace": "ecs",
+        "StepScalingPolicyConfiguration": {
+          "AdjustmentType": "PercentChangeInCapacity",
+          "Cooldown": {
+            "Ref": "ContainerCooldown"
+          },
+          "MetricAggregationType": "Average",
+          "StepAdjustments": [
+            {
+              "MetricIntervalUpperBound": {
+                "Ref": "ContainerMetricIntervalUpperBoundUp"
+              },
+              "MetricIntervalLowerBound": {
+                "Ref": "ContainerMetricIntervalLowerBoundUp"
+              },
+              "ScalingAdjustment": {
+                "Ref": "ContainerAdjustmentNumberLowUp"
+              }
+            },
+            {
+              "MetricIntervalLowerBound": {
+                "Ref": "ContainerMetricIntervalUpperBoundUp"
+              },
+              "ScalingAdjustment": {
+                "Ref": "ContainerAdjustmentNumberHighUp"
+              }
+            }
+          ]
+        }
+      },
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy"
+    },
+    "ContainerService": {
+      "DependsOn": [
+        "ContainerTargetGroupHttp",
+        "ElbListener"
+      ],
+      "Properties": {
+        "Cluster": {
+          "Ref": "ContainerHost"
+        },
+        "DesiredCount": {
+          "Ref": "ContainerDesiredCount"
+        },
+        "LoadBalancers": [
+          {
+            "TargetGroupArn": {
+              "Ref": "ContainerTargetGroupHttp"
+            },
+            "ContainerName": {
+              "Ref": "ContainerName"
+            },
+            "ContainerPort": {
+              "Ref": "ContainerPort"
+            }
+          }
+        ],
+        "PlacementStrategies": [
+          {
+            "Field": "attribute:ecs.availability-zone",
+            "Type": "spread"
+          },
+          {
+            "Field": "instanceId",
+            "Type": "spread"
+          }
+        ],
+        "Role": {
+          "Ref": "LoadbalancerServiceRoleArn"
+        },
+        "ServiceName": {
+          "Ref": "ContainerName"
+        },
+        "TaskDefinition": {
+          "Ref": "ContainerTaskdefinition"
+        }
+      },
+      "Type": "AWS::ECS::Service"
+    },
+    "ContainerTargetGroupHttp": {
+      "Properties": {
+        "HealthCheckIntervalSeconds": {
+          "Ref": "ElbHealthCheckIntervalSeconds"
+        },
+        "HealthCheckPath": "/health",
+        "HealthCheckProtocol": "HTTP",
+        "HealthCheckTimeoutSeconds": {
+          "Ref": "ElbHealthCheckTimeoutSeconds"
+        },
+        "HealthyThresholdCount": {
+          "Ref": "ElbHealthyThresholdCount"
+        },
+        "Matcher": {
+          "HttpCode": "204"
+        },
+        "Name": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "ContainerName"
+              },
+              "-",
+              {
+                "Ref": "ContainerPort"
+              }
+            ]
+          ]
+        },
+        "Port": {
+          "Ref": "ContainerPort"
+        },
+        "Protocol": "HTTP",
+        "UnhealthyThresholdCount": {
+          "Ref": "ElbUnhealthyThresholdCount"
+        },
+        "VpcId": {
+          "Ref": "VpcId"
+        }
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
+    },
+    "ContainerTaskdefinition": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Name": {
+              "Ref": "ContainerName"
+            },
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "ContainerRepository"
+                  },
+                  "sensu:latest"
+                ]
+              ]
+            },
+            "Cpu": {
+              "Ref": "ContainerCpu"
+            },
+            "Memory": {
+              "Ref": "ContainerMemory"
+            },
+            "MemoryReservation": {
+              "Ref": "ContainerMemoryReservation"
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-group": "ECS-Docker",
+                "awslogs-stream-prefix": {
+                  "Ref": "ContainerHost"
+                }
+              }
+            },
+            "Command": [
+              "api"
+            ],
+            "Environment": [
+              {
+                "Name": "API_HOST",
+                "Value": {
+                  "Ref": "SensuApiHost"
+                }
+              },
+              {
+                "Name": "API_PORT",
+                "Value": {
+                  "Ref": "SensuApiPort"
+                }
+              },
+              {
+                "Name": "TRANSPORT_NAME",
+                "Value": "snssqs"
+              },
+              {
+                "Name": "SNSSQS_MAX_NUMBER_OF_MESSAGES",
+                "Value": {
+                  "Ref": "SensuSqsMaxNumberOfMessages"
+                }
+              },
+              {
+                "Name": "SNSSQS_WAIT_TIME_SECONDS",
+                "Value": {
+                  "Ref": "SensuSqsWaitTimeSeconds"
+                }
+              },
+              {
+                "Name": "SNSSQS_REGION",
+                "Value": {
+                  "Ref": "SensuRegion"
+                }
+              },
+              {
+                "Name": "SNSSQS_CONSUMING_SQS_QUEUE_URL",
+                "Value": {
+                  "Ref": "SensuApiSqsQueue"
+                }
+              },
+              {
+                "Name": "SNSSQS_PUBLISHING_SNS_TOPIC_ARN",
+                "Value": {
+                  "Ref": "SensuApiInputTopic"
+                }
+              },
+              {
+                "Name": "REDIS_HOST",
+                "Value": {
+                  "Ref": "RedisHost"
+                }
+              },
+              {
+                "Name": "REDIS_PORT",
+                "Value": {
+                  "Ref": "RedisPort"
+                }
+              },
+              {
+                "Name": "REDIS_DB",
+                "Value": {
+                  "Ref": "RedisDbTableId"
+                }
+              }
+            ],
+            "PortMappings": [
+              {
+                "ContainerPort": {
+                  "Ref": "ContainerPort"
+                }
+              }
+            ]
+          }
+        ],
+        "Family": {
+          "Ref": "ContainerName"
+        },
+        "TaskRoleArn": {
+          "Ref": "TaskRoleArn"
+        }
+      },
+      "Type": "AWS::ECS::TaskDefinition"
+    },
+    "ElbListener": {
+      "DependsOn": [
+        "ContainerTargetGroupHttp"
+      ],
+      "Properties": {
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": {
+              "Ref": "ContainerTargetGroupHttp"
+            }
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "ElbFrontOrBack"
+        },
+        "Port": {
+          "Ref": "ElbPortListener"
+        },
+        "Protocol": "HTTP"
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::Listener"
+    }
+  }
+}

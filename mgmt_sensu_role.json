@@ -1,0 +1,56 @@
+{
+  "Description": "AWS CloudFormation Template for ECS Sensu Policy and Role",
+  "Outputs": {
+    "TaskRoleArn": {
+      "Description": "ECS Sensu Task Role ARN",
+      "Value": {
+        "Ref": "EcsSensuTaskRole"
+      }
+    }
+  },
+  "Resources": {
+    "EcsSensuTaskRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ecs-tasks.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Policies": [
+          {
+            "PolicyName": "sensu-ecs-tasks-policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Resource": "*",
+                  "Action": [
+                    "sns:Publish",
+                    "sqs:ReceiveMessage",
+                    "sqs:DeleteMessage",
+                    "sqs:ChangeMessageVisibility",
+                    "sqs:GetQueueAttributes",
+                    "sqs:GetQueueUrl"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    }
+  }
+}

@@ -1,0 +1,304 @@
+{
+  "Description": "AWS CloudFormation Template for ECS Sensu Server",
+  "Outputs": {
+    "ContainerName": {
+      "Description": "Container Name",
+      "Value": {
+        "Ref": "ContainerName"
+      }
+    },
+    "ContainerServiceArn": {
+      "Description": "Container Service ARN",
+      "Value": {
+        "Ref": "ContainerService"
+      }
+    },
+    "ContainerTaskdefinitionArn": {
+      "Description": "Container TaskDefinition ARN",
+      "Value": {
+        "Ref": "ContainerTaskdefinition"
+      }
+    }
+  },
+  "Parameters": {
+    "ArgosApiKey": {
+      "Description": "argos API key",
+      "Type": "String"
+    },
+    "ArgosLive": {
+      "Default": "false",
+      "Description": "false | true for argos setting",
+      "Type": "String"
+    },
+    "ArgosSimulate": {
+      "Default": "true",
+      "Description": "false | true for argos setting",
+      "Type": "String"
+    },
+    "ArgosUrl": {
+      "Description": "argos url",
+      "Type": "String"
+    },
+    "ContainerCpu": {
+      "Default": "256",
+      "Description": "ECS Service CPU usage",
+      "Type": "String"
+    },
+    "ContainerDesiredCount": {
+      "Default": "1",
+      "Description": "The scalable dimension that´s associated with the scalable target.",
+      "Type": "String"
+    },
+    "ContainerHost": {
+      "Default": "default",
+      "Description": "Container Host",
+      "Type": "String"
+    },
+    "ContainerMemory": {
+      "Default": "256",
+      "Description": "ECS Service Memory usage",
+      "Type": "String"
+    },
+    "ContainerMemoryReservation": {
+      "Default": "256",
+      "Description": "ECS Service Memory reservation usage",
+      "Type": "String"
+    },
+    "ContainerName": {
+      "Description": "Name of the ECS Container Service",
+      "Type": "String"
+    },
+    "ContainerPort": {
+      "Description": "ECS Container Port",
+      "Type": "String"
+    },
+    "ContainerRepository": {
+      "Default": "none",
+      "Description": "ECS public repository",
+      "Type": "String"
+    },
+    "RedisDbTableId": {
+      "Default": "0",
+      "Description": "Redis database (customer table id)",
+      "Type": "String"
+    },
+    "RedisHost": {
+      "Default": "redis",
+      "Description": "Redis Host",
+      "Type": "String"
+    },
+    "RedisPort": {
+      "Default": "6379",
+      "Description": "Port for Redis",
+      "Type": "String"
+    },
+    "SensuApiHost": {
+      "Description": "Sensu API host",
+      "Type": "String"
+    },
+    "SensuApiInputTopic": {
+      "Description": "SNS Topic ARN",
+      "Type": "String"
+    },
+    "SensuApiPort": {
+      "Description": "Sensu API port",
+      "Type": "String"
+    },
+    "SensuApiSqsQueue": {
+      "Description": "SQS Queue URL",
+      "Type": "String"
+    },
+    "SensuRegion": {
+      "AllowedValues": [
+        "eu-central-1",
+        "eu-west-1"
+      ],
+      "Default": "eu-central-1",
+      "Description": "Region of SQSSNS",
+      "Type": "String"
+    },
+    "SensuSqsMaxNumberOfMessages": {
+      "Default": "10",
+      "Description": "Maximum number of message for SNSSQS",
+      "Type": "String"
+    },
+    "SensuSqsWaitTimeSeconds": {
+      "Default": "2",
+      "Description": "Waiting time in second",
+      "Type": "String"
+    },
+    "TaskRoleArn": {
+      "Description": "Task Role ARN",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "ContainerService": {
+      "Properties": {
+        "Cluster": {
+          "Ref": "ContainerHost"
+        },
+        "DesiredCount": {
+          "Ref": "ContainerDesiredCount"
+        },
+        "ServiceName": {
+          "Ref": "ContainerName"
+        },
+        "TaskDefinition": {
+          "Ref": "ContainerTaskdefinition"
+        }
+      },
+      "Type": "AWS::ECS::Service"
+    },
+    "ContainerTaskdefinition": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Name": {
+              "Ref": "ContainerName"
+            },
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "ContainerRepository"
+                  },
+                  "sensu:latest"
+                ]
+              ]
+            },
+            "Cpu": {
+              "Ref": "ContainerCpu"
+            },
+            "Memory": {
+              "Ref": "ContainerMemory"
+            },
+            "MemoryReservation": {
+              "Ref": "ContainerMemoryReservation"
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-group": "ECS-Docker",
+                "awslogs-stream-prefix": {
+                  "Ref": "ContainerHost"
+                }
+              }
+            },
+            "Command": [
+              "server"
+            ],
+            "Environment": [
+              {
+                "Name": "API_HOST",
+                "Value": {
+                  "Ref": "SensuApiHost"
+                }
+              },
+              {
+                "Name": "API_PORT",
+                "Value": {
+                  "Ref": "SensuApiPort"
+                }
+              },
+              {
+                "Name": "TRANSPORT_NAME",
+                "Value": "snssqs"
+              },
+              {
+                "Name": "SNSSQS_MAX_NUMBER_OF_MESSAGES",
+                "Value": {
+                  "Ref": "SensuSqsMaxNumberOfMessages"
+                }
+              },
+              {
+                "Name": "SNSSQS_WAIT_TIME_SECONDS",
+                "Value": {
+                  "Ref": "SensuSqsWaitTimeSeconds"
+                }
+              },
+              {
+                "Name": "SNSSQS_REGION",
+                "Value": {
+                  "Ref": "SensuRegion"
+                }
+              },
+              {
+                "Name": "SNSSQS_CONSUMING_SQS_QUEUE_URL",
+                "Value": {
+                  "Ref": "SensuApiSqsQueue"
+                }
+              },
+              {
+                "Name": "SNSSQS_PUBLISHING_SNS_TOPIC_ARN",
+                "Value": {
+                  "Ref": "SensuApiInputTopic"
+                }
+              },
+              {
+                "Name": "REDIS_HOST",
+                "Value": {
+                  "Ref": "RedisHost"
+                }
+              },
+              {
+                "Name": "REDIS_PORT",
+                "Value": {
+                  "Ref": "RedisPort"
+                }
+              },
+              {
+                "Name": "REDIS_DB",
+                "Value": {
+                  "Ref": "RedisDbTableId"
+                }
+              },
+              {
+                "Name": "ARGOS_LIVE",
+                "Value": {
+                  "Ref": "ArgosLive"
+                }
+              },
+              {
+                "Name": "ARGOS_SIMULATE",
+                "Value": {
+                  "Ref": "ArgosSimulate"
+                }
+              },
+              {
+                "Name": "ARGOS_URL",
+                "Value": {
+                  "Ref": "ArgosUrl"
+                }
+              },
+              {
+                "Name": "ARGOS_API_KEY",
+                "Value": {
+                  "Ref": "ArgosApiKey"
+                }
+              }
+            ],
+            "PortMappings": [
+              {
+                "ContainerPort": {
+                  "Ref": "ContainerPort"
+                }
+              }
+            ]
+          }
+        ],
+        "Family": {
+          "Ref": "ContainerName"
+        },
+        "TaskRoleArn": {
+          "Ref": "TaskRoleArn"
+        }
+      },
+      "Type": "AWS::ECS::TaskDefinition"
+    }
+  }
+}

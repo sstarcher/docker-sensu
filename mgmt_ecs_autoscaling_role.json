@@ -1,0 +1,61 @@
+{
+  "Description": "AWS CloudFormation Template for ECS Sensu Policy and Role",
+  "Outputs": {
+    "ContainerAutoscalingRole": {
+      "Description": "ECS Autoscaling Role ARN",
+      "Value": {
+        "Fn::GetAtt": [
+          "ContainerAutoscalingRole",
+          "Arn"
+        ]
+      }
+    }
+  },
+  "Resources": {
+    "ContainerAutoscalingRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "allow",
+              "Principal": {
+                "Service": [
+                  "application-autoscaling.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "ecs-autoscaling-service",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Resource": [
+                    "*"
+                  ],
+                  "Effect": "Allow",
+                  "Action": [
+                    "application-autoscaling:*",
+                    "cloudwatch:DescribeAlarms",
+                    "cloudwatch:PutMetricAlarm",
+                    "ecs:DescribeServices",
+                    "ecs:UpdateService"
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "RoleName": "ecs-autoscaling-role"
+      },
+      "Type": "AWS::IAM::Role"
+    }
+  }
+}
