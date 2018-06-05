@@ -1,47 +1,5 @@
 {
-  "Conditions": {
-    "CacheTypeMemchache": {
-      "Fn::Equals": [
-        {
-          "Ref": "SsmCacheType"
-        },
-        "memcache"
-      ]
-    },
-    "CacheTypeRedis": {
-      "Fn::Equals": [
-        {
-          "Ref": "SsmCacheType"
-        },
-        "redis"
-      ]
-    },
-    "DbTypeMysql": {
-      "Fn::Equals": [
-        {
-          "Ref": "SsmDbType"
-        },
-        "mysql"
-      ]
-    },
-    "DbTypePostgres": {
-      "Fn::Equals": [
-        {
-          "Ref": "SsmDbType"
-        },
-        "postgres"
-      ]
-    },
-    "EfsMountsTrue": {
-      "Fn::Equals": [
-        {
-          "Ref": "ContainerEfsEnabled"
-        },
-        true
-      ]
-    }
-  },
-  "Description": "AWS CloudFormation Template for LAMP ECS Service/Task",
+  "Description": "AWS CloudFormation Template for ECS Sensu API",
   "Outputs": {
     "ContainerName": {
       "Description": "Container Name",
@@ -49,143 +7,946 @@
         "Ref": "ContainerName"
       }
     },
-    "ServiceArn": {
-      "Description": "Service ARN",
+    "ContainerServiceArn": {
+      "Description": "Container Service ARN",
       "Value": {
         "Ref": "ContainerService"
       }
     },
-    "TaskdefinitionArn": {
-      "Description": "TaskDefinition ARN",
+    "ContainerTaskdefinitionArn": {
+      "Description": "Container TaskDefinition ARN",
       "Value": {
         "Ref": "ContainerTaskdefinition"
       }
     }
   },
   "Parameters": {
+    "ApplicationName": {
+      "Description": "Name of the ECS Container Service",
+      "Type": "String"
+    },
+    "ContainerAdjustmentNumberHighDown": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_adjustment_number_high_down"
+          ]
+        ]
+      },
+      "Description": "The amount by which to scale.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAdjustmentNumberHighUp": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_adjustment_number_high_up"
+          ]
+        ]
+      },
+      "Description": "The amount by which to scale.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAdjustmentNumberLowDown": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_adjustment_number_low_down"
+          ]
+        ]
+      },
+      "Description": "The amount by which to scale.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAdjustmentNumberLowUp": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_adjustment_number_low_up"
+          ]
+        ]
+      },
+      "Description": "The amount by which to scale.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAlarmEvaluationPeriod": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_alarm_evaluation_period"
+          ]
+        ]
+      },
+      "Description": "The number of periods over which data is compared to the specified threshold.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAlarmPeriod": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_alarm_period"
+          ]
+        ]
+      },
+      "Description": "The time over which the specified statistic is applied.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAlarmTresholdDown": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_alarm_treshold_down"
+          ]
+        ]
+      },
+      "Description": "The value against which the specified statistic is compared.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAlarmTresholdUp": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_alarm_treshold_up"
+          ]
+        ]
+      },
+      "Description": "The value against which the specified statistic is compared.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAutoscalingRole": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_autoscaling_role"
+          ]
+        ]
+      },
+      "Description": "Container autoscaling role (ARN)",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerCooldown": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_cooldown"
+          ]
+        ]
+      },
+      "Description": "The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
     "ContainerCpu": {
-      "Default": "256",
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_cpu"
+          ]
+        ]
+      },
       "Description": "ECS Service CPU usage",
-      "Type": "Number"
+      "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerDesiredCount": {
-      "Default": "1",
-      "Description": "Defines the count of desired containers",
-      "Type": "Number"
-    },
-    "ContainerEfsEnabled": {
-      "Default": "SSM_BASE_PATH/EFS/enabled",
-      "Description": "enable EFS mounts",
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_desired_count"
+          ]
+        ]
+      },
+      "Description": "The scalable dimension that´s associated with the scalable target.",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "ContainerEfsPath": {
-      "Default": "/share",
-      "Description": "The path on the container that you want to mount",
-      "Type": "String"
+    "ContainerHost": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_host"
+          ]
+        ]
+      },
+      "Description": "Container Host",
+      "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "ContainerEfsReadOnly": {
-      "AllowedValues": [
-        "true",
-        "false"
-      ],
-      "Default": "false",
-      "Description": "Indicates whether the container can write to the volume.",
-      "Type": "String"
-    },
-    "ContainerEfsVolume": {
-      "Default": "files",
-      "Description": "The name of the volume to mount.",
-      "Type": "String"
-    },
-    "ContainerImage": {
-      "Description": "Docker container image",
-      "Type": "String"
+    "ContainerMaxCapacity": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_max_capacity"
+          ]
+        ]
+      },
+      "Description": "The maximum value that Application Auto Scaling can use to scale a target during a scaling activity.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerMemory": {
-      "Default": "256",
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_memory"
+          ]
+        ]
+      },
       "Description": "ECS Service Memory usage",
-      "Type": "Number"
+      "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerMemoryReservation": {
-      "Default": "256",
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_memory_reservation"
+          ]
+        ]
+      },
       "Description": "ECS Service Memory reservation usage",
-      "Type": "Number"
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerMetricIntervalLowerBoundDown": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_metric_interval_lower_bound_down"
+          ]
+        ]
+      },
+      "Description": "The lower bound of the breach size",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerMetricIntervalLowerBoundUp": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_metric_interval_lower_bound_up"
+          ]
+        ]
+      },
+      "Description": "The lower bound of the breach size",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerMetricIntervalUpperBoundDown": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_metric_interval_upper_bound_down"
+          ]
+        ]
+      },
+      "Description": "The upper bound of the breach size",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerMetricIntervalUpperBoundUp": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_metric_interval_upper_bound_up"
+          ]
+        ]
+      },
+      "Description": "The upper bound of the breach size",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerMinCapacity": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_min_capacity"
+          ]
+        ]
+      },
+      "Description": "The minimum value that Application Auto Scaling can use to scale a target during a scaling activity.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerName": {
-      "Description": "Name of the ECS Task/Service",
-      "Type": "String"
-    },
-    "EcsClusterName": {
-      "Default": "SSM_BASE_PATH/ECS/cluster_name",
-      "Description": "Defines the ecs clustername",
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_name"
+          ]
+        ]
+      },
+      "Description": "Name of the ECS Container Service",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "EcsContainerPort": {
-      "Default": "SSM_BASE_PATH/ECS/container_port",
-      "Description": "The port of the ecs container",
+    "ContainerPort": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_port"
+          ]
+        ]
+      },
+      "Description": "ECS Container Port",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "EcsTargetGroupArn": {
-      "Default": "SSM_BASE_PATH/ECS/target_group_arn",
-      "Description": "The target group arn of the ELB",
+    "ContainerRepository": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/container_repository"
+          ]
+        ]
+      },
+      "Description": "ECS public repository",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "EfsHostPath": {
-      "Default": "SSM_BASE_PATH/EFS/host_path",
-      "Description": "The path on the host that you want to mount",
+    "ElbFrontOrBack": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/elb_front_or_back"
+          ]
+        ]
+      },
+      "Description": "Elastic loadbalancer (Frontend or Backend)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SsmCacheHost": {
-      "Default": "SSM_BASE_PATH/Cache/host",
-      "Description": "cache host",
+    "ElbHealthCheckIntervalSeconds": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/elb_health_check_interval_seconds"
+          ]
+        ]
+      },
+      "Description": "Elastic loadbalancer Health Check interval in seconds",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SsmCachePort": {
-      "Default": "SSM_BASE_PATH/Cache/port",
-      "Description": "cache port",
+    "ElbHealthCheckTimeoutSeconds": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/elb_health_check_timeout_seconds"
+          ]
+        ]
+      },
+      "Description": "Elastic loadbalancer Health Checks timeout in seconds",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SsmCacheType": {
-      "Default": "SSM_BASE_PATH/Cache/type",
-      "Description": "cache type",
+    "ElbHealthyThresholdCount": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/elb_healthy_threshold_count"
+          ]
+        ]
+      },
+      "Description": "Elastic loadbalancer healthy threshold count",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SsmDbDatabase": {
-      "Default": "SSM_BASE_PATH/DB/database",
-      "Description": "db database name",
+    "ElbPortListener": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/elb_port_listener"
+          ]
+        ]
+      },
+      "Description": "ELB port listener, (If different from Container)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SsmDbHost": {
-      "Default": "SSM_BASE_PATH/DB/host",
-      "Description": "db host",
+    "ElbUnhealthyThresholdCount": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/elb_unhealthy_threshold_count"
+          ]
+        ]
+      },
+      "Description": "Elastic loadbalancer unhealthy threshold count",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SsmDbPassword": {
-      "Default": "SSM_BASE_PATH/DB/password",
-      "Description": "db password",
+    "LoadbalancerServiceRoleArn": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/loadbalancer_service_role_arn"
+          ]
+        ]
+      },
+      "Description": "Elasticloadbalancer service role (ARN)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SsmDbPort": {
-      "Default": "SSM_BASE_PATH/DB/port",
-      "Description": "db port",
+    "RedisDbTableId": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/redis_db_table_id"
+          ]
+        ]
+      },
+      "Description": "Redis database (customer table id)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SsmDbType": {
-      "Default": "SSM_BASE_PATH/DB/type",
-      "Description": "db host",
+    "RedisHost": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/redis_host"
+          ]
+        ]
+      },
+      "Description": "Redis Host",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SsmDbUser": {
-      "Default": "SSM_BASE_PATH/DB/username",
-      "Description": "db username",
+    "RedisPort": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/redis_port"
+          ]
+        ]
+      },
+      "Description": "Port for Redis",
       "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuApiHost": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/sensu_api_host"
+          ]
+        ]
+      },
+      "Description": "Sensu API Host",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuApiInputTopic": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/sensu_api_input_topic"
+          ]
+        ]
+      },
+      "Description": "SNS Topic ARN",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuApiPort": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/sensu_api_port"
+          ]
+        ]
+      },
+      "Description": "Sensu API port",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuApiSqsQueue": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/sensu_api_sqs_queue"
+          ]
+        ]
+      },
+      "Description": "SQS Queue URL",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuRegion": {
+      "AllowedValues": [
+        "eu-central-1",
+        "eu-west-1"
+      ],
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/sensu_region"
+          ]
+        ]
+      },
+      "Description": "Region of SQSSNS",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuSqsMaxNumberOfMessages": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/sensu_sqs_max_number_of_messages"
+          ]
+        ]
+      },
+      "Description": "Maximum number of message for SNSSQS",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuSqsWaitTimeSeconds": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/sensu_sqs_wait_time_seconds"
+          ]
+        ]
+      },
+      "Description": "Waiting time in second",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "TaskRoleArn": {
+      "Default": {
+        "Fn::Join": [
+          "",
+          [
+            "SSM_BASE_PATH/",
+            {
+              "Ref": "ApplicationName"
+            },
+            "/ECS/task_role_arn"
+          ]
+        ]
+      },
+      "Description": "Task Role ARN",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "VpcId": {
+      "Description": "VPC ID",
+      "Type": "AWS::EC2::VPC::Id"
     }
   },
   "Resources": {
+    "ContainerAlarmScaleDown": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "ContainerScalingPolicyDown"
+          }
+        ],
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "CPU Utilization low on ",
+              {
+                "Ref": "ContainerName"
+              },
+              " container"
+            ]
+          ]
+        },
+        "ComparisonOperator": "LessThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "ServiceName",
+            "Value": {
+              "Ref": "ContainerName"
+            }
+          },
+          {
+            "Name": "ClusterName",
+            "Value": {
+              "Ref": "ContainerHost"
+            }
+          }
+        ],
+        "EvaluationPeriods": {
+          "Ref": "ContainerAlarmEvaluationPeriod"
+        },
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/ECS",
+        "Period": {
+          "Ref": "ContainerAlarmPeriod"
+        },
+        "Statistic": "Average",
+        "Threshold": {
+          "Ref": "ContainerAlarmTresholdDown"
+        }
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "ContainerAlarmScaleUp": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "ContainerScalingPolicyUp"
+          }
+        ],
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "CPU Utilization high on ",
+              {
+                "Ref": "ContainerName"
+              },
+              " container"
+            ]
+          ]
+        },
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "ServiceName",
+            "Value": {
+              "Ref": "ContainerName"
+            }
+          },
+          {
+            "Name": "ClusterName",
+            "Value": {
+              "Ref": "ContainerHost"
+            }
+          }
+        ],
+        "EvaluationPeriods": {
+          "Ref": "ContainerAlarmEvaluationPeriod"
+        },
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/ECS",
+        "Period": {
+          "Ref": "ContainerAlarmPeriod"
+        },
+        "Statistic": "Average",
+        "Threshold": {
+          "Ref": "ContainerAlarmTresholdUp"
+        }
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "ContainerAutoScalingTarget": {
+      "DependsOn": [
+        "ContainerService"
+      ],
+      "Properties": {
+        "MaxCapacity": {
+          "Ref": "ContainerMaxCapacity"
+        },
+        "MinCapacity": {
+          "Ref": "ContainerMinCapacity"
+        },
+        "ResourceId": {
+          "Fn::Join": [
+            "",
+            [
+              "service/",
+              {
+                "Ref": "ContainerHost"
+              },
+              "/",
+              {
+                "Ref": "ContainerName"
+              }
+            ]
+          ]
+        },
+        "RoleARN": {
+          "Ref": "ContainerAutoscalingRole"
+        },
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ServiceNamespace": "ecs"
+      },
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget"
+    },
+    "ContainerScalingPolicyDown": {
+      "Properties": {
+        "PolicyName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "ContainerName"
+              },
+              "-service-autoscaling-down"
+            ]
+          ]
+        },
+        "PolicyType": "StepScaling",
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ScalingTargetId": {
+          "Ref": "ContainerAutoScalingTarget"
+        },
+        "ServiceNamespace": "ecs",
+        "StepScalingPolicyConfiguration": {
+          "AdjustmentType": "PercentChangeInCapacity",
+          "Cooldown": {
+            "Ref": "ContainerCooldown"
+          },
+          "MetricAggregationType": "Average",
+          "StepAdjustments": [
+            {
+              "MetricIntervalUpperBound": {
+                "Ref": "ContainerMetricIntervalUpperBoundDown"
+              },
+              "MetricIntervalLowerBound": {
+                "Ref": "ContainerMetricIntervalLowerBoundDown"
+              },
+              "ScalingAdjustment": {
+                "Ref": "ContainerAdjustmentNumberLowDown"
+              }
+            },
+            {
+              "MetricIntervalUpperBound": {
+                "Ref": "ContainerMetricIntervalLowerBoundDown"
+              },
+              "ScalingAdjustment": {
+                "Ref": "ContainerAdjustmentNumberHighDown"
+              }
+            }
+          ]
+        }
+      },
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy"
+    },
+    "ContainerScalingPolicyUp": {
+      "Properties": {
+        "PolicyName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "ContainerName"
+              },
+              "-service-autoscaling-up"
+            ]
+          ]
+        },
+        "PolicyType": "StepScaling",
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ScalingTargetId": {
+          "Ref": "ContainerAutoScalingTarget"
+        },
+        "ServiceNamespace": "ecs",
+        "StepScalingPolicyConfiguration": {
+          "AdjustmentType": "PercentChangeInCapacity",
+          "Cooldown": {
+            "Ref": "ContainerCooldown"
+          },
+          "MetricAggregationType": "Average",
+          "StepAdjustments": [
+            {
+              "MetricIntervalUpperBound": {
+                "Ref": "ContainerMetricIntervalUpperBoundUp"
+              },
+              "MetricIntervalLowerBound": {
+                "Ref": "ContainerMetricIntervalLowerBoundUp"
+              },
+              "ScalingAdjustment": {
+                "Ref": "ContainerAdjustmentNumberLowUp"
+              }
+            },
+            {
+              "MetricIntervalLowerBound": {
+                "Ref": "ContainerMetricIntervalUpperBoundUp"
+              },
+              "ScalingAdjustment": {
+                "Ref": "ContainerAdjustmentNumberHighUp"
+              }
+            }
+          ]
+        }
+      },
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy"
+    },
     "ContainerService": {
+      "DependsOn": [
+        "ContainerTargetGroupHttp",
+        "ElbListener"
+      ],
       "Properties": {
         "Cluster": {
-          "Ref": "EcsClusterName"
+          "Ref": "ContainerHost"
         },
         "DesiredCount": {
           "Ref": "ContainerDesiredCount"
@@ -193,13 +954,13 @@
         "LoadBalancers": [
           {
             "TargetGroupArn": {
-              "Ref": "EcsTargetGroupArn"
+              "Ref": "ContainerTargetGroupHttp"
             },
             "ContainerName": {
               "Ref": "ContainerName"
             },
             "ContainerPort": {
-              "Ref": "EcsContainerPort"
+              "Ref": "ContainerPort"
             }
           }
         ],
@@ -213,11 +974,60 @@
             "Type": "spread"
           }
         ],
+        "Role": {
+          "Ref": "LoadbalancerServiceRoleArn"
+        },
+        "ServiceName": {
+          "Ref": "ContainerName"
+        },
         "TaskDefinition": {
           "Ref": "ContainerTaskdefinition"
         }
       },
       "Type": "AWS::ECS::Service"
+    },
+    "ContainerTargetGroupHttp": {
+      "Properties": {
+        "HealthCheckIntervalSeconds": {
+          "Ref": "ElbHealthCheckIntervalSeconds"
+        },
+        "HealthCheckPath": "/health",
+        "HealthCheckProtocol": "HTTP",
+        "HealthCheckTimeoutSeconds": {
+          "Ref": "ElbHealthCheckTimeoutSeconds"
+        },
+        "HealthyThresholdCount": {
+          "Ref": "ElbHealthyThresholdCount"
+        },
+        "Matcher": {
+          "HttpCode": "204"
+        },
+        "Name": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "ContainerName"
+              },
+              "-",
+              {
+                "Ref": "ContainerPort"
+              }
+            ]
+          ]
+        },
+        "Port": {
+          "Ref": "ContainerPort"
+        },
+        "Protocol": "HTTP",
+        "UnhealthyThresholdCount": {
+          "Ref": "ElbUnhealthyThresholdCount"
+        },
+        "VpcId": {
+          "Ref": "VpcId"
+        }
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
     },
     "ContainerTaskdefinition": {
       "Properties": {
@@ -227,7 +1037,15 @@
               "Ref": "ContainerName"
             },
             "Image": {
-              "Ref": "ContainerImage"
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "ContainerRepository"
+                  },
+                  "sensu:latest"
+                ]
+              ]
             },
             "Cpu": {
               "Ref": "ContainerCpu"
@@ -246,245 +1064,83 @@
                 },
                 "awslogs-group": "ECS-Docker",
                 "awslogs-stream-prefix": {
-                  "Ref": "EcsClusterName"
+                  "Ref": "ContainerHost"
                 }
               }
             },
-            "PortMappings": [
-              {
-                "ContainerPort": {
-                  "Ref": "EcsContainerPort"
-                }
-              }
-            ],
-            "MountPoints": [
-              {
-                "Fn::If": [
-                  "EfsMountsTrue",
-                  {
-                    "ReadOnly": {
-                      "Ref": "ContainerEfsReadOnly"
-                    },
-                    "ContainerPath": {
-                      "Ref": "ContainerEfsPath"
-                    },
-                    "SourceVolume": {
-                      "Ref": "ContainerEfsVolume"
-                    }
-                  },
-                  {
-                    "Ref": "AWS::NoValue"
-                  }
-                ]
-              }
+            "Command": [
+              "api"
             ],
             "Environment": [
               {
-                "Name": "MYSQL_HOST",
+                "Name": "API_HOST",
                 "Value": {
-                  "Fn::If": [
-                    "DbTypeMysql",
-                    {
-                      "Ref": "SsmDbHost"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
+                  "Ref": "SensuApiHost"
                 }
               },
               {
-                "Name": "MYSQL_PORT",
+                "Name": "API_PORT",
                 "Value": {
-                  "Fn::If": [
-                    "DbTypeMysql",
-                    {
-                      "Ref": "SsmDbPort"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
+                  "Ref": "SensuApiPort"
                 }
               },
               {
-                "Name": "MYSQL_DATABASE",
+                "Name": "TRANSPORT_NAME",
+                "Value": "snssqs"
+              },
+              {
+                "Name": "SNSSQS_MAX_NUMBER_OF_MESSAGES",
                 "Value": {
-                  "Fn::If": [
-                    "DbTypeMysql",
-                    {
-                      "Ref": "SsmDbDatabase"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
+                  "Ref": "SensuSqsMaxNumberOfMessages"
                 }
               },
               {
-                "Name": "MYSQL_USER",
+                "Name": "SNSSQS_WAIT_TIME_SECONDS",
                 "Value": {
-                  "Fn::If": [
-                    "DbTypeMysql",
-                    {
-                      "Ref": "SsmDbUser"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
+                  "Ref": "SensuSqsWaitTimeSeconds"
                 }
               },
               {
-                "Name": "MYSQL_PASSWORD",
+                "Name": "SNSSQS_REGION",
                 "Value": {
-                  "Fn::If": [
-                    "DbTypeMysql",
-                    {
-                      "Ref": "SsmDbPassword"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
+                  "Ref": "SensuRegion"
                 }
               },
               {
-                "Name": "POSTGRES_HOST",
+                "Name": "SNSSQS_CONSUMING_SQS_QUEUE_URL",
                 "Value": {
-                  "Fn::If": [
-                    "DbTypePostgres",
-                    {
-                      "Ref": "SsmDbHost"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
+                  "Ref": "SensuApiSqsQueue"
                 }
               },
               {
-                "Name": "POSTGRESL_PORT",
+                "Name": "SNSSQS_PUBLISHING_SNS_TOPIC_ARN",
                 "Value": {
-                  "Fn::If": [
-                    "DbTypePostgres",
-                    {
-                      "Ref": "SsmDbPort"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
-                }
-              },
-              {
-                "Name": "POSTGRES_DATABASE",
-                "Value": {
-                  "Fn::If": [
-                    "DbTypePostgres",
-                    {
-                      "Ref": "SsmDbDatabase"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
-                }
-              },
-              {
-                "Name": "POSTGRES_USER",
-                "Value": {
-                  "Fn::If": [
-                    "DbTypePostgres",
-                    {
-                      "Ref": "SsmDbUser"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
-                }
-              },
-              {
-                "Name": "POSTGRES_PASSWORD",
-                "Value": {
-                  "Fn::If": [
-                    "DbTypePostgres",
-                    {
-                      "Ref": "SsmDbPassword"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
+                  "Ref": "SensuApiInputTopic"
                 }
               },
               {
                 "Name": "REDIS_HOST",
                 "Value": {
-                  "Fn::If": [
-                    "CacheTypeRedis",
-                    {
-                      "Ref": "SsmCacheHost"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
+                  "Ref": "RedisHost"
                 }
               },
               {
                 "Name": "REDIS_PORT",
                 "Value": {
-                  "Fn::If": [
-                    "CacheTypeRedis",
-                    {
-                      "Ref": "SsmCachePort"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
+                  "Ref": "RedisPort"
                 }
               },
               {
                 "Name": "REDIS_DB",
                 "Value": {
-                  "Fn::If": [
-                    "CacheTypeRedis",
-                    "0",
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
+                  "Ref": "RedisDbTableId"
                 }
-              },
+              }
+            ],
+            "PortMappings": [
               {
-                "Name": "MEMCACHE_HOST",
-                "Value": {
-                  "Fn::If": [
-                    "CacheTypeMemchache",
-                    {
-                      "Ref": "SsmCacheHost"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
-                }
-              },
-              {
-                "Name": "MEMCACHE_PORT",
-                "Value": {
-                  "Fn::If": [
-                    "CacheTypeMemchache",
-                    {
-                      "Ref": "SsmCachePort"
-                    },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
+                "ContainerPort": {
+                  "Ref": "ContainerPort"
                 }
               }
             ]
@@ -493,28 +1149,34 @@
         "Family": {
           "Ref": "ContainerName"
         },
-        "Volumes": [
-          {
-            "Fn::If": [
-              "EfsMountsTrue",
-              {
-                "Name": {
-                  "Ref": "ContainerEfsVolume"
-                },
-                "Host": {
-                  "SourcePath": {
-                    "Ref": "EfsHostPath"
-                  }
-                }
-              },
-              {
-                "Ref": "AWS::NoValue"
-              }
-            ]
-          }
-        ]
+        "TaskRoleArn": {
+          "Ref": "TaskRoleArn"
+        }
       },
       "Type": "AWS::ECS::TaskDefinition"
+    },
+    "ElbListener": {
+      "DependsOn": [
+        "ContainerTargetGroupHttp"
+      ],
+      "Properties": {
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": {
+              "Ref": "ContainerTargetGroupHttp"
+            }
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "ElbFrontOrBack"
+        },
+        "Port": {
+          "Ref": "ElbPortListener"
+        },
+        "Protocol": "HTTP"
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::Listener"
     }
   }
 }
