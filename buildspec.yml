@@ -8,7 +8,6 @@ phases:
       - TAG=commit-"$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
       - IMAGE_URI="${REPOSITORY_URI}:${TAG}"
       - echo Using NAME "$APPLICATION_NAME"
-      - echo Using SENSU_COMMAND "$SENSU_COMMAND"
       - echo Using TAG "$TAG"
       - echo Using IMAGE_URI "$IMAGE_URI"
   build:
@@ -27,8 +26,10 @@ phases:
       - echo Preparing Cloudformation Artifacts
       - printf '[{"name":"%s","imageUri":"%s"}]' "$APPLICATION_NAME" "$IMAGE_URI" > images.json
       - cat images.json
-      - printf '{"Parameters":{"ContainerImage":"%s","ContainerName":"%s","SensuCommand":"%s"}}' "$IMAGE_URI" "$APPLICATION_NAME" "$SENSU_COMMAND"> stack-configuration.json
-      - cat stack-configuration.json
+      - printf '{"Parameters":{"ContainerImage":"%s","ContainerName":"%s","SensuCommand":"api"}}' "$IMAGE_URI" "$APPLICATION_NAME"> sensu-api-stack-configuration.json
+      - cat sensu-api-stack-configuration.json
+      - printf '{"Parameters":{"ContainerImage":"%s","ContainerName":"%s","SensuCommand":"server"}}' "$IMAGE_URI" "$APPLICATION_NAME"> sensu-server-stack-configuration.json
+      - cat sensu-server-stack-configuration.json
       - sed "s|SSM_BASE_PATH|$SSM_BASE_PATH_DEV|g" cloudformation.json > cloudformation_dev.json
       - cat cloudformation_dev.json
       - sed "s|SSM_BASE_PATH|$SSM_BASE_PATH_PREPROD|g" cloudformation.json > cloudformation_preprod.json
@@ -39,7 +40,8 @@ phases:
 artifacts:
   files:
     - images.json
-    - stack-configuration.json
+    - sensu-api-stack-configuration.json
+    - sensu-server-stack-configuration.json
     - cloudformation.json
     - cloudformation_dev.json
     - cloudformation_preprod.json
