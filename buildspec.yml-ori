@@ -37,7 +37,7 @@ phases:
 
 artifacts:
   files:
-    - images.json
+    - image.json
     - stack-configuration.json
     - cloudformation.json
     - cloudformation_dev.json
