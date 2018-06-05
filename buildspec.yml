@@ -8,6 +8,7 @@ phases:
       - TAG=commit-"$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
       - IMAGE_URI="${REPOSITORY_URI}:${TAG}"
       - echo Using NAME "$APPLICATION_NAME"
+      - echo Using SENSU_COMMAND "$SENSU_COMMAND"
       - echo Using TAG "$TAG"
       - echo Using IMAGE_URI "$IMAGE_URI"
   build:
@@ -26,7 +27,7 @@ phases:
       - echo Preparing Cloudformation Artifacts
       - printf '[{"name":"%s","imageUri":"%s"}]' "$APPLICATION_NAME" "$IMAGE_URI" > images.json
       - cat images.json
-      - printf '{"Parameters":{"ContainerImage":"%s","ContainerName":"%s"}}' "$IMAGE_URI" "$APPLICATION_NAME" > stack-configuration.json
+      - printf '{"Parameters":{"ContainerImage":"%s","ContainerName":"%s","SensuCommand":"%s"}}' "$IMAGE_URI" "$APPLICATION_NAME" "$SENSU_COMMAND"> stack-configuration.json
       - cat stack-configuration.json
       - sed "s|SSM_BASE_PATH|$SSM_BASE_PATH_DEV|g" cloudformation.json > cloudformation_dev.json
       - cat cloudformation_dev.json
