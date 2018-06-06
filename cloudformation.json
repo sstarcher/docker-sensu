@@ -22,67 +22,67 @@
   },
   "Parameters": {
     "ContainerAdjustmentNumberHighDown": {
-      "Default": "/dev/sensu-api-demo/ECS/container_adjustment_number_high_down",
+      "Default": "SSM_BASE_PATH/ECS/container_adjustment_number_high_down",
       "Description": "The amount by which to scale.",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerAdjustmentNumberHighUp": {
-      "Default": "/dev/sensu-api-demo/ECS/container_adjustment_number_high_up",
+      "Default": "SSM_BASE_PATH/ECS/container_adjustment_number_high_up",
       "Description": "The amount by which to scale.",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerAdjustmentNumberLowDown": {
-      "Default": "/dev/sensu-api-demo/ECS/container_adjustment_number_low_down",
+      "Default": "SSM_BASE_PATH/ECS/container_adjustment_number_low_down",
       "Description": "The amount by which to scale.",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerAdjustmentNumberLowUp": {
-      "Default": "/dev/sensu-api-demo/ECS/container_adjustment_number_low_up",
+      "Default": "SSM_BASE_PATH/ECS/container_adjustment_number_low_up",
       "Description": "The amount by which to scale.",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerAlarmEvaluationPeriod": {
-      "Default": "/dev/sensu-api-demo/ECS/container_alarm_evaluation_period",
+      "Default": "SSM_BASE_PATH/ECS/container_alarm_evaluation_period",
       "Description": "The number of periods over which data is compared to the specified threshold.",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerAlarmPeriod": {
-      "Default": "/dev/sensu-api-demo/ECS/container_alarm_period",
+      "Default": "SSM_BASE_PATH/ECS/container_alarm_period",
       "Description": "The time over which the specified statistic is applied.",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerAlarmTresholdDown": {
-      "Default": "/dev/sensu-api-demo/ECS/container_alarm_treshold_down",
+      "Default": "SSM_BASE_PATH/ECS/container_alarm_treshold_down",
       "Description": "The value against which the specified statistic is compared.",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerAlarmTresholdUp": {
-      "Default": "/dev/sensu-api-demo/ECS/container_alarm_treshold_up",
+      "Default": "SSM_BASE_PATH/ECS/container_alarm_treshold_up",
       "Description": "The value against which the specified statistic is compared.",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerAutoscalingRole": {
-      "Default": "/dev/sensu-api-demo/ECS/container_autoscaling_role",
+      "Default": "SSM_BASE_PATH/ECS/container_autoscaling_role",
       "Description": "Container autoscaling role (ARN)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerCooldown": {
-      "Default": "/dev/sensu-api-demo/ECS/container_cooldown",
+      "Default": "SSM_BASE_PATH/ECS/container_cooldown",
       "Description": "The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerCpu": {
-      "Default": "/dev/sensu-api-demo/ECS/container_cpu",
+      "Default": "SSM_BASE_PATH/ECS/container_cpu",
       "Description": "ECS Service CPU usage",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerDesiredCount": {
-      "Default": "/dev/sensu-api-demo/ECS/container_desired_count",
+      "Default": "SSM_BASE_PATH/ECS/container_desired_count",
       "Description": "The scalable dimension that´s associated with the scalable target.",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerHost": {
-      "Default": "/dev/sensu-api-demo/ECS/container_host",
+      "Default": "SSM_BASE_PATH/ECS/container_host",
       "Description": "Container Host",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
@@ -91,42 +91,42 @@
       "Type": "String"
     },
     "ContainerMaxCapacity": {
-      "Default": "/dev/sensu-api-demo/ECS/container_max_capacity",
+      "Default": "SSM_BASE_PATH/ECS/container_max_capacity",
       "Description": "The maximum value that Application Auto Scaling can use to scale a target during a scaling activity.",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerMemory": {
-      "Default": "/dev/sensu-api-demo/ECS/container_memory",
+      "Default": "SSM_BASE_PATH/ECS/container_memory",
       "Description": "ECS Service Memory usage",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerMemoryReservation": {
-      "Default": "/dev/sensu-api-demo/ECS/container_memory_reservation",
+      "Default": "SSM_BASE_PATH/ECS/container_memory_reservation",
       "Description": "ECS Service Memory reservation usage",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerMetricIntervalLowerBoundDown": {
-      "Default": "/dev/sensu-api-demo/ECS/container_metric_interval_lower_bound_down",
+      "Default": "SSM_BASE_PATH/ECS/container_metric_interval_lower_bound_down",
       "Description": "The lower bound of the breach size",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerMetricIntervalLowerBoundUp": {
-      "Default": "/dev/sensu-api-demo/ECS/container_metric_interval_lower_bound_up",
+      "Default": "SSM_BASE_PATH/ECS/container_metric_interval_lower_bound_up",
       "Description": "The lower bound of the breach size",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerMetricIntervalUpperBoundDown": {
-      "Default": "/dev/sensu-api-demo/ECS/container_metric_interval_upper_bound_down",
+      "Default": "SSM_BASE_PATH/ECS/container_metric_interval_upper_bound_down",
       "Description": "The upper bound of the breach size",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerMetricIntervalUpperBoundUp": {
-      "Default": "/dev/sensu-api-demo/ECS/container_metric_interval_upper_bound_up",
+      "Default": "SSM_BASE_PATH/ECS/container_metric_interval_upper_bound_up",
       "Description": "The upper bound of the breach size",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerMinCapacity": {
-      "Default": "/dev/sensu-api-demo/ECS/container_min_capacity",
+      "Default": "SSM_BASE_PATH/ECS/container_min_capacity",
       "Description": "The minimum value that Application Auto Scaling can use to scale a target during a scaling activity.",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
@@ -135,77 +135,77 @@
       "Type": "String"
     },
     "ContainerPort": {
-      "Default": "/dev/sensu-api-demo/ECS/container_port",
+      "Default": "SSM_BASE_PATH/ECS/container_port",
       "Description": "ECS Container Port",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ElbFrontOrBack": {
-      "Default": "/dev/sensu-api-demo/ECS/elb_front_or_back",
+      "Default": "SSM_BASE_PATH/ECS/elb_front_or_back",
       "Description": "Elastic loadbalancer (Frontend or Backend)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ElbHealthCheckIntervalSeconds": {
-      "Default": "/dev/sensu-api-demo/ECS/elb_health_check_interval_seconds",
+      "Default": "SSM_BASE_PATH/ECS/elb_health_check_interval_seconds",
       "Description": "Elastic loadbalancer Health Check interval in seconds",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ElbHealthCheckTimeoutSeconds": {
-      "Default": "/dev/sensu-api-demo/ECS/elb_health_check_timeout_seconds",
+      "Default": "SSM_BASE_PATH/ECS/elb_health_check_timeout_seconds",
       "Description": "Elastic loadbalancer Health Checks timeout in seconds",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ElbHealthyThresholdCount": {
-      "Default": "/dev/sensu-api-demo/ECS/elb_healthy_threshold_count",
+      "Default": "SSM_BASE_PATH/ECS/elb_healthy_threshold_count",
       "Description": "Elastic loadbalancer healthy threshold count",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ElbPortListener": {
-      "Default": "/dev/sensu-api-demo/ECS/elb_port_listener",
+      "Default": "SSM_BASE_PATH/ECS/elb_port_listener",
       "Description": "ELB port listener, (If different from Container)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ElbUnhealthyThresholdCount": {
-      "Default": "/dev/sensu-api-demo/ECS/elb_unhealthy_threshold_count",
+      "Default": "SSM_BASE_PATH/ECS/elb_unhealthy_threshold_count",
       "Description": "Elastic loadbalancer unhealthy threshold count",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "LoadbalancerServiceRoleArn": {
-      "Default": "/dev/sensu-api-demo/ECS/loadbalancer_service_role_arn",
+      "Default": "SSM_BASE_PATH/ECS/loadbalancer_service_role_arn",
       "Description": "Elasticloadbalancer service role (ARN)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "RedisDbTableId": {
-      "Default": "/dev/sensu-api-demo/ECS/redis_db_table_id",
+      "Default": "SSM_BASE_PATH/ECS/redis_db_table_id",
       "Description": "Redis database (customer table id)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "RedisHost": {
-      "Default": "/dev/sensu-api-demo/ECS/redis_host",
+      "Default": "SSM_BASE_PATH/ECS/redis_host",
       "Description": "Redis Host",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "RedisPort": {
-      "Default": "/dev/sensu-api-demo/ECS/redis_port",
+      "Default": "SSM_BASE_PATH/ECS/redis_port",
       "Description": "Port for Redis",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuApiHost": {
-      "Default": "/dev/sensu-api-demo/ECS/sensu_api_host",
+      "Default": "SSM_BASE_PATH/ECS/sensu_api_host",
       "Description": "Sensu API Host",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuApiInputTopic": {
-      "Default": "/dev/sensu-api-demo/ECS/sensu_api_input_topic",
+      "Default": "SSM_BASE_PATH/ECS/sensu_api_input_topic",
       "Description": "SNS Topic ARN",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuApiPort": {
-      "Default": "/dev/sensu-api-demo/ECS/sensu_api_port",
+      "Default": "SSM_BASE_PATH/ECS/sensu_api_port",
       "Description": "Sensu API port",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuApiSqsQueue": {
-      "Default": "/dev/sensu-api-demo/ECS/sensu_api_sqs_queue",
+      "Default": "SSM_BASE_PATH/ECS/sensu_api_sqs_queue",
       "Description": "SQS Queue URL",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
@@ -215,27 +215,27 @@
       "Type": "String"
     },
     "SensuRegion": {
-      "Default": "/dev/sensu-api-demo/ECS/sensu_region",
+      "Default": "SSM_BASE_PATH/ECS/sensu_region",
       "Description": "Region of SQSSNS",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuSqsMaxNumberOfMessages": {
-      "Default": "/dev/sensu-api-demo/ECS/sensu_sqs_max_number_of_messages",
+      "Default": "SSM_BASE_PATH/ECS/sensu_sqs_max_number_of_messages",
       "Description": "Maximum number of message for SNSSQS",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuSqsWaitTimeSeconds": {
-      "Default": "/dev/sensu-api-demo/ECS/sensu_sqs_wait_time_seconds",
+      "Default": "SSM_BASE_PATH/ECS/sensu_sqs_wait_time_seconds",
       "Description": "Waiting time in second",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "TaskRoleArn": {
-      "Default": "/dev/sensu-api-demo/ECS/task_role_arn",
+      "Default": "ecs_sensu_task_role",
       "Description": "Task Role ARN",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "VpcId": {
-      "Default": "/dev/sensu-api-demo/ECS/vpc_id",
+      "Default": "SSM_BASE_PATH/ECS/vpc_id",
       "Description": "VPC ID",
       "Type": "AWS::SSM::Parameter::Value<String>"
     }
