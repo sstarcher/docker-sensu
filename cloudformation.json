@@ -133,7 +133,7 @@
     "ContainerName": {
       "Default": "/dev/sensu-api-demo/ECS/container_name",
       "Description": "Name of the ECS Container Service",
-      "Type": "AWS::SSM::Parameter::Value<String>"
+      "Type": "String"
     },
     "ContainerPort": {
       "Default": "/dev/sensu-api-demo/ECS/container_port",
