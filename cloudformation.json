@@ -21,10 +21,6 @@
     }
   },
   "Parameters": {
-    "ApplicationName": {
-      "Description": "Name of the ECS Container Service",
-      "Type": "String"
-    },
     "ContainerAdjustmentNumberHighDown": {
       "Default": "/dev/sensu-api-demo/ECS/container_adjustment_number_high_down",
       "Description": "The amount by which to scale.",
@@ -90,6 +86,10 @@
       "Description": "Container Host",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
+    "ContainerImage": {
+      "Description": "ECS image repository",
+      "Type": "String"
+    },
     "ContainerMaxCapacity": {
       "Default": "/dev/sensu-api-demo/ECS/container_max_capacity",
       "Description": "The maximum value that Application Auto Scaling can use to scale a target during a scaling activity.",
@@ -131,18 +131,12 @@
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerName": {
-      "Default": "/dev/sensu-api-demo/ECS/container_name",
       "Description": "Name of the ECS Container Service",
       "Type": "String"
     },
     "ContainerPort": {
       "Default": "/dev/sensu-api-demo/ECS/container_port",
       "Description": "ECS Container Port",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "ContainerRepository": {
-      "Default": "/dev/sensu-api-demo/ECS/container_repository",
-      "Description": "ECS public repository",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ElbFrontOrBack": {
@@ -577,15 +571,7 @@
               "Ref": "ContainerName"
             },
             "Image": {
-              "Fn::Join": [
-                "",
-                [
-                  {
-                    "Ref": "ContainerRepository"
-                  },
-                  "sensu:latest"
-                ]
-              ]
+              "Ref": "ContainerImage"
             },
             "Cpu": {
               "Ref": "ContainerCpu"
