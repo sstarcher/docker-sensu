@@ -269,32 +269,6 @@
         "DesiredCount": {
           "Ref": "ContainerDesiredCount"
         },
-        "LoadBalancers": [
-          {
-            "TargetGroupArn": {
-              "Ref": "ContainerTargetGroupHttp"
-            },
-            "ContainerName": {
-              "Ref": "ContainerName"
-            },
-            "ContainerPort": {
-              "Ref": "ContainerPort"
-            }
-          }
-        ],
-        "PlacementStrategies": [
-          {
-            "Field": "attribute:ecs.availability-zone",
-            "Type": "spread"
-          },
-          {
-            "Field": "instanceId",
-            "Type": "spread"
-          }
-        ],
-        "Role": {
-          "Ref": "LoadbalancerServiceRoleArn"
-        },
         "ServiceName": {
           "Ref": "ContainerName"
         },
