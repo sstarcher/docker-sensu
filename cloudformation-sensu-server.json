@@ -1,0 +1,432 @@
+{
+  "Description": "AWS CloudFormation Template for ECS Sensu",
+  "Outputs": {
+    "ContainerName": {
+      "Description": "Container Name",
+      "Value": {
+        "Ref": "ContainerName"
+      }
+    },
+    "ContainerServiceArn": {
+      "Description": "Container Service ARN",
+      "Value": {
+        "Ref": "ContainerService"
+      }
+    },
+    "ContainerTaskdefinitionArn": {
+      "Description": "Container TaskDefinition ARN",
+      "Value": {
+        "Ref": "ContainerTaskdefinition"
+      }
+    }
+  },
+  "Parameters": {
+    "ArgosApiKey": {
+      "Default": "SSM_BASE_PATH/ECS/argos_api_key",
+      "Description": "argos API key",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ArgosLive": {
+      "Default": "SSM_BASE_PATH/ECS/argos_live",
+      "Description": "false | true for argos setting",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ArgosSimulate": {
+      "Default": "SSM_BASE_PATH/ECS/argos_simulate",
+      "Description": "false | true for argos setting",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ArgosUrl": {
+      "Default": "SSM_BASE_PATH/ECS/argos_url",
+      "Description": "argos url",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAdjustmentNumberHighDown": {
+      "Default": "SSM_BASE_PATH/ECS/container_adjustment_number_high_down",
+      "Description": "The amount by which to scale.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAdjustmentNumberHighUp": {
+      "Default": "SSM_BASE_PATH/ECS/container_adjustment_number_high_up",
+      "Description": "The amount by which to scale.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAdjustmentNumberLowDown": {
+      "Default": "SSM_BASE_PATH/ECS/container_adjustment_number_low_down",
+      "Description": "The amount by which to scale.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAdjustmentNumberLowUp": {
+      "Default": "SSM_BASE_PATH/ECS/container_adjustment_number_low_up",
+      "Description": "The amount by which to scale.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAlarmEvaluationPeriod": {
+      "Default": "SSM_BASE_PATH/ECS/container_alarm_evaluation_period",
+      "Description": "The number of periods over which data is compared to the specified threshold.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAlarmPeriod": {
+      "Default": "SSM_BASE_PATH/ECS/container_alarm_period",
+      "Description": "The time over which the specified statistic is applied.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAlarmTresholdDown": {
+      "Default": "SSM_BASE_PATH/ECS/container_alarm_treshold_down",
+      "Description": "The value against which the specified statistic is compared.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAlarmTresholdUp": {
+      "Default": "SSM_BASE_PATH/ECS/container_alarm_treshold_up",
+      "Description": "The value against which the specified statistic is compared.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerAutoscalingRole": {
+      "Default": "SSM_BASE_PATH/ECS/container_autoscaling_role",
+      "Description": "Container autoscaling role (ARN)",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerCooldown": {
+      "Default": "SSM_BASE_PATH/ECS/container_cooldown",
+      "Description": "The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerCpu": {
+      "Default": "SSM_BASE_PATH/ECS/container_cpu",
+      "Description": "ECS Service CPU usage",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerDesiredCount": {
+      "Default": "SSM_BASE_PATH/ECS/container_desired_count",
+      "Description": "The scalable dimension that´s associated with the scalable target.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerHost": {
+      "Default": "SSM_BASE_PATH/ECS/container_host",
+      "Description": "Container Host",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerImage": {
+      "Description": "ECS image repository",
+      "Type": "String"
+    },
+    "ContainerMaxCapacity": {
+      "Default": "SSM_BASE_PATH/ECS/container_max_capacity",
+      "Description": "The maximum value that Application Auto Scaling can use to scale a target during a scaling activity.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerMemory": {
+      "Default": "SSM_BASE_PATH/ECS/container_memory",
+      "Description": "ECS Service Memory usage",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerMemoryReservation": {
+      "Default": "SSM_BASE_PATH/ECS/container_memory_reservation",
+      "Description": "ECS Service Memory reservation usage",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerMetricIntervalLowerBoundDown": {
+      "Default": "SSM_BASE_PATH/ECS/container_metric_interval_lower_bound_down",
+      "Description": "The lower bound of the breach size",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerMetricIntervalLowerBoundUp": {
+      "Default": "SSM_BASE_PATH/ECS/container_metric_interval_lower_bound_up",
+      "Description": "The lower bound of the breach size",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerMetricIntervalUpperBoundDown": {
+      "Default": "SSM_BASE_PATH/ECS/container_metric_interval_upper_bound_down",
+      "Description": "The upper bound of the breach size",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerMetricIntervalUpperBoundUp": {
+      "Default": "SSM_BASE_PATH/ECS/container_metric_interval_upper_bound_up",
+      "Description": "The upper bound of the breach size",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerMinCapacity": {
+      "Default": "SSM_BASE_PATH/ECS/container_min_capacity",
+      "Description": "The minimum value that Application Auto Scaling can use to scale a target during a scaling activity.",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ContainerName": {
+      "Description": "Name of the ECS Container Service",
+      "Type": "String"
+    },
+    "ContainerPort": {
+      "Default": "SSM_BASE_PATH/ECS/container_port",
+      "Description": "ECS Container Port",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ElbFrontOrBack": {
+      "Default": "SSM_BASE_PATH/ECS/elb_front_or_back",
+      "Description": "Elastic loadbalancer (Frontend or Backend)",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ElbHealthCheckIntervalSeconds": {
+      "Default": "SSM_BASE_PATH/ECS/elb_health_check_interval_seconds",
+      "Description": "Elastic loadbalancer Health Check interval in seconds",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ElbHealthCheckTimeoutSeconds": {
+      "Default": "SSM_BASE_PATH/ECS/elb_health_check_timeout_seconds",
+      "Description": "Elastic loadbalancer Health Checks timeout in seconds",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ElbHealthyThresholdCount": {
+      "Default": "SSM_BASE_PATH/ECS/elb_healthy_threshold_count",
+      "Description": "Elastic loadbalancer healthy threshold count",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ElbPortListener": {
+      "Default": "SSM_BASE_PATH/ECS/elb_port_listener",
+      "Description": "ELB port listener, (If different from Container)",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ElbUnhealthyThresholdCount": {
+      "Default": "SSM_BASE_PATH/ECS/elb_unhealthy_threshold_count",
+      "Description": "Elastic loadbalancer unhealthy threshold count",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "LoadbalancerServiceRoleArn": {
+      "Default": "SSM_BASE_PATH/ECS/loadbalancer_service_role_arn",
+      "Description": "Elasticloadbalancer service role (ARN)",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "RedisDbTableId": {
+      "Default": "SSM_BASE_PATH/ECS/redis_db_table_id",
+      "Description": "Redis database (customer table id)",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "RedisHost": {
+      "Default": "SSM_BASE_PATH/ECS/redis_host",
+      "Description": "Redis Host",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "RedisPort": {
+      "Default": "SSM_BASE_PATH/ECS/redis_port",
+      "Description": "Port for Redis",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuApiHost": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_api_host",
+      "Description": "Sensu API Host",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuApiInputTopic": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_api_input_topic",
+      "Description": "SNS Topic ARN",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuApiPort": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_api_port",
+      "Description": "Sensu API port",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuApiSqsQueue": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_api_sqs_queue",
+      "Description": "SQS Queue URL",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuCommand": {
+      "Default": "server",
+      "Description": "API or Server",
+      "Type": "String"
+    },
+    "SensuRegion": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_region",
+      "Description": "Region of SQSSNS",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuSqsMaxNumberOfMessages": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_sqs_max_number_of_messages",
+      "Description": "Maximum number of message for SNSSQS",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuSqsWaitTimeSeconds": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_sqs_wait_time_seconds",
+      "Description": "Waiting time in second",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "TaskRoleArn": {
+      "Default": "ecs_sensu_task_role",
+      "Description": "Task Role ARN",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "VpcId": {
+      "Default": "SSM_BASE_PATH/ECS/vpc_id",
+      "Description": "VPC ID",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    }
+  },
+  "Resources": {
+    "ContainerService": {
+      "DependsOn": [
+        "ContainerTargetGroupHttp",
+        "ElbListener"
+      ],
+      "Properties": {
+        "Cluster": {
+          "Ref": "ContainerHost"
+        },
+        "DesiredCount": {
+          "Ref": "ContainerDesiredCount"
+        },
+        "LoadBalancers": [
+          {
+            "TargetGroupArn": {
+              "Ref": "ContainerTargetGroupHttp"
+            },
+            "ContainerName": {
+              "Ref": "ContainerName"
+            },
+            "ContainerPort": {
+              "Ref": "ContainerPort"
+            }
+          }
+        ],
+        "PlacementStrategies": [
+          {
+            "Field": "attribute:ecs.availability-zone",
+            "Type": "spread"
+          },
+          {
+            "Field": "instanceId",
+            "Type": "spread"
+          }
+        ],
+        "Role": {
+          "Ref": "LoadbalancerServiceRoleArn"
+        },
+        "ServiceName": {
+          "Ref": "ContainerName"
+        },
+        "TaskDefinition": {
+          "Ref": "ContainerTaskdefinition"
+        }
+      },
+      "Type": "AWS::ECS::Service"
+    },
+    "ContainerTaskdefinition": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Name": {
+              "Ref": "ContainerName"
+            },
+            "Image": {
+              "Ref": "ContainerImage"
+            },
+            "Cpu": {
+              "Ref": "ContainerCpu"
+            },
+            "Memory": {
+              "Ref": "ContainerMemory"
+            },
+            "MemoryReservation": {
+              "Ref": "ContainerMemoryReservation"
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-group": "ECS-Docker",
+                "awslogs-stream-prefix": {
+                  "Ref": "ContainerHost"
+                }
+              }
+            },
+            "Command": [
+              {
+                "Ref": "SensuCommand"
+              }
+            ],
+            "Environment": [
+              {
+                "Name": "API_HOST",
+                "Value": {
+                  "Ref": "SensuApiHost"
+                }
+              },
+              {
+                "Name": "API_PORT",
+                "Value": {
+                  "Ref": "SensuApiPort"
+                }
+              },
+              {
+                "Name": "TRANSPORT_NAME",
+                "Value": "snssqs"
+              },
+              {
+                "Name": "SNSSQS_MAX_NUMBER_OF_MESSAGES",
+                "Value": {
+                  "Ref": "SensuSqsMaxNumberOfMessages"
+                }
+              },
+              {
+                "Name": "SNSSQS_WAIT_TIME_SECONDS",
+                "Value": {
+                  "Ref": "SensuSqsWaitTimeSeconds"
+                }
+              },
+              {
+                "Name": "SNSSQS_REGION",
+                "Value": {
+                  "Ref": "SensuRegion"
+                }
+              },
+              {
+                "Name": "SNSSQS_CONSUMING_SQS_QUEUE_URL",
+                "Value": {
+                  "Ref": "SensuApiSqsQueue"
+                }
+              },
+              {
+                "Name": "SNSSQS_PUBLISHING_SNS_TOPIC_ARN",
+                "Value": {
+                  "Ref": "SensuApiInputTopic"
+                }
+              },
+              {
+                "Name": "REDIS_HOST",
+                "Value": {
+                  "Ref": "RedisHost"
+                }
+              },
+              {
+                "Name": "REDIS_PORT",
+                "Value": {
+                  "Ref": "RedisPort"
+                }
+              },
+              {
+                "Name": "REDIS_DB",
+                "Value": {
+                  "Ref": "RedisDbTableId"
+                }
+              }
+            ],
+            "PortMappings": [
+              {
+                "ContainerPort": {
+                  "Ref": "ContainerPort"
+                }
+              }
+            ]
+          }
+        ],
+        "Family": {
+          "Ref": "ContainerName"
+        },
+        "TaskRoleArn": {
+          "Ref": "TaskRoleArn"
+        }
+      },
+      "Type": "AWS::ECS::TaskDefinition"
+    }
+  }
+}
