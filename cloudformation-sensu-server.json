@@ -262,10 +262,6 @@
   },
   "Resources": {
     "ContainerService": {
-      "DependsOn": [
-        "ContainerTargetGroupHttp",
-        "ElbListener"
-      ],
       "Properties": {
         "Cluster": {
           "Ref": "ContainerHost"
