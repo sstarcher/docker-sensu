@@ -26,9 +26,9 @@ phases:
       - echo Preparing Cloudformation Artifacts
       - printf '[{"name":"%s","imageUri":"%s"}]' "$APPLICATION_NAME" "$IMAGE_URI" > images.json
       - cat images.json
-      - printf '{"Parameters":{"ContainerImage":"%s","ContainerName":"%s","SensuCommand":"api"}}' "$IMAGE_URI" "$APPLICATION_NAME"> sensu-api-stack-configuration.json
+      - printf '{"Parameters":{"ContainerImage":"%s","ContainerName":"%s","SensuCommand":"api"}}' "$IMAGE_URI" "$APPLICATION_NAME"-api-default> sensu-api-stack-configuration.json
       - cat sensu-api-stack-configuration.json
-      - printf '{"Parameters":{"ContainerImage":"%s","ContainerName":"%s","SensuCommand":"server"}}' "$IMAGE_URI" "$APPLICATION_NAME"> sensu-server-stack-configuration.json
+      - printf '{"Parameters":{"ContainerImage":"%s","ContainerName":"%s","SensuCommand":"server"}}' "$IMAGE_URI" "$APPLICATION_NAME"-server-default> sensu-server-stack-configuration.json
       - cat sensu-server-stack-configuration.json
       - sed "s|SSM_BASE_PATH|$SSM_BASE_PATH_DEV|g" cloudformation.json > cloudformation_dev.json
       - cat cloudformation_dev.json
