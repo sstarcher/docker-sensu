@@ -229,11 +229,6 @@
       "Description": "API or Server",
       "Type": "String"
     },
-    "SensuRegion": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_region",
-      "Description": "Region of SQSSNS",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
     "SensuSqsMaxNumberOfMessages": {
       "Default": "SSM_BASE_PATH/ECS/sensu_sqs_max_number_of_messages",
       "Description": "Maximum number of message for SNSSQS",
@@ -341,7 +336,7 @@
               {
                 "Name": "SNSSQS_REGION",
                 "Value": {
-                  "Ref": "SensuRegion"
+                  "Ref": "AWS::Region"
                 }
               },
               {
