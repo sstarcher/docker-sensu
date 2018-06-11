@@ -154,11 +154,6 @@
       "Description": "Name of the ECS Container Service",
       "Type": "String"
     },
-    "ContainerPort": {
-      "Default": "SSM_BASE_PATH/ECS/container_port",
-      "Description": "ECS Container Port",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
     "ElbFrontOrBack": {
       "Default": "SSM_BASE_PATH/ECS/elb_front_or_back",
       "Description": "Elastic loadbalancer (Frontend or Backend)",
@@ -382,9 +377,7 @@
             ],
             "PortMappings": [
               {
-                "ContainerPort": {
-                  "Ref": "ContainerPort"
-                }
+                "ContainerPort": "4567"
               }
             ]
           }
