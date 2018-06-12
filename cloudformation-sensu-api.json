@@ -21,6 +21,11 @@
     }
   },
   "Parameters": {
+    "ApplicationEnv": {
+      "Default": "SSM_BASE_PATH/ECS/application_env",
+      "Description": "Container Host",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
     "ContainerAdjustmentNumberHighDown": {
       "Default": "SSM_BASE_PATH/ECS/container_adjustment_number_high_down",
       "Description": "The amount by which to scale.",

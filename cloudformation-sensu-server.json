@@ -1,4 +1,22 @@
 {
+  "Conditions": {
+    "ArgosSimulateTrue": {
+      "Fn::Equals": [
+        {
+          "Ref": "ArgosLive"
+        },
+        "false"
+      ]
+    },
+    "IsDevEnv": {
+      "Fn::Equals": [
+        {
+          "Ref": "ApplicationEnv"
+        },
+        "dev"
+      ]
+    }
+  },
   "Description": "AWS CloudFormation Template for ECS Sensu",
   "Outputs": {
     "ContainerName": {
@@ -21,24 +39,14 @@
     }
   },
   "Parameters": {
-    "ArgosApiKey": {
-      "Default": "SSM_BASE_PATH/ECS/argos_api_key",
-      "Description": "argos API key",
+    "ApplicationEnv": {
+      "Default": "SSM_BASE_PATH/ECS/application_env",
+      "Description": "Application Environment",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ArgosLive": {
       "Default": "SSM_BASE_PATH/ECS/argos_live",
       "Description": "false | true for argos setting",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "ArgosSimulate": {
-      "Default": "SSM_BASE_PATH/ECS/argos_simulate",
-      "Description": "false | true for argos setting",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "ArgosUrl": {
-      "Default": "SSM_BASE_PATH/ECS/argos_url",
-      "Description": "argos url",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerAdjustmentNumberHighDown": {
@@ -367,6 +375,42 @@
                 "Name": "REDIS_DB",
                 "Value": {
                   "Ref": "RedisDbTableId"
+                }
+              },
+              {
+                "Name": "ARGOS_LIVE",
+                "Value": {
+                  "Ref": "ArgosLive"
+                }
+              },
+              {
+                "Name": "ARGOS_SIMULATE",
+                "Value": {
+                  "Fn::If": [
+                    "ArgosSimulateTrue",
+                    "true",
+                    "false"
+                  ]
+                }
+              },
+              {
+                "Name": "ARGOS_URL",
+                "Value": {
+                  "Fn::If": [
+                    "IsDevEnv",
+                    "https://test-argos-eye-ext01.ws.arvato-systems.de/api/setEventData/CommonData",
+                    "none"
+                  ]
+                }
+              },
+              {
+                "Name": "ARGOS_API_KEY",
+                "Value": {
+                  "Fn::If": [
+                    "IsDevEnv",
+                    "FzQnaQjRtn",
+                    "none"
+                  ]
                 }
               }
             ],
