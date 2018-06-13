@@ -716,29 +716,12 @@
     "SensuDnsExtRecord": {
       "Properties": {
         "AliasTarget": {
-          "DNSName": {
-            "Ref": "EcsFrontendElbPublicIp"
-          },
+          "DNSName": "DEV-E-EcsFr-11A7QV86R627F-1592869613.eu-central-1.elb.amazonaws.com",
           "EvaluateTargetHealth": false,
           "HostedZoneId": "Z215JYRZR1TBD5"
         },
-        "HostedZoneId": {
-          "Ref": "ExternalZoneId"
-        },
-        "Name": {
-          "Fn::Join": [
-            "",
-            [
-              {
-                "Ref": "CustomerName"
-              },
-              ".",
-              {
-                "Ref": "ExternalZoneName"
-              }
-            ]
-          ]
-        },
+        "HostedZoneId": "Z2E78ENDBTHJE5",
+        "Name": "sensu-api-default.dev.mgmt.aws-arvato.com",
         "Type": "A"
       },
       "Type": "AWS::Route53::RecordSet"
