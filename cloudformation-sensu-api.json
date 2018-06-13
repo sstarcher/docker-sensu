@@ -716,7 +716,9 @@
     "SensuDnsExtRecord": {
       "Properties": {
         "AliasTarget": {
-          "DNSName": "DEV-E-EcsFr-11A7QV86R627F-1592869613.eu-central-1.elb.amazonaws.com",
+          "DNSName": {
+            "Ref": "EcsFrontendElbPublicIp"
+          },
           "EvaluateTargetHealth": false,
           "HostedZoneId": "Z215JYRZR1TBD5"
         },
