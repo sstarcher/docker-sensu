@@ -152,7 +152,7 @@
     "EcsFrontendElbPublicIp": {
       "Default": "SSM_BASE_PATH/ECS/ecs_frontend_elb_public_ip",
       "Description": "Elasticloadbalancer public DNS",
-      "Type": "String"
+      "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ElbFrontOrBack": {
       "Default": "SSM_BASE_PATH/ECS/elb_front_or_back",
