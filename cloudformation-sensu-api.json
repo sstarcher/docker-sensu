@@ -18,6 +18,12 @@
       "Value": {
         "Ref": "ContainerTaskdefinition"
       }
+    },
+    "SensuDnsExtRecord": {
+      "Description": "Sensu API DNS external record",
+      "Value": {
+        "Ref": "SensuDnsExtRecord"
+      }
     }
   },
   "Parameters": {
@@ -139,6 +145,15 @@
       "Description": "Name of the ECS Container Service",
       "Type": "String"
     },
+    "CustomerName": {
+      "Description": "Customer name",
+      "Type": "String"
+    },
+    "EcsFrontendElbPublicIp": {
+      "Default": "SSM_BASE_PATH/ECS/ecs_frontend_elb_public_ip",
+      "Description": "Elasticloadbalancer public DNS",
+      "Type": "String"
+    },
     "ElbFrontOrBack": {
       "Default": "SSM_BASE_PATH/ECS/elb_front_or_back",
       "Description": "Elastic loadbalancer (Frontend or Backend)",
@@ -167,6 +182,16 @@
     "ElbUnhealthyThresholdCount": {
       "Default": "SSM_BASE_PATH/ECS/elb_unhealthy_threshold_count",
       "Description": "Elastic loadbalancer unhealthy threshold count",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ExternalZoneId": {
+      "Default": "SSM_BASE_PATH/ECS/external_zone_id",
+      "Description": "External Zone ID",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ExternalZoneName": {
+      "Default": "SSM_BASE_PATH/ECS/external_zone_name",
+      "Description": "External Zone Name",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "LoadbalancerServiceRoleArn": {
@@ -687,6 +712,36 @@
         "Protocol": "HTTP"
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener"
+    },
+    "SensuDnsExtRecord": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Ref": "EcsFrontendElbPublicIp"
+          },
+          "EvaluateTargetHealth": false,
+          "HostedZoneId": "Z215JYRZR1TBD5"
+        },
+        "HostedZoneId": {
+          "Ref": "ExternalZoneId"
+        },
+        "Name": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "CustomerName"
+              },
+              ".",
+              {
+                "Ref": "ExternalZoneName"
+              }
+            ]
+          ]
+        },
+        "Type": "A"
+      },
+      "Type": "AWS::Route53::RecordSet"
     }
   }
 }
