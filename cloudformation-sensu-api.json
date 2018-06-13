@@ -720,8 +720,24 @@
           "EvaluateTargetHealth": false,
           "HostedZoneId": "Z215JYRZR1TBD5"
         },
-        "HostedZoneId": "Z2E78ENDBTHJE5",
-        "Name": "sensu-api-default.dev.mgmt.aws-arvato.com",
+        "HostedZoneId": {
+          "Ref": "ExternalZoneId"
+        },
+        "Name": {
+          "Fn::Join": [
+            "",
+            [
+              "sensu-api-",
+              {
+                "Ref": "CustomerName"
+              },
+              ".",
+              {
+                "Ref": "ExternalZoneName"
+              }
+            ]
+          ]
+        },
         "Type": "A"
       },
       "Type": "AWS::Route53::RecordSet"
