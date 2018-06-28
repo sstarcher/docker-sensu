@@ -186,11 +186,6 @@
       "Description": "Elastic loadbalancer healthy threshold count",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "ElbPortListener": {
-      "Default": "SSM_BASE_PATH/ECS/elb_port_listener",
-      "Description": "ELB port listener, (If different from Container)",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
     "ElbUnhealthyThresholdCount": {
       "Default": "SSM_BASE_PATH/ECS/elb_unhealthy_threshold_count",
       "Description": "Elastic loadbalancer unhealthy threshold count",
@@ -240,6 +235,11 @@
       "Default": "server",
       "Description": "API or Server",
       "Type": "String"
+    },
+    "SensuServerElbPortListener": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_server_elb_port_listener",
+      "Description": "Sensu Server ELB port listener, (If different from Container)",
+      "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuSqsMaxNumberOfMessages": {
       "Default": "SSM_BASE_PATH/ECS/sensu_sqs_max_number_of_messages",
@@ -749,7 +749,7 @@
           "Ref": "ElbFrontOrBack"
         },
         "Port": {
-          "Ref": "ElbPortListener"
+          "Ref": "SensuServerElbPortListener"
         },
         "Protocol": "HTTP"
       },
