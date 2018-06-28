@@ -162,10 +162,6 @@
       "Description": "Name of the ECS Container Service",
       "Type": "String"
     },
-    "CustomerName": {
-      "Description": "Customer name",
-      "Type": "String"
-    },
     "ElbFrontOrBack": {
       "Default": "SSM_BASE_PATH/ECS/elb_front_or_back",
       "Description": "Elastic loadbalancer (Frontend or Backend)",
@@ -184,6 +180,11 @@
     "ElbHealthyThresholdCount": {
       "Default": "SSM_BASE_PATH/ECS/elb_healthy_threshold_count",
       "Description": "Elastic loadbalancer healthy threshold count",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ElbPortListener": {
+      "Default": "SSM_BASE_PATH/ECS/elb_port_listener",
+      "Description": "ELB port listener, (If different from Container)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ElbUnhealthyThresholdCount": {
@@ -236,11 +237,6 @@
       "Description": "API or Server",
       "Type": "String"
     },
-    "SensuServerElbPortListener": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_server_elb_port_listener",
-      "Description": "Sensu Server ELB port listener, (If different from Container)",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
     "SensuSqsMaxNumberOfMessages": {
       "Default": "SSM_BASE_PATH/ECS/sensu_sqs_max_number_of_messages",
       "Description": "Maximum number of message for SNSSQS",
@@ -263,273 +259,13 @@
     }
   },
   "Resources": {
-    "ContainerAlarmScaleDown": {
-      "Properties": {
-        "AlarmActions": [
-          {
-            "Ref": "ContainerScalingPolicyDown"
-          }
-        ],
-        "AlarmDescription": {
-          "Fn::Join": [
-            "",
-            [
-              "CPU Utilization low on ",
-              {
-                "Ref": "ContainerName"
-              },
-              " container"
-            ]
-          ]
-        },
-        "ComparisonOperator": "LessThanThreshold",
-        "Dimensions": [
-          {
-            "Name": "ServiceName",
-            "Value": {
-              "Ref": "ContainerName"
-            }
-          },
-          {
-            "Name": "ClusterName",
-            "Value": {
-              "Ref": "ContainerHost"
-            }
-          }
-        ],
-        "EvaluationPeriods": {
-          "Ref": "ContainerAlarmEvaluationPeriod"
-        },
-        "MetricName": "CPUUtilization",
-        "Namespace": "AWS/ECS",
-        "Period": {
-          "Ref": "ContainerAlarmPeriod"
-        },
-        "Statistic": "Average",
-        "Threshold": {
-          "Ref": "ContainerAlarmTresholdDown"
-        }
-      },
-      "Type": "AWS::CloudWatch::Alarm"
-    },
-    "ContainerAlarmScaleUp": {
-      "Properties": {
-        "AlarmActions": [
-          {
-            "Ref": "ContainerScalingPolicyUp"
-          }
-        ],
-        "AlarmDescription": {
-          "Fn::Join": [
-            "",
-            [
-              "CPU Utilization high on ",
-              {
-                "Ref": "ContainerName"
-              },
-              " container"
-            ]
-          ]
-        },
-        "ComparisonOperator": "GreaterThanThreshold",
-        "Dimensions": [
-          {
-            "Name": "ServiceName",
-            "Value": {
-              "Ref": "ContainerName"
-            }
-          },
-          {
-            "Name": "ClusterName",
-            "Value": {
-              "Ref": "ContainerHost"
-            }
-          }
-        ],
-        "EvaluationPeriods": {
-          "Ref": "ContainerAlarmEvaluationPeriod"
-        },
-        "MetricName": "CPUUtilization",
-        "Namespace": "AWS/ECS",
-        "Period": {
-          "Ref": "ContainerAlarmPeriod"
-        },
-        "Statistic": "Average",
-        "Threshold": {
-          "Ref": "ContainerAlarmTresholdUp"
-        }
-      },
-      "Type": "AWS::CloudWatch::Alarm"
-    },
-    "ContainerAutoScalingTarget": {
-      "DependsOn": [
-        "ContainerService"
-      ],
-      "Properties": {
-        "MaxCapacity": {
-          "Ref": "ContainerMaxCapacity"
-        },
-        "MinCapacity": {
-          "Ref": "ContainerMinCapacity"
-        },
-        "ResourceId": {
-          "Fn::Join": [
-            "",
-            [
-              "service/",
-              {
-                "Ref": "ContainerHost"
-              },
-              "/",
-              {
-                "Ref": "ContainerName"
-              }
-            ]
-          ]
-        },
-        "RoleARN": {
-          "Ref": "ContainerAutoscalingRole"
-        },
-        "ScalableDimension": "ecs:service:DesiredCount",
-        "ServiceNamespace": "ecs"
-      },
-      "Type": "AWS::ApplicationAutoScaling::ScalableTarget"
-    },
-    "ContainerScalingPolicyDown": {
-      "Properties": {
-        "PolicyName": {
-          "Fn::Join": [
-            "",
-            [
-              {
-                "Ref": "ContainerName"
-              },
-              "-service-autoscaling-down"
-            ]
-          ]
-        },
-        "PolicyType": "StepScaling",
-        "ScalableDimension": "ecs:service:DesiredCount",
-        "ScalingTargetId": {
-          "Ref": "ContainerAutoScalingTarget"
-        },
-        "ServiceNamespace": "ecs",
-        "StepScalingPolicyConfiguration": {
-          "AdjustmentType": "PercentChangeInCapacity",
-          "Cooldown": {
-            "Ref": "ContainerCooldown"
-          },
-          "MetricAggregationType": "Average",
-          "StepAdjustments": [
-            {
-              "MetricIntervalUpperBound": {
-                "Ref": "ContainerMetricIntervalUpperBoundDown"
-              },
-              "MetricIntervalLowerBound": {
-                "Ref": "ContainerMetricIntervalLowerBoundDown"
-              },
-              "ScalingAdjustment": {
-                "Ref": "ContainerAdjustmentNumberLowDown"
-              }
-            },
-            {
-              "MetricIntervalUpperBound": {
-                "Ref": "ContainerMetricIntervalLowerBoundDown"
-              },
-              "ScalingAdjustment": {
-                "Ref": "ContainerAdjustmentNumberHighDown"
-              }
-            }
-          ]
-        }
-      },
-      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy"
-    },
-    "ContainerScalingPolicyUp": {
-      "Properties": {
-        "PolicyName": {
-          "Fn::Join": [
-            "",
-            [
-              {
-                "Ref": "ContainerName"
-              },
-              "-service-autoscaling-up"
-            ]
-          ]
-        },
-        "PolicyType": "StepScaling",
-        "ScalableDimension": "ecs:service:DesiredCount",
-        "ScalingTargetId": {
-          "Ref": "ContainerAutoScalingTarget"
-        },
-        "ServiceNamespace": "ecs",
-        "StepScalingPolicyConfiguration": {
-          "AdjustmentType": "PercentChangeInCapacity",
-          "Cooldown": {
-            "Ref": "ContainerCooldown"
-          },
-          "MetricAggregationType": "Average",
-          "StepAdjustments": [
-            {
-              "MetricIntervalUpperBound": {
-                "Ref": "ContainerMetricIntervalUpperBoundUp"
-              },
-              "MetricIntervalLowerBound": {
-                "Ref": "ContainerMetricIntervalLowerBoundUp"
-              },
-              "ScalingAdjustment": {
-                "Ref": "ContainerAdjustmentNumberLowUp"
-              }
-            },
-            {
-              "MetricIntervalLowerBound": {
-                "Ref": "ContainerMetricIntervalUpperBoundUp"
-              },
-              "ScalingAdjustment": {
-                "Ref": "ContainerAdjustmentNumberHighUp"
-              }
-            }
-          ]
-        }
-      },
-      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy"
-    },
     "ContainerService": {
-      "DependsOn": [
-        "ContainerTargetGroupHttp",
-        "ElbListener"
-      ],
       "Properties": {
         "Cluster": {
           "Ref": "ContainerHost"
         },
         "DesiredCount": {
           "Ref": "ContainerDesiredCount"
-        },
-        "LoadBalancers": [
-          {
-            "TargetGroupArn": {
-              "Ref": "ContainerTargetGroupHttp"
-            },
-            "ContainerName": {
-              "Ref": "ContainerName"
-            },
-            "ContainerPort": "4567"
-          }
-        ],
-        "PlacementStrategies": [
-          {
-            "Field": "attribute:ecs.availability-zone",
-            "Type": "spread"
-          },
-          {
-            "Field": "instanceId",
-            "Type": "spread"
-          }
-        ],
-        "Role": {
-          "Ref": "LoadbalancerServiceRoleArn"
         },
         "ServiceName": {
           "Ref": "ContainerName"
@@ -539,44 +275,6 @@
         }
       },
       "Type": "AWS::ECS::Service"
-    },
-    "ContainerTargetGroupHttp": {
-      "Properties": {
-        "HealthCheckIntervalSeconds": {
-          "Ref": "ElbHealthCheckIntervalSeconds"
-        },
-        "HealthCheckPath": "/health",
-        "HealthCheckProtocol": "HTTP",
-        "HealthCheckTimeoutSeconds": {
-          "Ref": "ElbHealthCheckTimeoutSeconds"
-        },
-        "HealthyThresholdCount": {
-          "Ref": "ElbHealthyThresholdCount"
-        },
-        "Matcher": {
-          "HttpCode": "204"
-        },
-        "Name": {
-          "Fn::Join": [
-            "",
-            [
-              {
-                "Ref": "ContainerName"
-              },
-              "-4567"
-            ]
-          ]
-        },
-        "Port": "4567",
-        "Protocol": "HTTP",
-        "UnhealthyThresholdCount": {
-          "Ref": "ElbUnhealthyThresholdCount"
-        },
-        "VpcId": {
-          "Ref": "VpcId"
-        }
-      },
-      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
     },
     "ContainerTaskdefinition": {
       "Properties": {
@@ -731,29 +429,6 @@
         }
       },
       "Type": "AWS::ECS::TaskDefinition"
-    },
-    "ElbListener": {
-      "DependsOn": [
-        "ContainerTargetGroupHttp"
-      ],
-      "Properties": {
-        "DefaultActions": [
-          {
-            "Type": "forward",
-            "TargetGroupArn": {
-              "Ref": "ContainerTargetGroupHttp"
-            }
-          }
-        ],
-        "LoadBalancerArn": {
-          "Ref": "ElbFrontOrBack"
-        },
-        "Port": {
-          "Ref": "SensuServerElbPortListener"
-        },
-        "Protocol": "HTTP"
-      },
-      "Type": "AWS::ElasticLoadBalancingV2::Listener"
     }
   }
 }
