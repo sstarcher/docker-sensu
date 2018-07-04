@@ -23,6 +23,7 @@ RUN \
     apt-get install -y sensu=${SENSU_VERSION} &&\
     # Custom Plugins
     /opt/sensu/embedded/bin/gem install --no-ri --no-rdoc sensu-plugins-sensu && \
+    /opt/sensu/embedded/bin/gem install --no-ri --no-rdoc aws-sdk && \
     # Install Sensu snssqs support
     /opt/sensu/embedded/bin/gem install --no-ri --no-rdoc sensu-transport-snssqs-ng && \
     # Cleanup sensu
