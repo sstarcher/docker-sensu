@@ -209,8 +209,8 @@
       "Description": "Port for Redis",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "ElbPortListener": {
-      "Default": "SSM_BASE_PATH/ECS/elb_port_listener",
+    "SensuApiElbPortListener": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_api_elb_port_listener",
       "Description": "Sensu Api ELB port listener, (If different from Container)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
@@ -707,7 +707,7 @@
           "Ref": "ElbFrontOrBack"
         },
         "Port": {
-          "Ref": "ElbPortListener"
+          "Ref": "SensuApiElbPortListener"
         },
         "Protocol": "HTTP"
       },
