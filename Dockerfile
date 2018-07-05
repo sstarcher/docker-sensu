@@ -47,7 +47,6 @@ RUN \
     mkdir -p /etc/sensu/conf.d /etc/sensu/check.d /etc/sensu/extensions/server /etc/sensu/extensions/client /etc/sensu/plugins /etc/sensu/handlers
     # Install apache2
     apt-get install -y apache2 &&\
-    touch /etc/sensu/plugins/check-apache.rb && chmod 755 /etc/sensu/plugins/check-apache.rb &&\
     service apache2 start &&\
 
 COPY templates /etc/sensu/templates
