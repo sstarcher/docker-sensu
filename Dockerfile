@@ -44,7 +44,7 @@ RUN \
     curl -Ls https://github.com/arschles/envtpl/releases/download/${ENVTPL_VERSION}/envtpl_linux_amd64 > /usr/local/bin/envtpl &&\
     chmod +x /usr/local/bin/envtpl &&\
     /opt/sensu/embedded/bin/gem install --no-document yaml2json &&\
-    mkdir -p /etc/sensu/conf.d /etc/sensu/check.d /etc/sensu/extensions/server /etc/sensu/extensions/client /etc/sensu/plugins /etc/sensu/handlers
+    mkdir -p /etc/sensu/conf.d /etc/sensu/check.d /etc/sensu/extensions/server /etc/sensu/extensions/client /etc/sensu/plugins /etc/sensu/handlers &&\
     # Install apache2
     apt-get install -y apache2 &&\
     service apache2 start &&\
