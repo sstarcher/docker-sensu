@@ -33,14 +33,10 @@ phases:
       - cat sensu-server-stack-configuration.json
       - sed "s|SSM_BASE_PATH|$SSM_BASE_PATH_DEV|g" cloudformation-sensu-api.json > cloudformation-sensu-api-dev.json
       - cat cloudformation-sensu-api-dev.json
-      - sed "s|SSM_BASE_PATH|$SSM_BASE_PATH_PREPROD|g" cloudformation-sensu-api.json > cloudformation-sensu-api-preprod.json
-      - cat cloudformation-sensu-api-preprod.json
       - sed "s|SSM_BASE_PATH|$SSM_BASE_PATH_PROD|g" cloudformation-sensu-api.json > cloudformation-sensu-api-prod.json
       - cat cloudformation-sensu-api-prod.json
       - sed "s|SSM_BASE_PATH|$SSM_BASE_PATH_DEV|g" cloudformation-sensu-server.json > cloudformation-sensu-server-dev.json
       - cat cloudformation-sensu-server-dev.json
-      - sed "s|SSM_BASE_PATH|$SSM_BASE_PATH_PREPROD|g" cloudformation-sensu-server.json > cloudformation-sensu-server-preprod.json
-      - cat cloudformation-sensu-server-preprod.json
       - sed "s|SSM_BASE_PATH|$SSM_BASE_PATH_PROD|g" cloudformation-sensu-server.json > cloudformation-sensu-server-prod.json
       - cat cloudformation-sensu-server-prod.json
 
@@ -51,9 +47,7 @@ artifacts:
     - sensu-server-stack-configuration.json
     - cloudformation-sensu-api.json
     - cloudformation-sensu-api-dev.json
-    - cloudformation-sensu-api-preprod.json
     - cloudformation-sensu-api-prod.json
     - cloudformation-sensu-server.json
     - cloudformation-sensu-server-dev.json
-    - cloudformation-sensu-server-preprod.json
     - cloudformation-sensu-server-prod.json
