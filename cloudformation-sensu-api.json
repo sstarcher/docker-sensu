@@ -234,11 +234,6 @@
       "Description": "SQS Queue URL",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuCommand": {
-      "Default": "api",
-      "Description": "API or Server",
-      "Type": "String"
-    },
     "SensuSqsMaxNumberOfMessages": {
       "Default": "SSM_BASE_PATH/ECS/sensu_sqs_max_number_of_messages",
       "Description": "Maximum number of message for SNSSQS",
@@ -608,9 +603,7 @@
               }
             },
             "Command": [
-              {
-                "Ref": "SensuCommand"
-              }
+              "api"
             ],
             "Environment": [
               {

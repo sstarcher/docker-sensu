@@ -231,11 +231,6 @@
       "Description": "SQS Queue URL",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuCommand": {
-      "Default": "server",
-      "Description": "API or Server",
-      "Type": "String"
-    },
     "SensuServerElbPortListener": {
       "Default": "SSM_BASE_PATH/ECS/sensu_server_elb_port_listener",
       "Description": "Sensu Server ELB port listener, (If different from Container)",
@@ -610,9 +605,7 @@
               }
             },
             "Command": [
-              {
-                "Ref": "SensuCommand"
-              }
+              "server"
             ],
             "Environment": [
               {
