@@ -491,10 +491,6 @@
       "Type": "AWS::ApplicationAutoScaling::ScalingPolicy"
     },
     "ContainerService": {
-      "DependsOn": [
-        "ContainerTargetGroupHttp",
-        "ElbListener"
-      ],
       "Properties": {
         "Cluster": {
           "Ref": "ContainerHost"
@@ -502,17 +498,6 @@
         "DesiredCount": {
           "Ref": "ContainerDesiredCount"
         },
-        "LoadBalancers": [
-          {
-            "TargetGroupArn": {
-              "Ref": "ContainerTargetGroupHttp"
-            },
-            "ContainerName": {
-              "Ref": "ContainerName"
-            },
-            "ContainerPort": "4567"
-          }
-        ],
         "PlacementStrategies": [
           {
             "Field": "attribute:ecs.availability-zone",
@@ -523,9 +508,6 @@
             "Type": "spread"
           }
         ],
-        "Role": {
-          "Ref": "LoadbalancerServiceRoleArn"
-        },
         "ServiceName": {
           "Ref": "ContainerName"
         },
@@ -534,44 +516,6 @@
         }
       },
       "Type": "AWS::ECS::Service"
-    },
-    "ContainerTargetGroupHttp": {
-      "Properties": {
-        "HealthCheckIntervalSeconds": {
-          "Ref": "ElbHealthCheckIntervalSeconds"
-        },
-        "HealthCheckPath": "/health",
-        "HealthCheckProtocol": "HTTP",
-        "HealthCheckTimeoutSeconds": {
-          "Ref": "ElbHealthCheckTimeoutSeconds"
-        },
-        "HealthyThresholdCount": {
-          "Ref": "ElbHealthyThresholdCount"
-        },
-        "Matcher": {
-          "HttpCode": "204"
-        },
-        "Name": {
-          "Fn::Join": [
-            "",
-            [
-              {
-                "Ref": "ContainerName"
-              },
-              "-4567"
-            ]
-          ]
-        },
-        "Port": "4567",
-        "Protocol": "HTTP",
-        "UnhealthyThresholdCount": {
-          "Ref": "ElbUnhealthyThresholdCount"
-        },
-        "VpcId": {
-          "Ref": "VpcId"
-        }
-      },
-      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
     },
     "ContainerTaskdefinition": {
       "Properties": {
@@ -724,29 +668,6 @@
         }
       },
       "Type": "AWS::ECS::TaskDefinition"
-    },
-    "ElbListener": {
-      "DependsOn": [
-        "ContainerTargetGroupHttp"
-      ],
-      "Properties": {
-        "DefaultActions": [
-          {
-            "Type": "forward",
-            "TargetGroupArn": {
-              "Ref": "ContainerTargetGroupHttp"
-            }
-          }
-        ],
-        "LoadBalancerArn": {
-          "Ref": "ElbFrontOrBack"
-        },
-        "Port": {
-          "Ref": "SensuServerElbPortListener"
-        },
-        "Protocol": "HTTP"
-      },
-      "Type": "AWS::ElasticLoadBalancingV2::Listener"
     }
   }
 }
