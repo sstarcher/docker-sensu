@@ -49,6 +49,11 @@
       "Description": "false | true for argos setting",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
+    "BuildImageTag": {
+      "Default": "SSM_BASE_PATH/ECS/build_image_tag",
+      "Description": "Build Image Commit Tag",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
     "ContainerAdjustmentNumberHighDown": {
       "Default": "SSM_BASE_PATH/ECS/container_adjustment_number_high_down",
       "Description": "The amount by which to scale.",
@@ -525,7 +530,18 @@
               "Ref": "ContainerName"
             },
             "Image": {
-              "Ref": "ContainerImage"
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "ContainerImage"
+                  },
+                  ":",
+                  {
+                    "Ref": "BuildImageTag"
+                  }
+                ]
+              ]
             },
             "Cpu": {
               "Ref": "ContainerCpu"
