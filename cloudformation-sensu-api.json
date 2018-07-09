@@ -34,7 +34,7 @@
     },
     "BuildImageTag": {
       "Default": "SSM_BASE_PATH/ECS/build_image_tag",
-      "Description": "Build Image Commit Tag",
+      "Description": "Dev Build Image Commit Tag",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ContainerAdjustmentNumberHighDown": {
