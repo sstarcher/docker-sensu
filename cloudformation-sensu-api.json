@@ -590,10 +590,7 @@
                   {
                     "Ref": "ContainerImage"
                   },
-                  ":",
-                  {
-                    "Ref": "BuildImageTag"
-                  }
+                  ":latest"
                 ]
               ]
             },
