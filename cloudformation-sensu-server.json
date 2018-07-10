@@ -667,6 +667,23 @@
                     "none"
                   ]
                 }
+              },
+              {
+                "Name": "CONTAINER_IMAGE_TAG",
+                "Value": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Ref": "ContainerImage"
+                      },
+                      ":",
+                      {
+                        "Ref": "BuildImageTag"
+                      }
+                    ]
+                  ]
+                }
               }
             ],
             "PortMappings": [

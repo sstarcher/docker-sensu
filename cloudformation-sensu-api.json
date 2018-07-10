@@ -681,6 +681,23 @@
                 "Value": {
                   "Ref": "RedisDbTableId"
                 }
+              },
+              {
+                "Name": "CONTAINER_IMAGE_TAG",
+                "Value": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Ref": "ContainerImage"
+                      },
+                      ":",
+                      {
+                        "Ref": "BuildImageTag"
+                      }
+                    ]
+                  ]
+                }
               }
             ],
             "PortMappings": [
