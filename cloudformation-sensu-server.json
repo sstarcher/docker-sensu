@@ -41,7 +41,7 @@
   "Parameters": {
     "ApplicationEnv": {
       "Default": "SSM_BASE_PATH/ECS/application_env",
-      "Description": "Application Environment",
+      "Description": "Application Environment DEV | PROD",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ArgosLive": {
@@ -171,36 +171,6 @@
       "Description": "Customer name",
       "Type": "String"
     },
-    "ElbFrontOrBack": {
-      "Default": "SSM_BASE_PATH/ECS/elb_front_or_back",
-      "Description": "Elastic loadbalancer (Frontend or Backend)",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "ElbHealthCheckIntervalSeconds": {
-      "Default": "SSM_BASE_PATH/ECS/elb_health_check_interval_seconds",
-      "Description": "Elastic loadbalancer Health Check interval in seconds",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "ElbHealthCheckTimeoutSeconds": {
-      "Default": "SSM_BASE_PATH/ECS/elb_health_check_timeout_seconds",
-      "Description": "Elastic loadbalancer Health Checks timeout in seconds",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "ElbHealthyThresholdCount": {
-      "Default": "SSM_BASE_PATH/ECS/elb_healthy_threshold_count",
-      "Description": "Elastic loadbalancer healthy threshold count",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "ElbUnhealthyThresholdCount": {
-      "Default": "SSM_BASE_PATH/ECS/elb_unhealthy_threshold_count",
-      "Description": "Elastic loadbalancer unhealthy threshold count",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "LoadbalancerServiceRoleArn": {
-      "Default": "SSM_BASE_PATH/ECS/loadbalancer_service_role_arn",
-      "Description": "Elasticloadbalancer service role (ARN)",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
     "RedisDbTableId": {
       "Default": "SSM_BASE_PATH/ECS/redis_db_table_id",
       "Description": "Redis database (customer table id)",
@@ -234,11 +204,6 @@
     "SensuApiSqsQueue": {
       "Default": "SSM_BASE_PATH/ECS/sensu_api_sqs_queue",
       "Description": "SQS Queue URL",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "SensuServerElbPortListener": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_server_elb_port_listener",
-      "Description": "Sensu Server ELB port listener, (If different from Container)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuSqsMaxNumberOfMessages": {

@@ -27,11 +27,6 @@
     }
   },
   "Parameters": {
-    "ApplicationEnv": {
-      "Default": "SSM_BASE_PATH/ECS/application_env",
-      "Description": "Container Host",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
     "BuildImageTag": {
       "Default": "SSM_BASE_PATH/ECS/build_image_tag",
       "Description": "Build Image Commit Tag",
@@ -219,19 +214,9 @@
       "Description": "Sensu Api ELB port listener, (If different from Container)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuApiHost": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_api_host",
-      "Description": "Sensu API Host",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
     "SensuApiInputTopic": {
       "Default": "SSM_BASE_PATH/ECS/sensu_api_input_topic",
       "Description": "SNS Topic ARN",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "SensuApiPort": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_api_port",
-      "Description": "Sensu API port",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuApiSqsQueue": {
