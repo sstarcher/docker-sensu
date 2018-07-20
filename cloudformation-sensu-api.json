@@ -740,7 +740,7 @@
           "Fn::Join": [
             "",
             [
-              "sensu-api-",
+              "sensu-",
               {
                 "Ref": "CustomerName"
               },
