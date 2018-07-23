@@ -149,14 +149,19 @@
       "Description": "Customer name",
       "Type": "String"
     },
+    "EcsBackendElbId": {
+      "Default": "SSM_BASE_PATH/ECS/ecs_backend_elb_id",
+      "Description": "Elastic loadbalancer (Frontend or Backend)",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "EcsBackendElbPublicIp": {
+      "Default": "SSM_BASE_PATH/ECS/ecs_backend_elb_public_ip",
+      "Description": "Sensu API host",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
     "EcsFrontendElbPublicIp": {
       "Default": "SSM_BASE_PATH/ECS/ecs_frontend_elb_public_ip",
       "Description": "Elasticloadbalancer public DNS",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "ElbFrontOrBack": {
-      "Default": "SSM_BASE_PATH/ECS/elb_front_or_back",
-      "Description": "Elastic loadbalancer (Frontend or Backend)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ElbHealthCheckIntervalSeconds": {
@@ -199,28 +204,28 @@
       "Description": "Redis database (customer table id)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "RedisHost": {
-      "Default": "SSM_BASE_PATH/ECS/redis_host",
-      "Description": "Redis Host",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "RedisPort": {
-      "Default": "SSM_BASE_PATH/ECS/redis_port",
-      "Description": "Port for Redis",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
     "SensuApiElbPortListener": {
       "Default": "SSM_BASE_PATH/ECS/sensu_api_elb_port_listener",
       "Description": "Sensu Api ELB port listener, (If different from Container)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuApiInputTopic": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_api_input_topic",
+    "SensuECPrimaryEndpoint": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_e_c_primary_endpoint",
+      "Description": "Redis Host",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuECPrimaryEndpointPort": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_e_c_primary_endpoint_port",
+      "Description": "Port for Redis",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuServerInputTopic": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_server_input_topic",
       "Description": "SNS Topic ARN",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuApiSqsQueue": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_api_sqs_queue",
+    "SensuServerSqsQueue": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_server_sqs_queue",
       "Description": "SQS Queue URL",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
@@ -498,7 +503,9 @@
             "ContainerName": {
               "Ref": "ContainerName"
             },
-            "ContainerPort": "4567"
+            "ContainerPort": {
+              "Ref": "EcsBackendElbPublicIp"
+            }
           }
         ],
         "PlacementStrategies": [
@@ -546,11 +553,16 @@
               {
                 "Ref": "ContainerName"
               },
-              "-4567"
+              "-",
+              {
+                "Ref": "EcsBackendElbPublicIp"
+              }
             ]
           ]
         },
-        "Port": "4567",
+        "Port": {
+          "Ref": "EcsBackendElbPublicIp"
+        },
         "Protocol": "HTTP",
         "UnhealthyThresholdCount": {
           "Ref": "ElbUnhealthyThresholdCount"
@@ -613,7 +625,9 @@
               },
               {
                 "Name": "API_PORT",
-                "Value": "4567"
+                "Value": {
+                  "Ref": "EcsBackendElbPublicIp"
+                }
               },
               {
                 "Name": "TRANSPORT_NAME",
@@ -640,25 +654,25 @@
               {
                 "Name": "SNSSQS_CONSUMING_SQS_QUEUE_URL",
                 "Value": {
-                  "Ref": "SensuApiSqsQueue"
+                  "Ref": "SensuServerSqsQueue"
                 }
               },
               {
                 "Name": "SNSSQS_PUBLISHING_SNS_TOPIC_ARN",
                 "Value": {
-                  "Ref": "SensuApiInputTopic"
+                  "Ref": "SensuServerInputTopic"
                 }
               },
               {
                 "Name": "REDIS_HOST",
                 "Value": {
-                  "Ref": "RedisHost"
+                  "Ref": "SensuECPrimaryEndpoint"
                 }
               },
               {
                 "Name": "REDIS_PORT",
                 "Value": {
-                  "Ref": "RedisPort"
+                  "Ref": "SensuECPrimaryEndpointPort"
                 }
               },
               {
@@ -687,7 +701,9 @@
             ],
             "PortMappings": [
               {
-                "ContainerPort": "4567"
+                "ContainerPort": {
+                  "Ref": "EcsBackendElbPublicIp"
+                }
               }
             ]
           }
@@ -715,7 +731,7 @@
           }
         ],
         "LoadBalancerArn": {
-          "Ref": "ElbFrontOrBack"
+          "Ref": "EcsBackendElbId"
         },
         "Port": {
           "Ref": "SensuApiElbPortListener"

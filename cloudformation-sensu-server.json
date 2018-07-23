@@ -171,19 +171,14 @@
       "Description": "Customer name",
       "Type": "String"
     },
+    "EcsBackendElbPublicIp": {
+      "Default": "SSM_BASE_PATH/ECS/ecs_backend_elb_public_ip",
+      "Description": "Sensu API host",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
     "RedisDbTableId": {
       "Default": "SSM_BASE_PATH/ECS/redis_db_table_id",
       "Description": "Redis database (customer table id)",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "RedisHost": {
-      "Default": "SSM_BASE_PATH/ECS/redis_host",
-      "Description": "Redis Host",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "RedisPort": {
-      "Default": "SSM_BASE_PATH/ECS/redis_port",
-      "Description": "Port for Redis",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuApiHost": {
@@ -191,18 +186,28 @@
       "Description": "Sensu API Host",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuApiInputTopic": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_api_input_topic",
-      "Description": "SNS Topic ARN",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
     "SensuApiPort": {
       "Default": "SSM_BASE_PATH/ECS/sensu_api_port",
       "Description": "Sensu API port",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuApiSqsQueue": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_api_sqs_queue",
+    "SensuECPrimaryEndpoint": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_e_c_primary_endpoint",
+      "Description": "Redis Host",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuECPrimaryEndpointPort": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_e_c_primary_endpoint_port",
+      "Description": "Port for Redis",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuServerInputTopic": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_server_input_topic",
+      "Description": "SNS Topic ARN",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuServerSqsQueue": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_server_sqs_queue",
       "Description": "SQS Queue URL",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
@@ -570,25 +575,25 @@
               {
                 "Name": "SNSSQS_CONSUMING_SQS_QUEUE_URL",
                 "Value": {
-                  "Ref": "SensuApiSqsQueue"
+                  "Ref": "SensuServerSqsQueue"
                 }
               },
               {
                 "Name": "SNSSQS_PUBLISHING_SNS_TOPIC_ARN",
                 "Value": {
-                  "Ref": "SensuApiInputTopic"
+                  "Ref": "SensuServerInputTopic"
                 }
               },
               {
                 "Name": "REDIS_HOST",
                 "Value": {
-                  "Ref": "RedisHost"
+                  "Ref": "SensuECPrimaryEndpoint"
                 }
               },
               {
                 "Name": "REDIS_PORT",
                 "Value": {
-                  "Ref": "RedisPort"
+                  "Ref": "SensuECPrimaryEndpointPort"
                 }
               },
               {
@@ -653,7 +658,9 @@
             ],
             "PortMappings": [
               {
-                "ContainerPort": "4567"
+                "ContainerPort": {
+                  "Ref": "EcsBackendElbPublicIp"
+                }
               }
             ]
           }
