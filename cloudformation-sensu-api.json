@@ -154,11 +154,6 @@
       "Description": "Elastic loadbalancer (Frontend or Backend)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "EcsBackendElbPublicIp": {
-      "Default": "SSM_BASE_PATH/ECS/ecs_backend_elb_public_ip",
-      "Description": "Sensu API host",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
     "EcsFrontendElbPublicIp": {
       "Default": "SSM_BASE_PATH/ECS/ecs_frontend_elb_public_ip",
       "Description": "Elasticloadbalancer public DNS",
@@ -207,6 +202,11 @@
     "SensuApiElbPortListener": {
       "Default": "SSM_BASE_PATH/ECS/sensu_api_elb_port_listener",
       "Description": "Sensu Api ELB port listener, (If different from Container)",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuApiPort": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_api_port",
+      "Description": "Sensu API port",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuECPrimaryEndpoint": {
@@ -504,7 +504,7 @@
               "Ref": "ContainerName"
             },
             "ContainerPort": {
-              "Ref": "EcsBackendElbPublicIp"
+              "Ref": "SensuApiPort"
             }
           }
         ],
@@ -555,13 +555,13 @@
               },
               "-",
               {
-                "Ref": "EcsBackendElbPublicIp"
+                "Ref": "SensuApiPort"
               }
             ]
           ]
         },
         "Port": {
-          "Ref": "EcsBackendElbPublicIp"
+          "Ref": "SensuApiPort"
         },
         "Protocol": "HTTP",
         "UnhealthyThresholdCount": {
@@ -626,7 +626,7 @@
               {
                 "Name": "API_PORT",
                 "Value": {
-                  "Ref": "EcsBackendElbPublicIp"
+                  "Ref": "SensuApiPort"
                 }
               },
               {
@@ -702,7 +702,7 @@
             "PortMappings": [
               {
                 "ContainerPort": {
-                  "Ref": "EcsBackendElbPublicIp"
+                  "Ref": "SensuApiPort"
                 }
               }
             ]

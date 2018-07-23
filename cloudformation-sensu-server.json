@@ -181,11 +181,6 @@
       "Description": "Redis database (customer table id)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuApiHost": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_api_host",
-      "Description": "Sensu API Host",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
     "SensuApiPort": {
       "Default": "SSM_BASE_PATH/ECS/sensu_api_port",
       "Description": "Sensu API port",
@@ -541,7 +536,7 @@
               {
                 "Name": "API_HOST",
                 "Value": {
-                  "Ref": "SensuApiHost"
+                  "Ref": "EcsBackendElbPublicIp"
                 }
               },
               {
@@ -659,7 +654,7 @@
             "PortMappings": [
               {
                 "ContainerPort": {
-                  "Ref": "EcsBackendElbPublicIp"
+                  "Ref": "SensuApiPort"
                 }
               }
             ]
