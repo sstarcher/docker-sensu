@@ -212,27 +212,27 @@ class Ec2Node < Sensu::Handler
         },
         table_name: 'shared_monitoring_customer_accounts'
       })
-  #    if (dyn_resp.items[0].key?('fixed_access_key_id') && dyn_resp.items[0].key?('fixed_secret_access_key')) then
-  #      assumed_role = {
-  #        access_key_id: dyn_resp.items[0]['fixed_access_key_id'],
-  #          secret_access_key: dyn_resp.items[0]['fixed_secret_access_key']
-  #      }
-  #      path = '/stashes'
-  #      api_request('POST', path) do |req|
-  #        domain = api_settings['host'].start_with?('http') ? api_settings['host'] : 'http://' + api_settings['host']
-  #        uri = URI("#{domain}:#{api_settings['port']}#{path}")
-  #        req.body = JSON.generate({
-  #          path: "/stash/aws/account/#{account_id}/service_role/assumed",
-  #          expire: 3000,
-  #          content: assumed_role
-  #        })
-  #        req.content_type = 'application/json'
-  #        Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
-  #          http.request(req)
-  #        end
-  #      end
-  #      return Aws::Credentials.new(assumed_role[:access_key_id], assumed_role[:secret_access_key])
-  #    else
+      if (dyn_resp.items[0].key?('fixed_access_key_id') && dyn_resp.items[0].key?('fixed_secret_access_key')) then
+        assumed_role = {
+          access_key_id: dyn_resp.items[0]['fixed_access_key_id'],
+            secret_access_key: dyn_resp.items[0]['fixed_secret_access_key']
+        }
+        path = '/stashes'
+        api_request('POST', path) do |req|
+          domain = api_settings['host'].start_with?('http') ? api_settings['host'] : 'http://' + api_settings['host']
+          uri = URI("#{domain}:#{api_settings['port']}#{path}")
+          req.body = JSON.generate({
+            path: "/stash/aws/account/#{account_id}/service_role/assumed",
+            expire: 3000,
+            content: assumed_role
+          })
+          req.content_type = 'application/json'
+          Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
+            http.request(req)
+          end
+        end
+        return Aws::Credentials.new(assumed_role[:access_key_id], assumed_role[:secret_access_key])
+      else
         role_arn = dyn_resp.items[0].key?('service_role_arn') ? dyn_resp.items[0]['service_role_arn'] : "arn:aws:iam::#{account_id}:role/AsyServiceRole"
         sts = Aws::STS::Client.new({region: region_server})
         sts_resp = sts.assume_role({
@@ -259,7 +259,7 @@ class Ec2Node < Sensu::Handler
           end
         end
         return Aws::Credentials.new(assumed_role[:access_key_id], assumed_role[:secret_access_key], assumed_role[:session_token])
-  #    end
+      end
     else
       puts "ERROR in sensu api /stashes access"
       return {}
