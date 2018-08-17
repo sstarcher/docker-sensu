@@ -1,7 +1,7 @@
 FROM ruby:2.4-slim-stretch
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
-ARG SENSU_VERSION=1.2.0-1
+ARG SENSU_VERSION=1.4.3-1
 ARG DUMB_INIT_VERSION=1.2.0
 ARG ENVTPL_VERSION=0.2.3
 
