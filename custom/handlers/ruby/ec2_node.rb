@@ -215,7 +215,7 @@ class Ec2Node < Sensu::Handler
       if (dyn_resp.items[0].key?('fixed_access_key_id') && dyn_resp.items[0].key?('fixed_secret_access_key')) then
         assumed_role = {
           access_key_id: dyn_resp.items[0]['fixed_access_key_id'],
-          secret_access_key: dyn_resp.items[0]['fixed_secret_access_key']
+            secret_access_key: dyn_resp.items[0]['fixed_secret_access_key']
         }
         path = '/stashes'
         api_request('POST', path) do |req|

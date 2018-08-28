@@ -18,9 +18,20 @@
       "Value": {
         "Ref": "ContainerTaskdefinition"
       }
+    },
+    "SensuDnsExtRecord": {
+      "Description": "Sensu API DNS external record",
+      "Value": {
+        "Ref": "SensuDnsExtRecord"
+      }
     }
   },
   "Parameters": {
+    "BuildImageTag": {
+      "Default": "SSM_BASE_PATH/ECS/build_image_tag",
+      "Description": "Build Image Commit Tag",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
     "ContainerAdjustmentNumberHighDown": {
       "Default": "SSM_BASE_PATH/ECS/container_adjustment_number_high_down",
       "Description": "The amount by which to scale.",
@@ -134,14 +145,18 @@
       "Description": "Name of the ECS Container Service",
       "Type": "String"
     },
-    "ContainerPort": {
-      "Default": "SSM_BASE_PATH/ECS/container_port",
-      "Description": "ECS Container Port",
+    "CustomerName": {
+      "Description": "Customer name",
+      "Type": "String"
+    },
+    "EcsBackendElbId": {
+      "Default": "SSM_BASE_PATH/ECS/ecs_backend_elb_id",
+      "Description": "Elastic loadbalancer (Frontend or Backend)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "ElbFrontOrBack": {
-      "Default": "SSM_BASE_PATH/ECS/elb_front_or_back",
-      "Description": "Elastic loadbalancer (Frontend or Backend)",
+    "EcsFrontendElbPublicIp": {
+      "Default": "SSM_BASE_PATH/ECS/ecs_frontend_elb_public_ip",
+      "Description": "Elasticloadbalancer public DNS",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "ElbHealthCheckIntervalSeconds": {
@@ -159,14 +174,19 @@
       "Description": "Elastic loadbalancer healthy threshold count",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "ElbPortListener": {
-      "Default": "SSM_BASE_PATH/ECS/elb_port_listener",
-      "Description": "ELB port listener, (If different from Container)",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
     "ElbUnhealthyThresholdCount": {
       "Default": "SSM_BASE_PATH/ECS/elb_unhealthy_threshold_count",
       "Description": "Elastic loadbalancer unhealthy threshold count",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ExternalZoneId": {
+      "Default": "SSM_BASE_PATH/ECS/external_zone_id",
+      "Description": "External Zone ID",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ExternalZoneName": {
+      "Default": "SSM_BASE_PATH/ECS/external_zone_name",
+      "Description": "External Zone Name",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "LoadbalancerServiceRoleArn": {
@@ -179,24 +199,9 @@
       "Description": "Redis database (customer table id)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "RedisHost": {
-      "Default": "SSM_BASE_PATH/ECS/redis_host",
-      "Description": "Redis Host",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "RedisPort": {
-      "Default": "SSM_BASE_PATH/ECS/redis_port",
-      "Description": "Port for Redis",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "SensuApiHost": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_api_host",
-      "Description": "Sensu API Host",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "SensuApiInputTopic": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_api_input_topic",
-      "Description": "SNS Topic ARN",
+    "SensuApiElbPortListener": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_api_elb_port_listener",
+      "Description": "Sensu Api ELB port listener, (If different from Container)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuApiPort": {
@@ -204,19 +209,24 @@
       "Description": "Sensu API port",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuApiSqsQueue": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_api_sqs_queue",
-      "Description": "SQS Queue URL",
+    "SensuECPrimaryEndpoint": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_e_c_primary_endpoint",
+      "Description": "Redis Host",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuCommand": {
-      "Default": "api",
-      "Description": "API or Server",
-      "Type": "String"
+    "SensuECPrimaryEndpointPort": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_e_c_primary_endpoint_port",
+      "Description": "Port for Redis",
+      "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuRegion": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_region",
-      "Description": "Region of SQSSNS",
+    "SensuServerInputTopic": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_server_input_topic",
+      "Description": "SNS Topic ARN",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuServerSqsQueue": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_server_sqs_queue",
+      "Description": "SQS Queue URL",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuSqsMaxNumberOfMessages": {
@@ -494,7 +504,7 @@
               "Ref": "ContainerName"
             },
             "ContainerPort": {
-              "Ref": "ContainerPort"
+              "Ref": "SensuApiPort"
             }
           }
         ],
@@ -545,13 +555,13 @@
               },
               "-",
               {
-                "Ref": "ContainerPort"
+                "Ref": "SensuApiPort"
               }
             ]
           ]
         },
         "Port": {
-          "Ref": "ContainerPort"
+          "Ref": "SensuApiPort"
         },
         "Protocol": "HTTP",
         "UnhealthyThresholdCount": {
@@ -571,7 +581,18 @@
               "Ref": "ContainerName"
             },
             "Image": {
-              "Ref": "ContainerImage"
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "ContainerImage"
+                  },
+                  ":",
+                  {
+                    "Ref": "BuildImageTag"
+                  }
+                ]
+              ]
             },
             "Cpu": {
               "Ref": "ContainerCpu"
@@ -595,16 +616,12 @@
               }
             },
             "Command": [
-              {
-                "Ref": "SensuCommand"
-              }
+              "api"
             ],
             "Environment": [
               {
                 "Name": "API_HOST",
-                "Value": {
-                  "Ref": "SensuApiHost"
-                }
+                "Value": "localhost"
               },
               {
                 "Name": "API_PORT",
@@ -631,31 +648,31 @@
               {
                 "Name": "SNSSQS_REGION",
                 "Value": {
-                  "Ref": "SensuRegion"
+                  "Ref": "AWS::Region"
                 }
               },
               {
                 "Name": "SNSSQS_CONSUMING_SQS_QUEUE_URL",
                 "Value": {
-                  "Ref": "SensuApiSqsQueue"
+                  "Ref": "SensuServerSqsQueue"
                 }
               },
               {
                 "Name": "SNSSQS_PUBLISHING_SNS_TOPIC_ARN",
                 "Value": {
-                  "Ref": "SensuApiInputTopic"
+                  "Ref": "SensuServerInputTopic"
                 }
               },
               {
                 "Name": "REDIS_HOST",
                 "Value": {
-                  "Ref": "RedisHost"
+                  "Ref": "SensuECPrimaryEndpoint"
                 }
               },
               {
                 "Name": "REDIS_PORT",
                 "Value": {
-                  "Ref": "RedisPort"
+                  "Ref": "SensuECPrimaryEndpointPort"
                 }
               },
               {
@@ -663,12 +680,29 @@
                 "Value": {
                   "Ref": "RedisDbTableId"
                 }
+              },
+              {
+                "Name": "CONTAINER_IMAGE_TAG",
+                "Value": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Ref": "ContainerImage"
+                      },
+                      ":",
+                      {
+                        "Ref": "BuildImageTag"
+                      }
+                    ]
+                  ]
+                }
               }
             ],
             "PortMappings": [
               {
                 "ContainerPort": {
-                  "Ref": "ContainerPort"
+                  "Ref": "SensuApiPort"
                 }
               }
             ]
@@ -697,14 +731,45 @@
           }
         ],
         "LoadBalancerArn": {
-          "Ref": "ElbFrontOrBack"
+          "Ref": "EcsBackendElbId"
         },
         "Port": {
-          "Ref": "ElbPortListener"
+          "Ref": "SensuApiElbPortListener"
         },
         "Protocol": "HTTP"
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener"
+    },
+    "SensuDnsExtRecord": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Ref": "EcsFrontendElbPublicIp"
+          },
+          "EvaluateTargetHealth": false,
+          "HostedZoneId": "Z215JYRZR1TBD5"
+        },
+        "HostedZoneId": {
+          "Ref": "ExternalZoneId"
+        },
+        "Name": {
+          "Fn::Join": [
+            "",
+            [
+              "sensu-",
+              {
+                "Ref": "CustomerName"
+              },
+              ".",
+              {
+                "Ref": "ExternalZoneName"
+              }
+            ]
+          ]
+        },
+        "Type": "A"
+      },
+      "Type": "AWS::Route53::RecordSet"
     }
   }
 }

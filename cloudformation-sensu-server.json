@@ -1,4 +1,22 @@
 {
+  "Conditions": {
+    "ArgosSimulateTrue": {
+      "Fn::Equals": [
+        {
+          "Ref": "ArgosLive"
+        },
+        "false"
+      ]
+    },
+    "IsDevEnv": {
+      "Fn::Equals": [
+        {
+          "Ref": "ApplicationEnv"
+        },
+        "dev"
+      ]
+    }
+  },
   "Description": "AWS CloudFormation Template for ECS Sensu",
   "Outputs": {
     "ContainerName": {
@@ -21,6 +39,21 @@
     }
   },
   "Parameters": {
+    "ApplicationEnv": {
+      "Default": "SSM_BASE_PATH/ECS/application_env",
+      "Description": "Application Environment DEV | PROD",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "ArgosLive": {
+      "Default": "SSM_BASE_PATH/ECS/argos_live",
+      "Description": "false | true for argos setting",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "BuildImageTag": {
+      "Default": "SSM_BASE_PATH/ECS/build_image_tag",
+      "Description": "Build Image Commit Tag",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
     "ContainerAdjustmentNumberHighDown": {
       "Default": "SSM_BASE_PATH/ECS/container_adjustment_number_high_down",
       "Description": "The amount by which to scale.",
@@ -134,44 +167,13 @@
       "Description": "Name of the ECS Container Service",
       "Type": "String"
     },
-    "ContainerPort": {
-      "Default": "SSM_BASE_PATH/ECS/container_port",
-      "Description": "ECS Container Port",
-      "Type": "AWS::SSM::Parameter::Value<String>"
+    "CustomerName": {
+      "Description": "Customer name",
+      "Type": "String"
     },
-    "ElbFrontOrBack": {
-      "Default": "SSM_BASE_PATH/ECS/elb_front_or_back",
-      "Description": "Elastic loadbalancer (Frontend or Backend)",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "ElbHealthCheckIntervalSeconds": {
-      "Default": "SSM_BASE_PATH/ECS/elb_health_check_interval_seconds",
-      "Description": "Elastic loadbalancer Health Check interval in seconds",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "ElbHealthCheckTimeoutSeconds": {
-      "Default": "SSM_BASE_PATH/ECS/elb_health_check_timeout_seconds",
-      "Description": "Elastic loadbalancer Health Checks timeout in seconds",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "ElbHealthyThresholdCount": {
-      "Default": "SSM_BASE_PATH/ECS/elb_healthy_threshold_count",
-      "Description": "Elastic loadbalancer healthy threshold count",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "ElbPortListener": {
-      "Default": "SSM_BASE_PATH/ECS/elb_port_listener",
-      "Description": "ELB port listener, (If different from Container)",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "ElbUnhealthyThresholdCount": {
-      "Default": "SSM_BASE_PATH/ECS/elb_unhealthy_threshold_count",
-      "Description": "Elastic loadbalancer unhealthy threshold count",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "LoadbalancerServiceRoleArn": {
-      "Default": "SSM_BASE_PATH/ECS/loadbalancer_service_role_arn",
-      "Description": "Elasticloadbalancer service role (ARN)",
+    "EcsBackendElbPublicIp": {
+      "Default": "SSM_BASE_PATH/ECS/ecs_backend_elb_public_ip",
+      "Description": "Sensu API host",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "RedisDbTableId": {
@@ -179,44 +181,29 @@
       "Description": "Redis database (customer table id)",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "RedisHost": {
-      "Default": "SSM_BASE_PATH/ECS/redis_host",
-      "Description": "Redis Host",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "RedisPort": {
-      "Default": "SSM_BASE_PATH/ECS/redis_port",
-      "Description": "Port for Redis",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "SensuApiHost": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_api_host",
-      "Description": "Sensu API Host",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
-    "SensuApiInputTopic": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_api_input_topic",
-      "Description": "SNS Topic ARN",
-      "Type": "AWS::SSM::Parameter::Value<String>"
-    },
     "SensuApiPort": {
       "Default": "SSM_BASE_PATH/ECS/sensu_api_port",
       "Description": "Sensu API port",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuApiSqsQueue": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_api_sqs_queue",
-      "Description": "SQS Queue URL",
+    "SensuECPrimaryEndpoint": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_e_c_primary_endpoint",
+      "Description": "Redis Host",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuCommand": {
-      "Default": "api",
-      "Description": "API or Server",
-      "Type": "String"
+    "SensuECPrimaryEndpointPort": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_e_c_primary_endpoint_port",
+      "Description": "Port for Redis",
+      "Type": "AWS::SSM::Parameter::Value<String>"
     },
-    "SensuRegion": {
-      "Default": "SSM_BASE_PATH/ECS/sensu_region",
-      "Description": "Region of SQSSNS",
+    "SensuServerInputTopic": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_server_input_topic",
+      "Description": "SNS Topic ARN",
+      "Type": "AWS::SSM::Parameter::Value<String>"
+    },
+    "SensuServerSqsQueue": {
+      "Default": "SSM_BASE_PATH/ECS/sensu_server_sqs_queue",
+      "Description": "SQS Queue URL",
       "Type": "AWS::SSM::Parameter::Value<String>"
     },
     "SensuSqsMaxNumberOfMessages": {
@@ -474,10 +461,6 @@
       "Type": "AWS::ApplicationAutoScaling::ScalingPolicy"
     },
     "ContainerService": {
-      "DependsOn": [
-        "ContainerTargetGroupHttp",
-        "ElbListener"
-      ],
       "Properties": {
         "Cluster": {
           "Ref": "ContainerHost"
@@ -485,19 +468,6 @@
         "DesiredCount": {
           "Ref": "ContainerDesiredCount"
         },
-        "LoadBalancers": [
-          {
-            "TargetGroupArn": {
-              "Ref": "ContainerTargetGroupHttp"
-            },
-            "ContainerName": {
-              "Ref": "ContainerName"
-            },
-            "ContainerPort": {
-              "Ref": "ContainerPort"
-            }
-          }
-        ],
         "PlacementStrategies": [
           {
             "Field": "attribute:ecs.availability-zone",
@@ -508,9 +478,6 @@
             "Type": "spread"
           }
         ],
-        "Role": {
-          "Ref": "LoadbalancerServiceRoleArn"
-        },
         "ServiceName": {
           "Ref": "ContainerName"
         },
@@ -520,49 +487,6 @@
       },
       "Type": "AWS::ECS::Service"
     },
-    "ContainerTargetGroupHttp": {
-      "Properties": {
-        "HealthCheckIntervalSeconds": {
-          "Ref": "ElbHealthCheckIntervalSeconds"
-        },
-        "HealthCheckPath": "/health",
-        "HealthCheckProtocol": "HTTP",
-        "HealthCheckTimeoutSeconds": {
-          "Ref": "ElbHealthCheckTimeoutSeconds"
-        },
-        "HealthyThresholdCount": {
-          "Ref": "ElbHealthyThresholdCount"
-        },
-        "Matcher": {
-          "HttpCode": "204"
-        },
-        "Name": {
-          "Fn::Join": [
-            "",
-            [
-              {
-                "Ref": "ContainerName"
-              },
-              "-",
-              {
-                "Ref": "ContainerPort"
-              }
-            ]
-          ]
-        },
-        "Port": {
-          "Ref": "ContainerPort"
-        },
-        "Protocol": "HTTP",
-        "UnhealthyThresholdCount": {
-          "Ref": "ElbUnhealthyThresholdCount"
-        },
-        "VpcId": {
-          "Ref": "VpcId"
-        }
-      },
-      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup"
-    },
     "ContainerTaskdefinition": {
       "Properties": {
         "ContainerDefinitions": [
@@ -571,7 +495,18 @@
               "Ref": "ContainerName"
             },
             "Image": {
-              "Ref": "ContainerImage"
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "ContainerImage"
+                  },
+                  ":",
+                  {
+                    "Ref": "BuildImageTag"
+                  }
+                ]
+              ]
             },
             "Cpu": {
               "Ref": "ContainerCpu"
@@ -595,15 +530,13 @@
               }
             },
             "Command": [
-              {
-                "Ref": "SensuCommand"
-              }
+              "server"
             ],
             "Environment": [
               {
                 "Name": "API_HOST",
                 "Value": {
-                  "Ref": "SensuApiHost"
+                  "Ref": "EcsBackendElbPublicIp"
                 }
               },
               {
@@ -631,31 +564,31 @@
               {
                 "Name": "SNSSQS_REGION",
                 "Value": {
-                  "Ref": "SensuRegion"
+                  "Ref": "AWS::Region"
                 }
               },
               {
                 "Name": "SNSSQS_CONSUMING_SQS_QUEUE_URL",
                 "Value": {
-                  "Ref": "SensuApiSqsQueue"
+                  "Ref": "SensuServerSqsQueue"
                 }
               },
               {
                 "Name": "SNSSQS_PUBLISHING_SNS_TOPIC_ARN",
                 "Value": {
-                  "Ref": "SensuApiInputTopic"
+                  "Ref": "SensuServerInputTopic"
                 }
               },
               {
                 "Name": "REDIS_HOST",
                 "Value": {
-                  "Ref": "RedisHost"
+                  "Ref": "SensuECPrimaryEndpoint"
                 }
               },
               {
                 "Name": "REDIS_PORT",
                 "Value": {
-                  "Ref": "RedisPort"
+                  "Ref": "SensuECPrimaryEndpointPort"
                 }
               },
               {
@@ -663,12 +596,65 @@
                 "Value": {
                   "Ref": "RedisDbTableId"
                 }
+              },
+              {
+                "Name": "ARGOS_LIVE",
+                "Value": {
+                  "Ref": "ArgosLive"
+                }
+              },
+              {
+                "Name": "ARGOS_SIMULATE",
+                "Value": {
+                  "Fn::If": [
+                    "ArgosSimulateTrue",
+                    "true",
+                    "false"
+                  ]
+                }
+              },
+              {
+                "Name": "ARGOS_URL",
+                "Value": {
+                  "Fn::If": [
+                    "IsDevEnv",
+                    "https://test-argos-eye-ext01.ws.arvato-systems.de/api/setEventData/CommonData",
+                    "none"
+                  ]
+                }
+              },
+              {
+                "Name": "ARGOS_API_KEY",
+                "Value": {
+                  "Fn::If": [
+                    "IsDevEnv",
+                    "FzQnaQjRtn",
+                    "none"
+                  ]
+                }
+              },
+              {
+                "Name": "CONTAINER_IMAGE_TAG",
+                "Value": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Ref": "ContainerImage"
+                      },
+                      ":",
+                      {
+                        "Ref": "BuildImageTag"
+                      }
+                    ]
+                  ]
+                }
               }
             ],
             "PortMappings": [
               {
                 "ContainerPort": {
-                  "Ref": "ContainerPort"
+                  "Ref": "SensuApiPort"
                 }
               }
             ]
@@ -682,29 +668,6 @@
         }
       },
       "Type": "AWS::ECS::TaskDefinition"
-    },
-    "ElbListener": {
-      "DependsOn": [
-        "ContainerTargetGroupHttp"
-      ],
-      "Properties": {
-        "DefaultActions": [
-          {
-            "Type": "forward",
-            "TargetGroupArn": {
-              "Ref": "ContainerTargetGroupHttp"
-            }
-          }
-        ],
-        "LoadBalancerArn": {
-          "Ref": "ElbFrontOrBack"
-        },
-        "Port": {
-          "Ref": "ElbPortListener"
-        },
-        "Protocol": "HTTP"
-      },
-      "Type": "AWS::ElasticLoadBalancingV2::Listener"
     }
   }
 }
