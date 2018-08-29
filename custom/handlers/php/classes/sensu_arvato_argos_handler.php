@@ -197,8 +197,12 @@ class SensuArvatoArgosHandler extends SensuArvatoHandler {
         $response = \Httpful\Request::get($this->_api_url . '/stashes/aws/account/' . $account_id . '/productive')->expectsJson()->send();
 
         if ($response->code == 200) {
-          $account_stash = json_decode($response->body);
-          $ret = $account_stash->{'productive'};
+          if (gettype($response->body) == 'string') {
+            $account_stash = json_decode($response->body);
+            $ret = $account_stash->{'productive'};
+          } else {
+            $ret = $response->body->productive;
+          }
           $this->log('(from stash) result of isProductiveAccount for client: ' . $event['client']['name'] . ', ' . $ret, 'debug');
           return $ret;
         } elseif ($response->code == 404) {
@@ -208,11 +212,12 @@ class SensuArvatoArgosHandler extends SensuArvatoHandler {
           ]);
           $dynamodb = $sdk->createDynamoDb();
 
-          $result = $dynamodb->scan([
+          $result = $dynamodb->query([
+            'IndexName' => 'account_id-index',
             'TableName' => 'shared_monitoring_customer_accounts',
-        		'FilterExpression' => 'account_id = :account_id',
-        		'ExpressionAttributeValues' => [
-        			':account_id' => [
+                'KeyConditionExpression' => 'account_id = :account_id',
+                'ExpressionAttributeValues' => [
+                    ':account_id' => [
                 'S' => $account_id
               ]
         		]

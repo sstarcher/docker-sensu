@@ -64,7 +64,7 @@ case "$SENSU_SERVICE" in
     if [ -z "$GRAPHITE_HOST" ]; then
       rm -f /etc/sensu/extensions/server/metrics.rb
       rm -f /etc/sensu/extensions/server/relay.rb
-      mv /etc/sensu/conf.d/handlers/drop_metrics.json /etc/sensu/conf.d/handlers/metrics.json
+      test -f /etc/sensu/conf.d/handlers/drop_metrics.json && mv /etc/sensu/conf.d/handlers/drop_metrics.json /etc/sensu/conf.d/handlers/metrics.json
       rm -f /etc/sensu/conf.d/relay.json
     else
       rm -f /etc/sensu/conf.d/handlers/drop_metrics.json

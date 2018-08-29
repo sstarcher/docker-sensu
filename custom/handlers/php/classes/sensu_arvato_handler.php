@@ -4,7 +4,7 @@ require_once(__DIR__ . '/httpful.phar');
 
 abstract class SensuArvatoHandler {
 
-    protected $_event_infos = array('id' => 'SENSU event id', 'timestamp' => 'SENSU event timestamp', 'last_state_change' => 'SENSU event last state change', 'last_ok' => 'SENSU event last ok');
+    protected $_event_infos = array('id' => 'SENSU event id', 'action' => 'SENSU event action', 'timestamp' => 'SENSU event timestamp', 'last_state_change' => 'SENSU event last state change', 'last_ok' => 'SENSU event last ok');
     protected $_client_infos = array('remedy_app' => 'Application',
         'remedy_component' => 'Component',
         'chef' => array(
@@ -311,15 +311,20 @@ abstract class SensuArvatoHandler {
     public function getShortText() {
         $event = $this->getEvent();
 
+        $text = 'SENSU check ' . $event['check']['name'] . ' on server ' . $event['client']['name'];
+        if($this->getAutoscalingGroupName()) {
+          $text = 'SENSU check ' . $event['check']['name'] . ' on autoscaling group ' . $this->getAutoscalingGroupName();
+        }
+
         switch ($event['action']) {
             case 'create':
-                return 'SENSU check ' . $event['check']['name'] . ' on server ' . $event['client']['name'] . ' failed';
+                return $text . ' failed';
                 break;
             case 'resolve':
-                return 'SENSU check ' . $event['check']['name'] . ' on server ' . $event['client']['name'] . ' resolved';
+                return $text . ' failed';
                 break;
             case 'flapping':
-                return 'SENSU check ' . $event['check']['name'] . ' on server ' . $event['client']['name'] . ' flapping';
+                return $text . ' failed';
                 break;
         }
 
@@ -404,6 +409,16 @@ abstract class SensuArvatoHandler {
         }
 
         return 'Todo not defined on sensu check or client level';
+    }
+
+    public function getAutoscalingGroupName() {
+        $event = $this->getEvent();
+
+        if (!isset($event['client']['tags']['aws:autoscaling:groupName'])) {
+            return null;
+        }
+
+        return $event['client']['tags']['aws:autoscaling:groupName'];
     }
 
     public function getAggregrateName() {
