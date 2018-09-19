@@ -273,9 +273,11 @@ class Ec2Node < Sensu::Handler
     unless region_client == region_server
       puts "[EC2 Node] #{instance_id} is in region #{region_client} server is in region #{region_server}"
     end
-    unless account_id == Aws::STS::Client.new({region: region_server}).get_caller_identity.account
-      puts "[EC2 Node] #{instance_id} is in account #{account_id} server is in account #{Aws::STS::Client.new({region: region_server}).get_caller_identity.account}"
-      begin
+    unless account_id == ''
+      puts "[EC2 Node] #{instance_id} don't have account_id attribute"
+    else account_id == Aws::STS::Client.new({region: region_server}).get_caller_identity.account
+        puts "[EC2 Node] #{instance_id} is in account #{account_id} server is in account #{Aws::STS::Client.new({region: region_server}).get_caller_identity.account}"
+        begin
         credentials = assume_role
       rescue Aws::DynamoDB::Errors::ResourceNotFoundException
         puts "[EC2 Node] Role switch failed due to missing DynamoDB item"
