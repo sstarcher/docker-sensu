@@ -268,22 +268,29 @@ class Ec2Node < Sensu::Handler
 
   # Method to check if there is any instance and if instance is in a valid state that could be deleted
   def ec2_node_should_be_deleted?
+
+    # Exit if missing account_id
+    unless account_id == ''
+      puts "[EC2 Node] #{instance_id} missing account_id attribute"
+      return false
+    end
+
     # Defining region for aws SDK object
-    credentials = {}
     unless region_client == region_server
       puts "[EC2 Node] #{instance_id} is in region #{region_client} server is in region #{region_server}"
     end
-    unless account_id == ''
-      puts "[EC2 Node] #{instance_id} don't have account_id attribute"
-    else account_id == Aws::STS::Client.new({region: region_server}).get_caller_identity.account
-        puts "[EC2 Node] #{instance_id} is in account #{account_id} server is in account #{Aws::STS::Client.new({region: region_server}).get_caller_identity.account}"
-        begin
+
+    credentials = {}
+    unless account_id == Aws::STS::Client.new({region: region_server}).get_caller_identity.account
+      puts "[EC2 Node] #{instance_id} is in account #{account_id} server is in account #{Aws::STS::Client.new({region: region_server}).get_caller_identity.account}"
+      begin
         credentials = assume_role
-      rescue Aws::DynamoDB::Errors::ResourceNotFoundException
-        puts "[EC2 Node] Role switch failed due to missing DynamoDB item"
-        return false
+        rescue Aws::DynamoDB::Errors::ResourceNotFoundException
+          puts "[EC2 Node] Role switch failed due to missing DynamoDB item"
+          return false
       end
     end
+
     ec2 = Aws::EC2::Client.new({region: region_client, credentials: credentials})
     settings['ec2_node'] = {} unless settings['ec2_node']
     instance_states = @event['client']['ec2_states'] || settings['ec2_node']['ec2_states'] || ['shutting-down', 'terminated', 'stopping', 'stopped']
