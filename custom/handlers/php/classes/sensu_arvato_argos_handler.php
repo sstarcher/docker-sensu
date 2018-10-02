@@ -6,7 +6,7 @@ require_once(__DIR__ . '/sensu_arvato_handler.php');
 
 class SensuArvatoArgosHandler extends SensuArvatoHandler {
 
-    protected $_needed_config_fields = array('live', 'debug', 'simulate', 'api_key', 'url','op_tool_kit');
+    protected $_needed_config_fields = array('live', 'debug', 'simulate', 'api_key', 'url', 'op_tool_kit');
     private $_severity_mapping = array(0 => 'WARNING', 1 => 'MINOR', 2 => 'CRITICAL');
 
     public function getHandlerName() {

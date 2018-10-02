@@ -270,7 +270,7 @@ class Ec2Node < Sensu::Handler
   def ec2_node_should_be_deleted?
 
     # Exit if missing account_id
-    unless account_id == ''
+    unless account_id != ''
       puts "[EC2 Node] #{instance_id} missing account_id attribute"
       return false
     end
