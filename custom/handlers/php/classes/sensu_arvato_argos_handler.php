@@ -99,6 +99,8 @@ class SensuArvatoArgosHandler extends SensuArvatoHandler {
             case 2:
                 if ($this->_isCritical())
                     return 'CRITICAL';
+                if ($this->_isUnCritical())
+                    return 'WARNING';
                 return 'MINOR';
                 break;
             case 3:
@@ -267,7 +269,7 @@ class SensuArvatoArgosHandler extends SensuArvatoHandler {
         }
 
         if ($this->_hasDependentEvent()) {
-            $this->log("Abort depended event found");
+            $this->log("Abort dependent event found");
             return 1;
         }
 

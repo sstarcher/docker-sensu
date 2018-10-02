@@ -34,6 +34,8 @@ abstract class SensuArvatoHandler {
     protected $_needed_event_fields = array('id', 'client', 'check', 'action', 'timestamp');
     protected $_allowed_event_actions = array('create', 'resolve', 'flapping');
     protected $_needed_config_fields = array('live', 'debug', 'simulate');
+    protected $_uncritial_single_checks = array();
+    protected $_uncritial_asg_checks = array('keepalive', 'load');
     protected $silent = false;
 
     private function _readEvent() {
@@ -499,6 +501,32 @@ abstract class SensuArvatoHandler {
         if ($aggregate->results->warning >= $max_warning) {
             $this->log("Event is critical due to too many warning aggregation results", "info");
             return true;
+        }
+
+        return false;
+    }
+
+    protected function _isUnCritical() {
+        $event = $this->getEvent();
+        if (isset($event['check']['is_uncritical']) && $event['check']['is_uncritical'] == true) {
+            $this->log("Event is uncritical due to custom check field is_uncritical", "debug");
+            return true;
+        }
+        if (isset($event['client']['is_uncritical']) && $event['client']['is_uncritical'] == true) {
+            $this->log("Event is uncritical due to custom client field is_uncritical", "debug");
+            return true;
+        }
+
+        if($this->getAutoscalingGroupName() != null) {
+            if (in_array($event['check']['name'], $this->_uncritial_asg_checks)) {
+                $this->log("Event is uncritical due to check is in array uncritial_asg_checks", "debug");
+                return true;
+            }
+        } else {
+            if (in_array($event['check']['name'], $this->_uncritial_single_checks)) {
+                $this->log("Event is uncritical due to check is in array uncritial_single_checks", "debug");
+                return true;
+            }
         }
 
         return false;
