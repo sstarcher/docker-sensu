@@ -30,7 +30,7 @@ abstract class SensuArvatoHandler {
     protected $_events = null;
     protected $_aggregate = null;
     protected $_handler_config = null;
-    protected $_api_url = 'http://csadm:CS01bmspass@localhost:4567';
+    protected $_api_url = 'http://localhost:4567';
     protected $_needed_event_fields = array('id', 'client', 'check', 'action', 'timestamp');
     protected $_allowed_event_actions = array('create', 'resolve', 'flapping');
     protected $_needed_config_fields = array('live', 'debug', 'simulate');
@@ -542,8 +542,12 @@ abstract class SensuArvatoHandler {
         if (file_exists($filename)) {
             $config = json_decode(file_get_contents($filename), true);
             if (isset($config['api']['host']) && isset($config['api']['port'])) {
+              if (isset($config['api']['user']) && isset($config['api']['password'])) {
+                $this->_api_url = 'http://' . $config['api']['user'] .':'. $config['api']['password'] . '@' . $config['api']['host'] . ':' . $config['api']['port'];
+              else
                 $this->_api_url = 'http://' . $config['api']['host'] . ':' . $config['api']['port'];
             }
+          }
         }
         $this->_silent = $silent;
     }
