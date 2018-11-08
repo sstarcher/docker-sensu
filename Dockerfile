@@ -1,7 +1,7 @@
 FROM ruby:2.4-slim-stretch
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
-ARG SENSU_VERSION=1.4.3-1
+ARG SENSU_VERSION=1.6.1-1
 ARG DUMB_INIT_VERSION=1.2.0
 ARG ENVTPL_VERSION=0.2.3
 
@@ -41,7 +41,8 @@ RUN \
 COPY templates /etc/sensu/templates
 COPY bin /bin/
 
-ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
+ENV SENSU_VERSION=${SENSU_VERSION} \
+    DEFAULT_PLUGINS_REPO=sensu-plugins \
     DEFAULT_PLUGINS_VERSION=master \
     # Client Config
     CLIENT_SUBSCRIPTIONS=all,default \
