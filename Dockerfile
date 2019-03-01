@@ -1,7 +1,7 @@
-FROM ruby:2.4-slim-stretch
+FROM ruby:2.5-slim-stretch
 MAINTAINER Shane Starcher <shanestarcher@gmail.com>
 
-ARG SENSU_VERSION=1.4.3-1
+ARG SENSU_VERSION=1.6.1-1
 ARG DUMB_INIT_VERSION=1.2.0
 ARG ENVTPL_VERSION=0.2.3
 
@@ -20,7 +20,7 @@ RUN \
     echo "deb https://sensu.global.ssl.fastly.net/apt stretch main" > /etc/apt/sources.list.d/sensu.list &&\
     apt-get update &&\
     apt-get install -y sensu=${SENSU_VERSION} &&\
-    rm -rf /opt/sensu/embedded/lib/ruby/gems/2.4.0/{cache,doc}/* &&\
+    rm -rf /opt/sensu/embedded/lib/ruby/gems/2.5.0/{cache,doc}/* &&\
     find /opt/sensu/embedded/lib/ruby/gems/ -name "*.o" -delete &&\
     # Cleanup debian
     apt-get remove -y gnupg &&\
@@ -41,7 +41,8 @@ RUN \
 COPY templates /etc/sensu/templates
 COPY bin /bin/
 
-ENV DEFAULT_PLUGINS_REPO=sensu-plugins \
+ENV SENSU_VERSION=${SENSU_VERSION} \
+    DEFAULT_PLUGINS_REPO=sensu-plugins \
     DEFAULT_PLUGINS_VERSION=master \
     # Client Config
     CLIENT_SUBSCRIPTIONS=all,default \
